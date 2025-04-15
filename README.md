@@ -71,17 +71,23 @@ Supported remotely by Abigail as well as the other data experts listed above.
 Here are some resources that are useful to learning R: 
 
 - **R Documentation**: [https://www.r-project.org/](https://www.r-project.org/)
+
    *This is the official R documentation, where you can find detailed descriptions of R functions, packages, and general programming guidance. It's a great reference to consult for in-depth information on any R function or topic.*
 - **RStudio Cheatsheets**: [https://rstudio.com/resources/cheatsheets/](https://rstudio.com/resources/cheatsheets/)
+
    *RStudio provides a variety of cheatsheets that summarize key functions and workflows in R. These are useful for quick reference and learning how to navigate RStudio efficiently, covering topics like data wrangling, visualization, and more.*
 - **Online R Courses**:  
    - [DataCamp: Introduction to R](https://www.datacamp.com/courses/free-introduction-to-r)
+
         *This free course offers a hands-on introduction to R programming, covering the basics and providing practice exercises in an interactive environment. Ideal for beginners to get started with R.*
    - [Coursera: R Programming](https://www.coursera.org/learn/r-programming)
+
         *A comprehensive course on R programming that covers core programming concepts, such as data types, control structures, and functions, with practical applications in data analysis.*
 - **swirl**: [swirl - Learn R, in R](https://swirlstats.com/)  
+
    *An interactive R package that helps you learn R programming right in your R session.*
 - **R for Data Science**: [https://r4ds.had.co.nz/](https://r4ds.had.co.nz/)  
+
    *A comprehensive guide to using R for data science by one of the leading R developers, Hadley Wickham.*
 
 We look forward to seeing you at the workshop and helping you get started with R and statistics!
