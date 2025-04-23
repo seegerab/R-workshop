@@ -9,7 +9,7 @@ This repository contains materials for the *Stool4TB R and Statistics Workshop* 
 
 In this workshop, we will introduce participants to:
 
-- **R Programming**: Understanding the basics of R, data manipulation, and visualization using RStudio.
+- **R Programming**: Understanding the basics of R and visualization using RStudio.
 - **Basic Statistical Concepts**: Overview of key statistical techniques and how to perform basic analyses in R.
 - **Hands-on Exercises**: Practical exercises using Stool4TB data to help reinforce the concepts learned.
 
@@ -17,9 +17,8 @@ In this workshop, we will introduce participants to:
 
 The materials for the workshop include:
 
-1. **Code**: R markdown scripts that demonstrate the key concepts and statistical techniques and includes information on the basics of R programming and introductory statistics.
+1. **Code**: R markdown (.Rmd) scripts that demonstrate the key concepts and statistical techniques and includes information on the basics of R programming and introductory statistics.
 2. **Datasets**: Data for use during the workshop exercises.
-3. **Exercises**: Hands-on exercises to practice and apply what they've learned.
 
 You can find all of the materials in this repository.
 
@@ -32,11 +31,13 @@ Throughout the course of the pre-workshop activies, you will install and use the
 
 As an analogy, R is the foundation - like a basic text editor. RStudio offers enhanced tools, similar to how Microsoft Word or Google Docs provides more features and tools than a simple text editor.
 
+You will install these tools in week 1 of the pre-workshop activities. 
+
 ## Contact Information
 
 If you have any questions or need assistance, feel free to contact the facilitators:
 
-- **Abigail**: abigail.seeger@bcm.edu for technical support
+- **Abigail**: abigail.seeger@bcm.edu for technical support 
 - **Joanna**: joanna.ehrlich@isglobal.org for logistical support
 
 The following team members have volunteered to be a resource for new R learners. They can support with installing R and RStudio. 
@@ -55,11 +56,13 @@ The following team members have volunteered to be a resource for new R learners.
 
 Supported remotely by Abigail as well as the other data experts listed above. 
 
+### Other Sites
+
+Supported remotely by Abigail.
+
 ## Additional Resources
 
 Here are some resources that are useful to learning R:
-
-
 
 - **RStudio Cheatsheets**: [https://rstudio.com/resources/cheatsheets/](https://rstudio.com/resources/cheatsheets/)
 
@@ -84,5 +87,5 @@ Here are some resources that are useful to learning R:
 - **R for Data Science**: [https://r4ds.had.co.nz/](https://r4ds.had.co.nz/)  
 
    *A comprehensive guide to using R for data science by one of the leading R developers, Hadley Wickham. This resource is more advanced.*
-   
+
 We look forward to seeing you at the workshop and helping you get started with R and statistics!
