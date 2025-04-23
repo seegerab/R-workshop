@@ -13,12 +13,12 @@ If you already have R and RStudio installed, there is nothing you need to do! If
 
 You will be asked to select a "CRAN Mirror". This is the location of the server from which you're going to download R and later, R packages. As an analogy, this is like going to the closest library to you to check out a book. Please choose a location close to you for faster download - for those based in Africa, this will be the South Africa link:
 
-![](image.png)
+![](image.png){width=50%}
 
 2. **Install RStudio**:  
    Download and install RStudio from [RStudio's website](https://posit.co/download/rstudio-desktop/). Select the Free version:
 
-![](image-1.png)
+![](image-1.png){width=50%}
 
 Here is a helpful video to walk you through this process:
 
