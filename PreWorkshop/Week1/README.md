@@ -4,8 +4,6 @@ This week, you will be installing R and RStudio.
 
 If you already have R and RStudio installed, there is nothing you need to do! If you would like, you can investigate some of the resources outlined on the main page. 
 
-
-
 ## Steps
 
 1. **Install R**:  
@@ -15,11 +13,8 @@ You will be asked to select a "CRAN Mirror". This is the location of the server 
 
 <img src="image.png" width="50%" />
 
-
 2. **Install RStudio**:  
-   Download and install RStudio from [RStudio's website](https://posit.co/download/rstudio-desktop/). Select the Free version:
-
-<img src="image-1.png" width="50%" />
+   Download and install RStudio from [RStudio's website](https://posit.co/download/rstudio-desktop/). 
 
 Here is a helpful video to walk you through this process:
 
