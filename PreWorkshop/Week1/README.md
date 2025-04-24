@@ -34,7 +34,7 @@ This is what R looks like to use. It is relatively simple.
 
 <img src="image-5.png" width="50%" />
 
-On the other hand, RStudio offers more tools. The language is still R, but it is a more polished and user-friendly environment. This is what RStudio looks like.
+On the other hand, RStudio offers more tools. The language is still R, but it is a more polished and user-friendly environment. This is what RStudio looks like. We'll explore more next week what each of the panes are and more about the functionality!
 
 <img src="image-6.png" width="50%" />
 
