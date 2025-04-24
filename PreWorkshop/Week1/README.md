@@ -2,7 +2,7 @@
 
 This week, you will be installing R and RStudio.
 
-If you already have R and RStudio installed, there is nothing you need to do! If you would like, you can investigate some of the resources outlined on the main page. 
+If you already have R and RStudio installed, there is nothing you need to do! If you would like, you can investigate some of the resources outlined on the main page or help a colleague get their R and R Studio installed. 
 
 ## Steps
 
@@ -28,8 +28,27 @@ Moving forward, the screenshots will be for the Windows installation. However, t
 
 6. R should be installed! 
 
-2. **Install RStudio**:  
-   Download and install RStudio from [RStudio's website](https://posit.co/download/rstudio-desktop/). 
+## **Install RStudio**
+
+This is what R looks like to use. It is relatively simple.  
+
+<img src="image-5.png" width="50%" />
+
+On the other hand, RStudio offers more tools. The language is still R, but it is a more polished and user-friendly environment. This is what RStudio looks like.
+
+<img src="image-6.png" width="50%" />
+
+1. Click on this[link:](https://posit.co/download/rstudio-desktop/). 
+
+2. You've already installed R, so select "Install RStudio".
+
+<img src="image-7.png" width="50%" />
+
+3. You should see an RStudio .exe file in your downloads. Click on it, and follow the prompts. Keep all of the default settings - no need to change anything. 
+
+4. RStudio should be installed! To verify, try opening it - search for RStudio in your programs, and open it. I suggest you save to either your Desktop or Start Menu so it's easy to find, if it isn't already installed there.
+
+# Resources 
 
 Here is a helpful video to walk you through this process:
 
