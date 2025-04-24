@@ -14,15 +14,15 @@ If you already have R and RStudio installed, there is nothing you need to do! If
 
 Moving forward, the screenshots will be for the Windows installation. However, the steps will be the same for the Mac installation.
 
-<img src="C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week1/images/image-2.png" width="50%" />
+<img src="image-2.png" width="50%" />
 
 3. Select the "base" distribution link.
 
-<img src="C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week1/images/image-3.png" width="50%" />
+<img src="image-3.png" width="50%" />
 
 4. Click on the download link.
 
-<img src="C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week1/images/image-4.png" width="50%" />
+<img src="image-4.png" width="50%" />
 
 5. You should see R-4.5.0.exe in your downloads. Click on it, and follow the prompts. Keep all of the default settings - no need to change anything. 
 
@@ -32,17 +32,17 @@ Moving forward, the screenshots will be for the Windows installation. However, t
 
 This is what R looks like to use. It is relatively simple.  
 
-<img src="C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week1/images/image-5.png" width="50%" />
+<img src="image-5.png" width="50%" />
 
 On the other hand, RStudio offers more tools. The language is still R, but it is a more polished and user-friendly environment. This is what RStudio looks like.
 
-<img src="C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week1/images/image-6.png" width="50%" />
+<img src="image-6.png" width="50%" />
 
 1. Click on this[link:](https://posit.co/download/rstudio-desktop/). 
 
 2. You've already installed R, so select "Install RStudio".
 
-<img src="C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week1/images/image-7.png" width="50%" />
+<img src="image-7.png" width="50%" />
 
 3. You should see an RStudio .exe file in your downloads. Click on it, and follow the prompts. Keep all of the default settings - no need to change anything. 
 
