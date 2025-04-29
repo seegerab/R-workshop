@@ -1,9 +1,9 @@
 # Introduction to R and Statistics for the Stool4TB Annual Meeting
 
-This repository contains materials for the *Stool4TB R and Statistics Workshop* (May 2025). You'll find slides, code, datasets, and exercises to help you get started with R, RStudio, and basic statistical concepts.
+This repository contains materials for the *Stool4TB R and Statistics Workshop* (May 2025). You'll find code and data sets to help you get started with R, RStudio, and basic statistical concepts.
 
 **Workshop Dates**: Friday, May 30, 2025  
-**Location**: Stool4TB Annual Meeting (Mbabane, Eswatini)   
+**Location**: In person - Stool4TB Annual Meeting (Mbabane, Eswatini)   
 
 ## Overview
 
@@ -54,7 +54,7 @@ The following team members have volunteered to be a resource for new R learners.
 
 ### Uganda
 
-Supported remotely by Abigail as well as the other data experts listed above. 
+Supported remotely by Abigail. 
 
 ### Other Sites
 
