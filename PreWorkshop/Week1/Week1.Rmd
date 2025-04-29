@@ -64,23 +64,22 @@ Here are some other numeric operations:
 ### Anything in the parentheses is executed first
 (3 + 3) ^ 2 ### The ^ symbol is used for exponents
 ```
+
 ## Try it!
 
-1. In this code chunk, return the sum of two and eight.
-
-Please keep free to copy and paste code from above! If you do so, just copy the code, not the back ticks starting and ending the code chunk, or the {r}.
+1. In Miguel's progress report from April 29, 2025, he reported that there were 150 adults recruited in Uganda, 267 recruited in Mozambique, and 260 in Eswatini. How many total participants have been recruited?
 
 ```{r}
 
 ```
 
-2. In Miguel's progress report from X, he reported that there were X participants enrolled in Eswatini, Y in Tanzania, and Z in Eswatini. How many total participants were enrolled?
+2. The target for pediatric enrollment in Eswatini is 305 participants. 314 have been recruited, as of April 29. How many participants above the target have been recruited?
 
 ```{r}
 
 ```
 
-3. It turns out that Y participants from Eswatini are missing z. We started with z participants, so how many have available data for z?
+3. The target for recruited children is 1295. 1289 have been recruited so far. What percent of the target number has been achieved?
 
 ```{r}
 
@@ -93,22 +92,21 @@ Using R as a calculator is pretty simple - and just scratching the surface of wh
 R can be used for analysis, including t-tests, chi-squared tests, ANOVAs, linear regression, and logistic regression. It can also be used for complicated analysis like machine learning. And, you can also make publication-quality figures in R!
 
 R can also be used to do a lot of the same executions as Excel, such as sorting, filtering, and creating new variables. However, R is reproducible - you don't need to remember exactly what columns you selected or what operation you did because you'll have code to recreate any of these steps that you took. R handles big data sets better, and is more efficient for complicated calculations. 
-
 One cool thing about R is that it is R and open source. This is in contrast to other tools - like SAS, Stata, and Prism which are not free. 
 
 We will cover basic analysis and figures in the weeks leading up to the workshop and during the workshop itself. However, today we're going to get familiar with some basic R syntax and data structures. 
 
-First, `<-` is used as an assignment operator. In the code chunk below, `var_a` is the assigned the value of 3 and `var_b` is assigned the value of 3. 
+First, `<-` is used as an assignment operator. In the code chunk below, `x` is the assigned the value of 3 and `y` is assigned the value of 3. 
 
 ```{r}
-var_a <- 3
-var_b <- 3
+x <- 3
+y <- 3
 ```
 
-You can do the same operations on `var_a` and `var_b` that we did above and get the same result:
+You can do the same operations on `x` and `y` that we did above and get the same result:
 
 ```{r}
-var_a + var_b 
+x + y 
 ```
 
 Here, we used variable names for numbers. However, we can assign things like data frames and characters the same way! 
@@ -119,14 +117,16 @@ Up until now, we've been working with numeric values. However, there are many di
 |------------|------------------------------|-----------------|
 | numeric    | Numbers         | `3.14`, `-2`    |
 | character  | Text or strings              | `"hello"`       |
-| logical    | Boolean values               | `TRUE`,
+| logical    | Boolean values               | `TRUE`, `FALSE`
 
 
-# Getting help
+In analysis, we mostly use data frames, where each column contains values of a single data type. We'll learn more about data frames next week!
+
+# Getting help in R
 
 There are a few ways to get help in R.
 
-First, you can include a `?` in front of a function name. For example, if you want more information on the `str()` function, the documentation should appear in the help() pane once you run the code chunk. This is helpful to see all of the function arguments. 
+First, you can include a `?` in front of a function name. For example, if you want more information on the `str()` function - this is short for structure, and tells you more about the structure of a variable - the documentation should appear in the help() pane once you run the code chunk. This is helpful to see all of the function arguments. 
 
 ```{r}
 ?str()
@@ -140,7 +140,7 @@ Please fill out this survey so we know you completed the assignment and to help 
 
 # TBeyond Basics
 
-There are style guidelines for coding related to naming variables and syntax. Read this if you are interested in best practices!
+There are style guidelines for coding related to naming variables and syntax. Start with the syntax tab if you are interested in learning about best practices! 
 
 https://style.tidyverse.org/
 
