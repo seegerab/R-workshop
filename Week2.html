@@ -1564,12 +1564,13 @@ document!</p>
 <li>Knit to an .html document to easily share your work with colleagues
 <ul>
 <li>Knit is kind of a funny word to use here — it comes from knitting!
-The idea is that you’re combining text and code together seamlessly,
-like knitting pieces of yarn into a sweater. In fact, the Knit button
-even has a little ball of yarn and a knitting needle!</li>
+The idea is that you’re combining text, code, and output together
+seamlessly, like knitting pieces of yarn into a sweater. In fact, the
+Knit button even has a little ball of blue yarn and a knitting
+needle!</li>
 </ul></li>
 </ul>
-<p>We’re going to knit to an .html in this course, but you can also
+<p>We’re going to knit to an .html in this workshop, but you can also
 output to a PDF or word document.</p>
 <p>Inside of the R markdown document, you can type out text. That is
 what this is! You can include code chunks, also.</p>
@@ -1585,7 +1586,7 @@ for other people who view your code.</p>
 calculator, using the standard arithmetic symbols.</p>
 <p>To execute this code chunk, you should see a green triangle (a “play”
 symbol) in the upper-right hand corner of the code chunk. When you press
-play, hopefully you see 6 output below the code chunk!</p>
+play, hopefully you see <code>6</code> output below the code chunk!</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">### Add 3 and 3 together</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="dv">3</span> <span class="sc">+</span> <span class="dv">3</span></span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
@@ -1605,18 +1606,15 @@ play, hopefully you see 6 output below the code chunk!</p>
 <div id="try-it" class="section level2">
 <h2>Try it!</h2>
 <ol style="list-style-type: decimal">
-<li>In this code chunk, return the sum of two and eight.</li>
-</ol>
-<p>Please keep free to copy and paste code from above! If you do so,
-just copy the code, not the back ticks starting and ending the code
-chunk, or the {r}.</p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>In Miguel’s progress report from X, he reported that there were X
-participants enrolled in Eswatini, Y in Tanzania, and Z in Eswatini. How
-many total participants were enrolled?</p></li>
-<li><p>It turns out that Y participants from Eswatini are missing z. We
-started with z participants, so how many have available data for
-z?</p></li>
+<li><p>In Miguel’s progress report from April 29, 2025, he reported that
+there were 260 adults recruited in Eswatini, 150 in Uganda, and 267 in
+Mozambique. How many total adults have been recruited?</p></li>
+<li><p>The target recruitment for children in Eswatini is 305. To date,
+314 children have been recruited. How many additional children were
+recruited?</p></li>
+<li><p>The target for total pediatric recruitment is 1295 children. To
+date, 1289 children have been recruited. What percent of the target has
+been achieved?</p></li>
 </ol>
 </div>
 </div>
@@ -1641,14 +1639,16 @@ free.</p>
 the workshop and during the workshop itself. However, today we’re going
 to get familiar with some basic R syntax and data structures.</p>
 <p>First, <code>&lt;-</code> is used as an assignment operator. In the
-code chunk below, <code>var_a</code> is the assigned the value of 3 and
-<code>var_b</code> is assigned the value of 3.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>var_a <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>var_b <span class="ot">&lt;-</span> <span class="dv">3</span></span></code></pre></div>
-<p>You can do the same operations on <code>var_a</code> and
-<code>var_b</code> that we did above and get the same result:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>var_a <span class="sc">+</span> var_b </span></code></pre></div>
+code chunk below, x and y are both assigned the value 3 using the
+<code>&lt;-</code> operator.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">3</span></span></code></pre></div>
+<p>You can do the same operations on <code>x</code> and <code>y</code>
+that we did above and get the same result:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>x <span class="sc">+</span> y</span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
+<p>Here, we used variable names for numbers. However, we can assign
+things like data frames and characters the same way!</p>
 <p>Up until now, we’ve been working with numeric values. However, there
 are many different data types in R.</p>
 <table>
@@ -1673,14 +1673,36 @@ are many different data types in R.</p>
 <tr class="odd">
 <td>logical</td>
 <td>Boolean values</td>
-<td><code>TRUE</code>,</td>
+<td><code>TRUE</code>, <code>FALSE</code></td>
 </tr>
 </tbody>
 </table>
-<p>There are some operations that only work for each data type. For
-example, adding two character variables together doesn’t make sense.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">str</span>(var_a)</span></code></pre></div>
-<pre><code>##  num 3</code></pre>
+<p>There are different operations you can perform on different data
+types. For example - it wouldn’t make sense to add two words together,
+or find the number of rows in a number.</p>
+<p>A vector is a collection of values of the same type. You can create
+one using the <code>c()</code> function:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="do">### Example of a vector</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>numeric_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="do">### Here&#39;s another vector that includes the character data type! Notice  that words must be in quotation marks (&quot;&quot;)</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>character_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>, <span class="st">&quot;d&quot;</span>)</span></code></pre></div>
+<p>You can inspect an object using the function str(). str() is short
+for structure - it tells you more information about the structure of the
+data by printing out the objects in the vector, telling you how long the
+vector is, and including the data type.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">str</span>(numeric_vector)</span></code></pre></div>
+<pre><code>##  num [1:3] 1 2 3</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">str</span>(character_vector) </span></code></pre></div>
+<pre><code>##  chr [1:4] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot;</code></pre>
+<div id="try-it-1" class="section level2">
+<h2>Try it!</h2>
+<p>Pretend that this is a vector with 5 participant’s ages, in
+years.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>try_it_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">2</span>)</span></code></pre></div>
+<p>Before using the str() function - what is the data type of the
+vector?</p>
+<p>Now - use the str() function to investigate the structure!</p>
+</div>
 </div>
 <div id="getting-help" class="section level1">
 <h1>Getting help</h1>
@@ -1690,13 +1712,18 @@ For example, if you want more information on the <code>str()</code>
 function, the documentation should appear in the help() pane once you
 run the code chunk. This is helpful to see all of the function
 arguments.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>?<span class="fu">str</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>?<span class="fu">str</span>()</span></code></pre></div>
 <pre><code>## starting httpd help server ... done</code></pre>
 <p>I also Google - a lot! If you’re stuck on something, chances are
 someone else has experienced the same error. Make sure to include the
 function name and the error you’re experiencing. I usually also include
 “R” in my search to make sure to get results for the function in R, not
 another coding language.</p>
+</div>
+<div id="survey" class="section level1">
+<h1>Survey</h1>
+<p>Please fill out this survey so we know you completed the assignment
+and to help guide the direction this workshop is going in!</p>
 </div>
 <div id="tbeyond-basics" class="section level1">
 <h1>TBeyond Basics</h1>

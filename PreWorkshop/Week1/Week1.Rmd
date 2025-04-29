@@ -27,7 +27,7 @@ R markdown is great because it allows you to:
 - Knit to an .html document to easily share your work with colleagues
   - Knit is kind of a funny word to use here — it comes from knitting! The idea is that you're combining text, code, and output together seamlessly, like knitting pieces of yarn into a sweater. In fact, the Knit button even has a little ball of blue yarn and a knitting needle!
 
-We're going to knit to an .html in this workshop, but you can also output to a PDF or word document. 
+We're going to knit to an .html in this course, but you can also output to a PDF or word document. 
 
 Inside of the R markdown document, you can type out text. That is what this is! You can include code chunks, also.
 
@@ -46,7 +46,7 @@ This code chunk has a comment in it:
 
 Now, let's include some code. To start - R can be used as a calculator, using the standard arithmetic symbols. 
 
-To execute this code chunk, you should see a green triangle (a "play" symbol) in the upper-right hand corner of the code chunk. When you press play, hopefully you see `6` output below the code chunk!
+To execute this code chunk, you should see a green triangle (a "play" symbol) in the upper-right hand corner of the code chunk. When you press play, hopefully you see 6 output below the code chunk!
 
 ```{r}
 ### Add 3 and 3 together
@@ -66,24 +66,25 @@ Here are some other numeric operations:
 ```
 ## Try it!
 
-1. In Miguel's progress report from April 29, 2025, he reported that there were 260 adults recruited in Eswatini, 150 in Uganda, and 267 in Mozambique. How many total adults have been recruited?
+1. In this code chunk, return the sum of two and eight.
+
+Please keep free to copy and paste code from above! If you do so, just copy the code, not the back ticks starting and ending the code chunk, or the {r}.
 
 ```{r}
 
 ```
 
-2. The target recruitment for children in Eswatini is 305. To date, 314 children have been recruited. How many additional children were recruited?
+2. In Miguel's progress report from X, he reported that there were X participants enrolled in Eswatini, Y in Tanzania, and Z in Eswatini. How many total participants were enrolled?
 
 ```{r}
 
 ```
 
-3. The target for total pediatric recruitment is 1295 children. To date, 1289 children have been recruited. What percent of the target has been achieved?
+3. It turns out that Y participants from Eswatini are missing z. We started with z participants, so how many have available data for z?
 
 ```{r}
 
 ```
-
 
 # Basic R skills
 
@@ -97,17 +98,17 @@ One cool thing about R is that it is R and open source. This is in contrast to o
 
 We will cover basic analysis and figures in the weeks leading up to the workshop and during the workshop itself. However, today we're going to get familiar with some basic R syntax and data structures. 
 
-First, `<-` is used as an assignment operator. In the code chunk below, x and y are both assigned the value 3 using the `<-` operator.
+First, `<-` is used as an assignment operator. In the code chunk below, `var_a` is the assigned the value of 3 and `var_b` is assigned the value of 3. 
 
 ```{r}
-x <- 3
-y <- 3
+var_a <- 3
+var_b <- 3
 ```
 
-You can do the same operations on `x` and `y` that we did above and get the same result:
+You can do the same operations on `var_a` and `var_b` that we did above and get the same result:
 
 ```{r}
-x + y
+var_a + var_b 
 ```
 
 Here, we used variable names for numbers. However, we can assign things like data frames and characters the same way! 
@@ -118,41 +119,8 @@ Up until now, we've been working with numeric values. However, there are many di
 |------------|------------------------------|-----------------|
 | numeric    | Numbers         | `3.14`, `-2`    |
 | character  | Text or strings              | `"hello"`       |
-| logical    | Boolean values               | `TRUE`, `FALSE` |
+| logical    | Boolean values               | `TRUE`,
 
-There are different operations you can perform on different data types. For example - it wouldn't make sense to add two words together, or find the number of rows in a number. 
-
-A vector is a collection of values of the same type. You can create one using the `c()` function:
-
-```{r}
-### Example of a vector
-numeric_vector <- c(1, 2, 3)
-### Here's another vector that includes the character data type! Notice  that words must be in quotation marks ("")
-character_vector <- c("a", "b", "c", "d")
-```
-
-You can inspect an object using the function str(). str() is short for structure - it tells you more information about the structure of the data by printing out the objects in the vector, telling you how long the vector is, and including the data type. 
-
-```{r}
-str(numeric_vector)
-str(character_vector) 
-```
-
-## Try it!
-
-Pretend that this is a vector with 5 participant's ages, in years. 
-
-```{r}
-try_it_vector <- c(5, 3, 9, 2)
-```
-
-Before using the str() function - what is the data type of the vector?
-
-Now - use the str() function to investigate the structure!
-
-```{r}
-
-```
 
 # Getting help
 
@@ -169,8 +137,6 @@ I also Google - a lot! If you're stuck on something, chances are someone else ha
 # Survey
 
 Please fill out this survey so we know you completed the assignment and to help guide the direction this workshop is going in!
-
-
 
 # TBeyond Basics
 
