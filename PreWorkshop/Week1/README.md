@@ -8,7 +8,7 @@ This week, you will be installing R and R Studio and get an introduction to both
 
 - Once you click on the link, you will need to download the .Rmd file by clicking on the download button, circled below
 
-<img src="image-8.png" width="50%" />
+<img src="images/image-8.png" width="50%" />
 
 - The .Rmd will be in your downloads folder. Please move this to a folder that you create for this workshop.
 
