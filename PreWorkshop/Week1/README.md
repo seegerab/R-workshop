@@ -1,6 +1,6 @@
 # Week 1
 
-This week, you will be installing R and R Studio and get an introduction to both.
+This week, you will be installing R and R Studio and get an introduction to both. For all links, it may be easiest to right-click and open in new tab.
 
 1. Watch <a href="https://www.youtube.com/watch?v=5wy6JDx_a7g" target="_blank">this video</a>  
 2. Install R and R Studio using the steps provided <a href="https://github.com/seegerab/R-workshop/blob/main/PreWorkshop/Week1/Installing%20R%20and%20R%20Studio.md" target="_blank">here</a>  
