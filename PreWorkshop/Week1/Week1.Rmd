@@ -126,7 +126,7 @@ In analysis, we mostly use data frames, where each column contains values of a s
 
 There are a few ways to get help in R.
 
-First, you can include a `?` in front of a function name. For example, if you want more information on the `str()` function - this is short for structure, and tells you more about the structure of a variable - the documentation should appear in the help() pane once you run the code chunk. This is helpful to see all of the function arguments. 
+First, you can include a `?` in front of a function name. For example, if you want more information on the `str()` function - this is short for structure, and tells you more about the structure of a variable - the documentation should appear "help" tab in the bottom right pane once you run the code chunk. This is helpful to see all of the function arguments. 
 
 ```{r}
 ?str()

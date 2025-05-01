@@ -26,15 +26,11 @@ Moving forward, the screenshots will be for the Windows installation. However, t
 
 6. R should be installed! 
 
-## **Install RStudio**
-
-This is what R looks like to use. It is relatively simple.  
+This is what R looks like to use. It is relatively simple. On the other hand, RStudio offers more tools. 
 
 <img src="images/image-5.png" width="50%" />
 
-On the other hand, RStudio offers more tools. The language is still R, but it is a more polished and user-friendly environment. This is what RStudio looks like. We'll explore more next week what each of the panes are and more about the functionality!
-
-<img src="images/image-6.png" width="50%" />
+## **Install RStudio**
 
 1. Click on this [link:](https://posit.co/download/rstudio-desktop/). 
 
@@ -45,6 +41,10 @@ On the other hand, RStudio offers more tools. The language is still R, but it is
 3. You should see an RStudio .exe file in your downloads. Click on it, and follow the prompts. Keep all of the default settings - no need to change anything. 
 
 4. RStudio should be installed! To verify, try opening it - search for RStudio in your programs, and open it. I suggest you save to either your Desktop or Start Menu so it's easy to find, if it isn't already installed there.
+
+This is what RStudio looks like! The language is still R, but it is a more polished and user-friendly environment. 
+
+<img src="images/image-6.png" width="50%" />
 
 # Resources 
 
