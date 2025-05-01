@@ -14,5 +14,9 @@ This week, you will be installing R and R Studio and get an introduction to both
 
 - Once the file is in its final destination, clicking on the .Rmd should pull up the file in R Studio.
 
+- If you have never used RStudio before, you will see this message at the top of the document. Please select "Install".
+
+<img src="images/WhatsApp Image 2025-05-01 at 10.37.42_05c0646c.jpg" width="50%" />
+
 4. Fill out <a href="https://docs.google.com/forms/d/e/1FAIpQLScHDv_sdD-A_I8uOVBGRtkj-618DtXySOEBCeE0qBMk0zfpYA/viewform?usp=dialog" target="_blank">this survey</a>  
 5. Celebrate! You completed everything for week 1.

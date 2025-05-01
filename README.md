@@ -47,6 +47,7 @@ The following team members have volunteered to be a resource for new R learners.
 - **Ntsiki**: ntsiki.s@baylorfoundationeswatini.org
 - **Mbongeni**: mbongeni.dube@bcm.edu
 - **Geez**: mthethwa.nkulungwane@bcm.edu
+- **Zanele**: zanele.n@baylorfoundationeswatini.org
 
 ### Mozambique
 
