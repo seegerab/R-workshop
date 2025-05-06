@@ -1,0 +1,125 @@
+---
+title: "Getting Started in R and R Studio"
+output:
+  html_document:
+    theme: cerulean 
+    highlight: tango
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to week 2!
+
+In week 1, you installed R and R Studio, opened an R markdown (.Rmd) file, and became aquainted with the structure of an .Rmd file.
+
+This week, you will learn how to:
+
+1. Read in data and learn how to investigate the data
+2. Learn about different data types, and what we can do with each 
+3. Create tables to look at categorical variables
+4. Evaluate the mean, median, standard deviation, and other important values for numeric variables
+
+In addition, we'll learn about what exactly makes a variables `categorical` or `numeric`, and review what different statistical values - such as mean and standard deviation are. 
+
+# Read in data
+
+To read in data, we will use the `read.csv()` function. Today, we'll use a few different functions, and this is our first one!
+
+A function is like a set of instructions that performs a specific task. It takes input called ~arguments~, and it gives you a result. Different functions have different arguments, some of which are optional and some are required.
+
+To use `read.csv()`, you need to provide the file path of a .csv file (this is a comma-separated value file). This will be different depending on where you save the .csv file that you downloaded! This .csv file is a subset of variables that were collected at the baseline visit. It does not include the contacts.
+
+As an example, I saved my data named "Stool4TB workshop subset week 2.csv" at this file path "C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop".
+
+So, my function input would be:
+
+read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
+
+You will need to update this to be the file path that you saved the .csv file to.
+
+
+```{r }
+### Use the read.csv() function to read in your data
+### You will need to provide the file path to your .csv file inside the parantheses
+
+### We're going to save this as data, so it will appear in our environment and we can access it later
+data <- read.csv()
+```
+
+The data includes the following variables:
+
+*record_id*: the generic record ID of each participant
+
+*rf_country*: the country the participant was enrolled in, either Eswatini, Mozambique, or Tanzania
+
+*rf_enroll_date*: the date the participant was enrolled
+
+*rf_age_calculated*: the age of the participant, calculated by finding the difference between the enrollment date and date of birth and rounding down to the nearest integer
+
+*rf_gender*: gender; either Male or Female
+
+*rf_enrollocation*: enrollment location; either Inpatient, Outpatient, or Home
+
+*bf_hivstatus*: the HIV status of the participant; either Negative, Positive, or Unknown
+
+*bf_weight*: weight, in kilograms
+
+*bf_height*: height, in centimeters
+
+*bf_respiratoryrate*: respiratory rate, in breaths per minute
+
+*bf_heartrate*: heart rate, in beats per minute
+
+```{r}
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TBEDCTPStudy_DATA_LABELS_2025-05-06_1024.csv")
+colnames(data) <- colnames(read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TBEDCTPStudy_DATA_2025-05-06_1024.csv"))
+library(tidyverse)
+data <- data%>%
+  ### Remove the contacts
+  filter(ps_child_casetype != "Healthy sibling/ household contact")%>%
+  filter(bf_category != "Healthy HIV adult")%>%
+  ### Filter to just baseline
+  filter(redcap_event_name == "Baseline ")%>%
+### Select just some important variables
+  select(record_id, rf_country, rf_enroll_date, rf_age_calculated, rf_gender, rf_race, rf_enrollocation, bf_hivstatus, bf_category, bf_weight, bf_respiratoryrate, bf_heartrate)%>%
+  mutate(bf_hivstatus = ifelse(bf_hivstatus == "", bf_category, bf_hivstatus))%>%
+  mutate(bf_hivstatus = ifelse(bf_hivstatus %in% c("HIV adult presumptive  TB;", "Positive"), "Positive", bf_hivstatus))%>%
+  select(-c(bf_category))
+### Write to a .csv to share with participants
+write.csv(data, "Stool4TB workshop subset week 2.csv")
+```
+
+If you read in the data successfully, you should see this in your environment (the upper right pane). You can also take a look at the dimensions of the data - you should see 574 obs. (so there are 574 observations, or rows) and 11 variables (so there are 11 columns).
+
+If you click on `data` in the environment pane, it will open in a new tab. Take a moment to inspect the variables and scroll through the different observations!
+
+You can also take a look at the data using the head() function.
+
+```{r}
+head(data)
+```
+
+The str() (short for "structure") function is another good one to know. This tells you the data type of each variable.
+
+```{r}
+str(data)
+```
+
+Let's examine the different data types!
+
+bf_heartrate 
+
+```{r}
+
+```
+
+
+
