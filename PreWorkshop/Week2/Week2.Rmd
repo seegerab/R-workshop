@@ -41,7 +41,8 @@ As an example, I saved my data "Stool4TB workshop subset week 2.csv" to this fil
 
 So, my code would look like:
 
-```{r eval = FALSE}
+```{r  eval = FALSE}
+### This is just an example - if you run this, you will get an error 
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
 ```
 
@@ -59,7 +60,7 @@ The data includes the following variables:
 
 **record_id**: the generic record ID of each participant
 
-**rf_country**: the country the participant was enrolled in, either Eswatini, Mozambique, or Tanzania
+**rf_country**: the country the participant was enrolled in. For this subset, all were enrolled in Eswatini. 
 
 **rf_enroll_date**: the date the participant was enrolled
 
@@ -192,7 +193,7 @@ You can do this really elegantly using the pipe operator (`%>%`). The pipe opera
 
 ```{r warning = FALSE, message = FALSE}
 ### You will need to first install the package
-install.packages("tidyverse") ### You only need to do this once
+### install.packages("tidyverse") ### You only need to do this once - uncomment this (remove the ###) in order to install
 
 ### You need to use the library() function to access the package  
 library(tidyverse)
@@ -225,18 +226,20 @@ table(data$rf_enrollocation, exclude = NULL)%>%
 
 ## Tables continued
 
-Often, we want to create 2x2 contingency tables to examine the relationship between two categorical variables. For example, we might want a breakdown of paritipant enrollment location by site. 
+Often, we want to create 2x2 contingency tables to examine the relationship between two categorical variables. For example, we might want a breakdown of paritipant enrollment location and participant HIV status. 
 
 To do this, we include two categorical variables in the function, separated by a comma. The first variable will be the rows and the second variable will be the columns of the table.
 
 ```{r}
-table(data$rf_enrollocation, data$rf_country, exclude = NULL)%>%
+table(data$rf_enrollocation, data$bf_hivstatus, exclude = NULL)%>%
   addmargins()
 ```
 
-There are X total participants in this table. X enrolled in Eswatini, Y in Tanzania, and Z in Mozambique.
+There are 574 total participants in this table. 258 are not living with HIV, 304 are living with HIV, and 12 have an unknown HIV status.
 
-Of the Z participants enrolled in Mozambique, ZZ were enrolled in an Outpatient setting (ZZ/Z = ZZ%). This is an example of a conditional probability - it is the chance that someone is enrolled in an outpatient setting, **given** we know that they were enrolled in Mozambique.
+Of the 19 participants enrolled at home, ZZ were enrolled in an Outpatient setting (ZZ/Z = ZZ%). This is an example of a conditional probability - it is the chance that someone is enrolled in an outpatient setting, **given** we know that they were enrolled in Mozambique.
+
+Of the 304 participants living with HIV, 285 were enrolled in an outpatient setting (285/304 = 93.75%). This is an example of a conditional probability - it is the chance that someone is enrolled in an outpatient setting, **given** we know that they are living with HIV. 
 
 ### Try it! 2
 
@@ -311,6 +314,7 @@ Rather than ordering all 574 observations ourselves and finding the middle value
 ### Again, I always include na.rm = TRUE
 median(data$bf_weight, na.rm = TRUE)
 ```
+
 Notice that the median value is less than the mean value. This has to do with the distribution of what the data looks like.
 
 We'll learn about figures next week, however this is what the weight variable looks like as plotted in a histogram. 
@@ -436,13 +440,13 @@ data%>%
 
 You can easily switch out the variables to group by for any other categorical variable, and replace the `mean()` function with other functions we've learned so far.
 
-For example, let's find the minimum weight by country:
+For example, let's find the minimum weight by gender:
 
 ```{r}
 ### Use the pipe operator (%>%) from the tidyverse package
 data%>%
-  ### Group by the categorical variable - in this case, country
-  group_by(rf_country)%>%
+  ### Group by the categorical variable - in this case, gender
+  group_by(rf_gender)%>%
   ### Calculate the minimum weight by group
   summarize(min(bf_weight, na.rm = TRUE))
 ```
@@ -471,7 +475,7 @@ R has some packages that make this easy to do!
 
 ```{r warning = FALSE, message = FALSE}
 ### Install the package - you only need to do this once
-# install.packages("tableone")
+### install.packages("tableone") Uncomment this (remove the ###) to run
 library(tableone)
 
 ### Use the CreateTableOne() function to create a table using a subset of variables
@@ -482,5 +486,6 @@ print(table_one,
       showAllLevels = TRUE,
       nonnormal = TRUE) ### By include nonnormal = TRUE, this returns median and IQR rather than mean and sd
 ```
+
 
 
