@@ -39,18 +39,20 @@ To use `read.csv()`, you need to provide the file path of a .csv (comma-separate
 
 As an example, I saved my data "Stool4TB workshop subset week 2.csv" to this file path "C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop".
 
-So, my function input would be:
+So, my code would look like:
 
-read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
+```{r eval = FALSE}
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
+```
 
 You will need to update this to be the file path that you saved the .csv file to.
+
+Make sure to save as `data`.
 
 ```{r }
 ### Use the read.csv() function to read in your data
 ### You will need to provide the file path to your .csv file inside the parantheses
 
-### We're going to save this as data, so it will appear in our environment and we can access it later
-# data <- read.csv()
 ```
 
 The data includes the following variables:
