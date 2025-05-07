@@ -79,25 +79,6 @@ The data includes the following variables:
 
 **bf_heartrate**: heart rate, in beats per minute
 
-```{r}
-data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TBEDCTPStudy_DATA_LABELS_2025-05-06_1024.csv")
-colnames(data) <- colnames(read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TBEDCTPStudy_DATA_2025-05-06_1024.csv"))
-library(tidyverse)
-data <- data%>%
-  ### Remove the contacts
-  filter(ps_child_casetype != "Healthy sibling/ household contact")%>%
-  filter(bf_category != "Healthy HIV adult")%>%
-  ### Filter to just baseline
-  filter(redcap_event_name == "Baseline ")%>%
-### Select just some important variables
-  select(record_id, rf_country, rf_enroll_date, rf_age_calculated, rf_gender, rf_race, rf_enrollocation, bf_hivstatus, bf_category, bf_weight, bf_respiratoryrate, bf_heartrate)%>%
-  mutate(bf_hivstatus = ifelse(bf_hivstatus == "", bf_category, bf_hivstatus))%>%
-  mutate(bf_hivstatus = ifelse(bf_hivstatus %in% c("HIV adult presumptive  TB;", "Positive"), "Positive", bf_hivstatus))%>%
-  select(-c(bf_category))
-### Write to a .csv to share with participants
-write.csv(data, "Stool4TB workshop subset week 2.csv")
-```
-
 # Examining the data and different variable types 
 
 If you read in the data successfully, you should see this in your environment (the upper right pane). You can also take a look at the dimensions of the data - you should see 574 obs. (so there are 574 observations, or rows) and 11 variables (so there are 11 columns).
