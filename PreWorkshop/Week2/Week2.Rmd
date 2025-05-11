@@ -18,24 +18,24 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Welcome to week 2!
 
-In week 1, you installed R and R Studio, opened an R markdown (.Rmd) file, and became aquainted with the structure of an .Rmd file.
+In week 1, you installed R and R Studio, opened an R markdown (.Rmd) file, and became acquainted with the structure of an .Rmd file.
 
 This week, you will learn how to:
 
-1. Read in data and learn how to investigate the data
+1. Read in data and learn how to investigate it
 2. Learn about different data types, and what we can do with each 
 3. Create tables to look at categorical variables
 4. Evaluate the mean, median, standard deviation, and other important values for numeric variables
 
-In addition, we'll learn about what exactly makes a variables `categorical` or `numeric`, and review what different statistical values - such as mean and standard deviation are. 
+In addition, we'll learn about what exactly makes a variables *categorical* or *numeric*, and review what different statistical values - such as mean and standard deviation - are. 
 
 # Reading in data
 
-To read in data, we will use the `read.csv()` function. Today, we'll use a few different functions, and this is our first one!
+To read in data, we will use the `read.csv()` function. We'll use a few different functions in this .Rmd, and this is our first one!
 
-A function is like a set of instructions that performs a specific task. It takes input called *arguments*, and it gives you a result. Different functions have different arguments, some of which are optional and some are required.
+A function is like a set of instructions that performs a specific task. It takes input called *arguments* and it gives you a result. Different functions have different arguments - some are optional and some are required.
 
-To use `read.csv()`, you need to provide the file path of a .csv (comma-separated value) file. This will be different depending on where you save the .csv file that you downloaded! This .csv file is a subset of variables that were collected at the baseline visit. It does not include the contacts.
+To use `read.csv()`, you need to provide the file path of a .csv (comma-separated value) file. This will be different depending on where you save the .csv file that you downloaded. This .csv file is a subset of variables that were collected at the baseline visit. It does not include the contacts, and only includes participants from Eswatini.
 
 As an example, I saved my data "Stool4TB workshop subset week 2.csv" to this file path "C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop".
 
@@ -52,15 +52,13 @@ Make sure to save as `data`.
 
 ```{r }
 ### Use the read.csv() function to read in your data
-### You will need to provide the file path to your .csv file inside the parantheses
+### You will need to provide the file path to your .csv file inside the parentheses
 
 ```
 
 The data includes the following variables:
 
 **record_id**: the generic record ID of each participant
-
-**rf_country**: the country the participant was enrolled in. For this subset, all were enrolled in Eswatini. 
 
 **rf_enroll_date**: the date the participant was enrolled
 
@@ -82,11 +80,11 @@ The data includes the following variables:
 
 # Examining the data and different variable types 
 
-If you read in the data successfully, you should see this in your environment (the upper right pane). You can also take a look at the dimensions of the data - you should see 574 obs. (so there are 574 observations, or rows) and 11 variables (so there are 11 columns).
+If you read in the data successfully, you should see this in your environment (the upper right pane). You can also take a look at the dimensions of the data - you should see 574 obs. (so there are 574 observations, or rows) and 9 variables (so there are 9 columns).
 
 If you click on `data` in the environment pane, it will open in a new tab. Take a moment to inspect the variables and scroll through the different observations!
 
-You can also take a look at the data using the head() function.
+You can also take a look at the data using the `head()` function.
 
 ```{r}
 head(data)
@@ -104,24 +102,25 @@ Let's examine the different data types!
 
 The data type `chr` is short for character. 
 
-You can think of these as text fields. Examples of character data types include gender, race, enrollment location, and HIV status. 
+You can think of these as text fields. Examples of character data types include gender, enrollment location, and HIV status. 
 
-These variables are all categorical variables - these are variables you can put in bins (or categories) and it wouldn't make sense to perform any numeric operations on.
+These variables are all categorical variables - they can be put in bins (or categories) and it wouldn't make sense to perform any numeric operations on them.
 
 ## Integers
 
 `record_id`, `rf_age_calculated`, `bf_respiratoryrate`, and `bf_heartrate` all have `int` as the type. This is short for integer.
 
-You can think of this as a whole number. For heart rate and respiratory rate, this makes sense. You can't have half of a heart beat or take half a breath
+You can think of this as a whole number. For heart rate and respiratory rate, this makes sense. You can't have half of a heart beat or take half a breath.
 
-For the `record_id`, even though it is entered as a number, it should really be a character. It wouldn't make sense to add or subtract the `record_id` variable, because this is a generic way to identify paricipants.
+For the `record_id`, even though it is entered as a number, it should really be a character. It wouldn't make sense to add or subtract the `record_id` variable, because this is a generic way to identify participants.
 
 Let's convert this to a character using a new function - as.character()! This takes as an argument the column that we want to convert to a character.
 
 ```{r}
-### The $ operator let's us access the record_id column
+### The $ operator lets us access the record_id column
 ### We'll learn more about this in the next section
 data$record_id <- as.character(data$record_id)
+### There are other functions, such as as.numeric, that can convert to other data types
 ```
 
 Now, let's check to make sure the updated data type is in fact a character.
@@ -131,9 +130,9 @@ str(data)
 ```
 
 
-Hopefully, you see `chr` rather than `int` above for the data type. 
+Hopefully, you see `chr` rather than `int` above for the data type.
 
-The last variable that is an integer is their age. This is a calculated field in RedCap to be their age **in years**. Think of this as the age you tell someone when they ask how old you are. So, while age can technically also be a decimal value (represented as the `num` data type), here, it makes sense for it to be an integer.
+The last variable that is an integer is age. This is a calculated field in RedCap to be age **in years**. Think of this as the age you tell someone when they ask how old you are. So, while age can technically also be a decimal value (represented as the `num` data type), here, it makes sense for it to be an integer.
 
 ## Numeric
 
@@ -147,20 +146,19 @@ Numeric variables have decimal places, while integer variable types do not.
 
 What we can do with different variables depends on the data type. For example, it might make sense to find the minimum heart rate, but it wouldn't make sense to find the minimum enrollment location.
 
-To start, we're going to focus on the character variables.
+To start, we're going to focus on the categorical variables.
 
 ## Tables
 
-One function that is create to evaluate character variables is the table() function.
+One function that is great to evaluate categorical variables is the `table()` function.
 
-The table() function takes a categorical variable as the argument. You can access each variable by using `$`. This tells R to access that specific column name. It is super important to spell the column name exactly as it appears and with the correct capitalization.
+The `table()` function takes a categorical variable as the argument. You can access each variable by using `$`. This tells R to access that specific column name. It is crucial to spell the column name exactly as it appears and with the correct capitalization.
 
 The `colnames()` function is helpful to see all of the column names.
 
 ```{r}
 colnames(data)
 ```
-
 
 For example, here are each of the enrollment locations for the 574 observations in the data:
 
@@ -191,17 +189,23 @@ A second modification is to apply the `addmargins()` function after you have cre
 
 You can do this really elegantly using the pipe operator (`%>%`). The pipe operator is included in the `tidyverse` package. Different packages allow you to use different functions that are not included in base R (all of the functions we've used so far). The `tidyverse` package is used to create to **tidy** data - to filter, select, and modify in a way that is neat and organized. We'll learn more about `tidyverse` next week!
 
+To use a package, you first need to install it. Then, each time you want to use a function in the package, you need to first use the `library()` function to access everything in the package.
+
 ```{r warning = FALSE, message = FALSE}
 ### You will need to first install the package
-### install.packages("tidyverse") ### You only need to do this once - uncomment this (remove the ###) in order to install
 
-### You need to use the library() function to access the package  
+### install.packages("tidyverse") 
+
+### You only need to do this once. Uncomment this (remove the ###) in order to install if you did not install using the pop-up you may have seen when you opened the .Rmd
+
+### Now, the library() function allows us to access the package  
 library(tidyverse)
 ```
 
 Essentially, you are telling R to first apply the `table()` function, and then the `addmargins()` function, which includes row and column totals in the table.
 
 ```{r}
+### You should now see a "Sum" column - this is the total number of participants
 table(data$rf_enrollocation, exclude = NULL)%>%
   addmargins()
 ```
@@ -210,15 +214,15 @@ table(data$rf_enrollocation, exclude = NULL)%>%
 
 1. Create a table of the HIV status variable. Make sure to include `exclude = NULL` and `addmargins()`.
 
-*Hint: if you can't remember what the column name is called, use the `str()` function or the `colnames()` function or pull up the data in a new tab.*
+*Hint: if you can't remember what the column name is called, use the `str()` function or the `colnames()` function or pull up the data in a new tab by clicking on it in the environment.*
 
 ```{r}
 
 ```
 
-2. What percent of participants are living with HIV?
+2. What proportion of participants are living with HIV?
 
-*Hint - we learned how to divide in week 1. Look back to week 1 if you need a reminder.*
+*Hint - we learned how to divide in week 1. Look back to week 1 if you need a reminder. Your answer should be a number between 0 and 1.*
 
 ```{r}
 
@@ -226,24 +230,23 @@ table(data$rf_enrollocation, exclude = NULL)%>%
 
 ## Tables continued
 
-Often, we want to create 2x2 contingency tables to examine the relationship between two categorical variables. For example, we might want a breakdown of paritipant enrollment location and participant HIV status. 
+Often, we want to create two-by-two contingency tables to examine the relationship between two categorical variables. For example, we might want a breakdown of participant enrollment location and participant HIV status. 
 
-To do this, we include two categorical variables in the function, separated by a comma. The first variable will be the rows and the second variable will be the columns of the table.
+To do this, we include two categorical variables in the function, separated by a comma. The first variable will be the rows of the table and the second variable will be the columns.
 
 ```{r}
+### Now, the addmargins() function includes both row and column totals
 table(data$rf_enrollocation, data$bf_hivstatus, exclude = NULL)%>%
   addmargins()
 ```
 
 There are 574 total participants in this table. 258 are not living with HIV, 304 are living with HIV, and 12 have an unknown HIV status.
 
-Of the 19 participants enrolled at home, ZZ were enrolled in an Outpatient setting (ZZ/Z = ZZ%). This is an example of a conditional probability - it is the chance that someone is enrolled in an outpatient setting, **given** we know that they were enrolled in Mozambique.
-
 Of the 304 participants living with HIV, 285 were enrolled in an outpatient setting (285/304 = 93.75%). This is an example of a conditional probability - it is the chance that someone is enrolled in an outpatient setting, **given** we know that they are living with HIV. 
 
 ### Try it! 2
 
-1. Create a 2x2 table using the variables for gender and HIV status.
+1. Create a two-by-two table using the variables for gender and HIV status.
 
 ```{r}
 
@@ -254,6 +257,11 @@ Of the 304 participants living with HIV, 285 were enrolled in an outpatient sett
 3. How many participants are living with HIV **and** are female?
 
 4. Given that we know a participant is living with HIV, what is the probability that they are female?
+
+```{r}
+
+```
+
 
 # Numeric variables
 
@@ -283,11 +291,10 @@ $\frac{85.0 + 57.8 + 45.0}{3} = 62.6 \text{ kg}$
 
 Rather than having to add up all 574 participants' weights and dividing by 574, we can use the `mean()` function!
 
-
 ```{r}
-### I always include na.rm = TRUE in the function, because if there are any missing values this will return NA
-mean(data$bf_weight, na.rm = TRUE)
+mean(data$bf_weight)
 ```
+
 The mean gives you an idea of the average weight. However, it can be pulled in the direction of outliers - data points that are very different from the rest of the values.
 
 For example, if I was looking at the weight of 3 participants and one happened to be mistakenly entered as 850.0 rather than 85.0, the mean would become:
@@ -304,18 +311,18 @@ For our 3 hypothetical participants with weights 85.0,  57.8, and 45.0 kg, we fi
 
 45.0, 57.8, 85.0 kg
 
-The median is the middle value - so 57.8.
+The median is the middle value (57.8).
 
-Notice that even when we look at the data with a mistake (450.0 rather than 45.0), the median is the same! In this way, the median is more resistant to outliers than the mean is.
+Notice that even if we look at the data with a mistake (450.0 rather than 45.0), the median is the same! In this way, the median is more resistant to outliers than the mean is.
 
 Rather than ordering all 574 observations ourselves and finding the middle value, the `median()` function in R makes this easy.
 
 ```{r}
 ### Again, I always include na.rm = TRUE
-median(data$bf_weight, na.rm = TRUE)
+median(data$bf_weight)
 ```
 
-Notice that the median value is less than the mean value. This has to do with the distribution of what the data looks like.
+Notice that the median value is less than the mean value. This gives us a clue that the distribution of weight may not be symmetric. 
 
 We'll learn about figures next week, however this is what the weight variable looks like as plotted in a histogram. 
 
@@ -343,14 +350,11 @@ ggplot(data = data%>%filter(!is.na(rf_age_calculated))%>%mutate(age_cat = ifelse
 1. What is the mean value of the respiratory rate?
 
 ```{r}
-
 ```
-
 
 2. What is the median value of the respiratory rate?
 
 ```{r}
-
 ```
 
 ## Spread
@@ -364,8 +368,9 @@ We can measure spread using standard deviation, which is essentially the average
 We can calculate standard deviation using the `sd()` function.
 
 ```{r}
-sd(data$bf_weight, na.rm = TRUE)
+sd(data$bf_weight)
 ```
+
 The standard deviation is similar to the mean in that it is impacted by outliers.
 
 ### Interquartile range 
@@ -404,7 +409,6 @@ We can calculate the range by finding the difference between the minimum and max
 
 ```{r}
 ### Standard deviation
-
 ```
 
 ```{r}
@@ -427,7 +431,7 @@ We can calculate the range by finding the difference between the minimum and max
 
 Sometimes, we want to report numeric summaries by group. For example, we might want the mean heart rate by HIV status.
 
-To do this, we can use the `group_by()` and `summarize()` functions and the pipe operator (%>%)!
+To do this, we can use the `group_by()` and `summarize()` functions and the pipe operator (`%>%`) that we learned earlier!
 
 ```{r}
 ### Use the pipe operator (%>%) from the tidyverse package
@@ -435,7 +439,7 @@ data%>%
   ### Group by the categorical variable - in this case, HIV status
   group_by(bf_hivstatus)%>%
   ### Calculate the mean heart rate by group
-  summarize(mean(bf_heartrate, na.rm = TRUE))
+  summarize(mean(bf_heartrate))
 ```
 
 You can easily switch out the variables to group by for any other categorical variable, and replace the `mean()` function with other functions we've learned so far.
@@ -448,16 +452,23 @@ data%>%
   ### Group by the categorical variable - in this case, gender
   group_by(rf_gender)%>%
   ### Calculate the minimum weight by group
-  summarize(min(bf_weight, na.rm = TRUE))
+  summarize(min(bf_weight))
 ```
 
 ### Try it! 5
 
-1. Find the median respiratory rate by gender. Which gender has a lower median respiratory rate?
+1. Find the mean respiratory rate by gender. Which gender has a lower mean respiratory rate?
 
 ```{r}
 
 ```
+
+2. Find the standard deviation of weight by gender. Write one sentence about what this tells you about the spread of weight between the two genders. 
+
+```{r}
+
+```
+
 
 # Conclusion
 
