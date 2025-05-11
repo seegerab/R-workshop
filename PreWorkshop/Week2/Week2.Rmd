@@ -1,0 +1,502 @@
+---
+title: "Reading in data and summary statistics"
+output:
+  html_document:
+    theme: cerulean 
+    highlight: tango
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to week 2!
+
+In week 1, you installed R and R Studio, opened an R markdown (.Rmd) file, and became acquainted with the structure of an .Rmd file.
+
+This week, you will learn how to:
+
+1. Read in data and learn how to investigate it
+2. Learn about different data types, and what we can do with each 
+3. Create tables to look at categorical variables
+4. Evaluate the mean, median, standard deviation, and other important values for numeric variables
+
+In addition, we'll learn about what exactly makes a variables *categorical* or *numeric*, and review what different statistical values - such as mean and standard deviation - are. 
+
+# Reading in data
+
+To read in data, we will use the `read.csv()` function. We'll use a few different functions in this .Rmd, and this is our first one!
+
+A function is like a set of instructions that performs a specific task. It takes input called *arguments* and it gives you a result. Different functions have different arguments - some are optional and some are required.
+
+To use `read.csv()`, you need to provide the file path of a .csv (comma-separated value) file. This will be different depending on where you save the .csv file that you downloaded. This .csv file is a subset of variables that were collected at the baseline visit. It does not include the contacts, and only includes participants from Eswatini.
+
+As an example, I saved my data "Stool4TB workshop subset week 2.csv" to this file path "C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop".
+
+So, my code would look like:
+
+```{r  eval = FALSE}
+### This is just an example - if you run this, you will get an error 
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
+```
+
+You will need to update this to be the file path that you saved the .csv file to.
+
+Make sure to save as `data`.
+
+```{r }
+### Use the read.csv() function to read in your data
+### You will need to provide the file path to your .csv file inside the parentheses
+
+```
+
+The data includes the following variables:
+
+**record_id**: the generic record ID of each participant
+
+**rf_enroll_date**: the date the participant was enrolled
+
+**rf_age_calculated**: the age of the participant, calculated by finding the difference between the enrollment date and date of birth and rounding down to the nearest integer
+
+**rf_gender**: gender; either Male or Female
+
+**rf_enrollocation**: enrollment location; either Inpatient, Outpatient, or Home
+
+**bf_hivstatus**: the HIV status of the participant; either Negative, Positive, or Unknown
+
+**bf_weight**: weight, in kilograms
+
+**bf_height**: height, in centimeters
+
+**bf_respiratoryrate**: respiratory rate, in breaths per minute
+
+**bf_heartrate**: heart rate, in beats per minute
+
+# Examining the data and different variable types 
+
+If you read in the data successfully, you should see this in your environment (the upper right pane). You can also take a look at the dimensions of the data - you should see 574 obs. (so there are 574 observations, or rows) and 9 variables (so there are 9 columns).
+
+If you click on `data` in the environment pane, it will open in a new tab. Take a moment to inspect the variables and scroll through the different observations!
+
+You can also take a look at the data using the `head()` function.
+
+```{r}
+head(data)
+```
+
+The str() (short for "structure") function is another good one to know. This tells you the data type of each variable.
+
+```{r}
+str(data)
+```
+
+Let's examine the different data types!
+
+## Character
+
+The data type `chr` is short for character. 
+
+You can think of these as text fields. Examples of character data types include gender, enrollment location, and HIV status. 
+
+These variables are all categorical variables - they can be put in bins (or categories) and it wouldn't make sense to perform any numeric operations on them.
+
+## Integers
+
+`record_id`, `rf_age_calculated`, `bf_respiratoryrate`, and `bf_heartrate` all have `int` as the type. This is short for integer.
+
+You can think of this as a whole number. For heart rate and respiratory rate, this makes sense. You can't have half of a heart beat or take half a breath.
+
+For the `record_id`, even though it is entered as a number, it should really be a character. It wouldn't make sense to add or subtract the `record_id` variable, because this is a generic way to identify participants.
+
+Let's convert this to a character using a new function - as.character()! This takes as an argument the column that we want to convert to a character.
+
+```{r}
+### The $ operator lets us access the record_id column
+### We'll learn more about this in the next section
+data$record_id <- as.character(data$record_id)
+### There are other functions, such as as.numeric, that can convert to other data types
+```
+
+Now, let's check to make sure the updated data type is in fact a character.
+
+```{r}
+str(data)
+```
+
+
+Hopefully, you see `chr` rather than `int` above for the data type.
+
+The last variable that is an integer is age. This is a calculated field in RedCap to be age **in years**. Think of this as the age you tell someone when they ask how old you are. So, while age can technically also be a decimal value (represented as the `num` data type), here, it makes sense for it to be an integer.
+
+## Numeric
+
+In addition to `int`, numbers can also be the `num` (numeric) type.
+
+Numeric variables have decimal places, while integer variable types do not.
+
+`bf_weight` is the only numeric data type. Notice that weight is reported out to one decimal place for kilograms. 
+
+# Examining different variables
+
+What we can do with different variables depends on the data type. For example, it might make sense to find the minimum heart rate, but it wouldn't make sense to find the minimum enrollment location.
+
+To start, we're going to focus on the categorical variables.
+
+## Tables
+
+One function that is great to evaluate categorical variables is the `table()` function.
+
+The `table()` function takes a categorical variable as the argument. You can access each variable by using `$`. This tells R to access that specific column name. It is crucial to spell the column name exactly as it appears and with the correct capitalization.
+
+The `colnames()` function is helpful to see all of the column names.
+
+```{r}
+colnames(data)
+```
+
+For example, here are each of the enrollment locations for the 574 observations in the data:
+
+```{r}
+data$rf_enrollocation
+```
+
+This is a lot of information! And it's hard to digest the 574 enrollment locations.
+
+Instead, the `table()` function summarizes this by counting how many participants were enrolled at each location.
+
+```{r}
+table(data$rf_enrollocation)
+```
+
+We can see that 19 participants were enrolled at home, 22 in an inpatient setting, and 533 outpatient.
+
+There are some ways to modify this table that make this table easier to interpret. 
+
+The first is to include `exclude = NULL` inside the function. This makes sure that any NA values (missing values) are included in the table to evaluate all the data - including missing values.
+
+```{r}
+### You should see the same output as the table() function above. However, this isn't always the case so I always include this when creating tables.
+table(data$rf_enrollocation, exclude = NULL)
+```
+
+A second modification is to apply the `addmargins()` function after you have created the table.
+
+You can do this really elegantly using the pipe operator (`%>%`). The pipe operator is included in the `tidyverse` package. Different packages allow you to use different functions that are not included in base R (all of the functions we've used so far). The `tidyverse` package is used to create to **tidy** data - to filter, select, and modify in a way that is neat and organized. We'll learn more about `tidyverse` next week!
+
+To use a package, you first need to install it. Then, each time you want to use a function in the package, you need to first use the `library()` function to access everything in the package.
+
+```{r warning = FALSE, message = FALSE}
+### You will need to first install the package
+
+### install.packages("tidyverse") 
+
+### You only need to do this once. Uncomment this (remove the ###) in order to install if you did not install using the pop-up you may have seen when you opened the .Rmd
+
+### Now, the library() function allows us to access the package  
+library(tidyverse)
+```
+
+Essentially, you are telling R to first apply the `table()` function, and then the `addmargins()` function, which includes row and column totals in the table.
+
+```{r}
+### You should now see a "Sum" column - this is the total number of participants
+table(data$rf_enrollocation, exclude = NULL)%>%
+  addmargins()
+```
+
+### Try it! 1
+
+1. Create a table of the HIV status variable. Make sure to include `exclude = NULL` and `addmargins()`.
+
+*Hint: if you can't remember what the column name is called, use the `str()` function or the `colnames()` function or pull up the data in a new tab by clicking on it in the environment.*
+
+```{r}
+
+```
+
+2. What proportion of participants are living with HIV?
+
+*Hint - we learned how to divide in week 1. Look back to week 1 if you need a reminder. Your answer should be a number between 0 and 1.*
+
+```{r}
+
+```
+
+## Tables continued
+
+Often, we want to create two-by-two contingency tables to examine the relationship between two categorical variables. For example, we might want a breakdown of participant enrollment location and participant HIV status. 
+
+To do this, we include two categorical variables in the function, separated by a comma. The first variable will be the rows of the table and the second variable will be the columns.
+
+```{r}
+### Now, the addmargins() function includes both row and column totals
+table(data$rf_enrollocation, data$bf_hivstatus, exclude = NULL)%>%
+  addmargins()
+```
+
+There are 574 total participants in this table. 258 are not living with HIV, 304 are living with HIV, and 12 have an unknown HIV status.
+
+Of the 304 participants living with HIV, 285 were enrolled in an outpatient setting (285/304 = 93.75%). This is an example of a conditional probability - it is the chance that someone is enrolled in an outpatient setting, **given** we know that they are living with HIV. 
+
+### Try it! 2
+
+1. Create a two-by-two table using the variables for gender and HIV status.
+
+```{r}
+
+```
+
+2. How many participants are living with HIV?
+
+3. How many participants are living with HIV **and** are female?
+
+4. Given that we know a participant is living with HIV, what is the probability that they are female?
+
+```{r}
+
+```
+
+
+# Numeric variables
+
+With numeric variables, we are interested in things like the **center** and **spread** of the data.
+
+To evaluate center, we'll learn the following functions:
+
+* mean()
+* median()
+
+To evaluate spread, we'll learn the following functions:
+
+* sd()
+* min()
+* max()
+* IQR()
+
+## Center
+
+### Mean
+
+The mean() function returns the mean. This is the sum of each value, divided by how many values we're adding up.
+
+For example, if you have 3 participants who weight 85.0, 57.8, and 45.0 kg, the mean of the 3 participants would be:
+
+$\frac{85.0 + 57.8 + 45.0}{3} = 62.6 \text{ kg}$
+
+Rather than having to add up all 574 participants' weights and dividing by 574, we can use the `mean()` function!
+
+```{r}
+mean(data$bf_weight)
+```
+
+The mean gives you an idea of the average weight. However, it can be pulled in the direction of outliers - data points that are very different from the rest of the values.
+
+For example, if I was looking at the weight of 3 participants and one happened to be mistakenly entered as 850.0 rather than 85.0, the mean would become:
+
+$\frac{850.0 + 57.8 + 45.0}{3} = 317.6 \text{ kg}$
+
+This is a big difference from the 62.6 kg we calculated above!
+
+### Median
+
+A measure of center that is more resistant to outliers is the median. This is the middle point of the data when all values are arranged in order.
+
+For our 3 hypothetical participants with weights 85.0,  57.8, and 45.0 kg, we first order them in ascending order:
+
+45.0, 57.8, 85.0 kg
+
+The median is the middle value (57.8).
+
+Notice that even if we look at the data with a mistake (450.0 rather than 45.0), the median is the same! In this way, the median is more resistant to outliers than the mean is.
+
+Rather than ordering all 574 observations ourselves and finding the middle value, the `median()` function in R makes this easy.
+
+```{r}
+### Again, I always include na.rm = TRUE
+median(data$bf_weight)
+```
+
+Notice that the median value is less than the mean value. This gives us a clue that the distribution of weight may not be symmetric. 
+
+We'll learn about figures next week, however this is what the weight variable looks like as plotted in a histogram. 
+
+```{r}
+ggplot(data = data%>%filter(!is.na(rf_age_calculated)), aes(x = bf_weight))+
+  geom_histogram()+
+  labs(x = "Weight (kg)",
+         y = "Density",
+         title = "Histogram of participant weight at baseline (kg)")
+```
+
+This distribution is called *bimodal* - there are two peaks, which I suspect are for younger children and adults. This is confirmed once we add a color for age category! We will dig more into how to create figures like this next week.
+
+```{r}
+ggplot(data = data%>%filter(!is.na(rf_age_calculated))%>%mutate(age_cat = ifelse(rf_age_calculated<=8, "0-8", "15 and older")), aes(x = bf_weight, fill = age_cat))+
+  geom_histogram()+
+  labs(x = "Weight (kg)",
+         y = "Density",
+         title = "Histogram of participant weight at baseline (kg)",
+       fill = "Age category")
+```
+
+### Try it! 3
+
+1. What is the mean value of the respiratory rate?
+
+```{r}
+```
+
+2. What is the median value of the respiratory rate?
+
+```{r}
+```
+
+## Spread
+
+In addition to the center of the data - measured using mean and median - it's important to know the spread of the data. 
+
+### Standard deviation
+
+We can measure spread using standard deviation, which is essentially the average distance each data point is from the mean. A small standard deviation indicates that the data points are close to the mean, while a large standard deviation suggests more variability. 
+
+We can calculate standard deviation using the `sd()` function.
+
+```{r}
+sd(data$bf_weight)
+```
+
+The standard deviation is similar to the mean in that it is impacted by outliers.
+
+### Interquartile range 
+
+On the other hand, the interquartile range (IQR) is more robust to outliers. 
+
+The `IQR()` function returns the difference between Q1 and Q3.
+
+Q1 is the 25-th percentile of the data and Q3 is the 75-th percentile. The median is the 50-th percentile of the data, and Q1 and Q3 are calculated similarly to the median.
+
+```{r}
+### This value is Q3 - Q1
+IQR(data$bf_weight)
+```
+
+### Minimum and maximum
+
+In addition, it is also helpful to know the minimum and maximum values, and we can do this using the `min()` and `max()` functions:
+
+```{r}
+min(data$bf_weight)
+max(data$bf_weight)
+```
+
+We can calculate the range by finding the difference between the minimum and maximum values:
+
+
+```{r}
+### This is the range
+136 - 2.3
+```
+
+### Try it! 4
+
+1. Calculate the standard deviation, and the minimum and maximum heart rate.
+
+```{r}
+### Standard deviation
+```
+
+```{r}
+### Minimum
+
+```
+
+```{r}
+### Maximum
+
+```
+
+2. What is the range of the heart rate variable?
+
+```{r}
+
+```
+
+## Summaries by category
+
+Sometimes, we want to report numeric summaries by group. For example, we might want the mean heart rate by HIV status.
+
+To do this, we can use the `group_by()` and `summarize()` functions and the pipe operator (`%>%`) that we learned earlier!
+
+```{r}
+### Use the pipe operator (%>%) from the tidyverse package
+data%>%
+  ### Group by the categorical variable - in this case, HIV status
+  group_by(bf_hivstatus)%>%
+  ### Calculate the mean heart rate by group
+  summarize(mean(bf_heartrate))
+```
+
+You can easily switch out the variables to group by for any other categorical variable, and replace the `mean()` function with other functions we've learned so far.
+
+For example, let's find the minimum weight by gender:
+
+```{r}
+### Use the pipe operator (%>%) from the tidyverse package
+data%>%
+  ### Group by the categorical variable - in this case, gender
+  group_by(rf_gender)%>%
+  ### Calculate the minimum weight by group
+  summarize(min(bf_weight))
+```
+
+### Try it! 5
+
+1. Find the mean respiratory rate by gender. Which gender has a lower mean respiratory rate?
+
+```{r}
+
+```
+
+2. Find the standard deviation of weight by gender. Write one sentence about what this tells you about the spread of weight between the two genders. 
+
+```{r}
+
+```
+
+
+# Conclusion
+
+That's it for today! You learned how to read in data and about the different data types in R. You also learned how to summarize both categorical and numeric data.
+
+Next week, we'll create some figures and do some filtering using the `tidyverse` package. 
+
+# TBeyond Basics
+
+If you would like to keep learning:
+
+Often, we need to create a table one for manuscripts - a table with basic summary statistics, such as counts and percents for categorical variables or median and IQR for numeric variables.
+
+R has some packages that make this easy to do!
+
+```{r warning = FALSE, message = FALSE}
+### Install the package - you only need to do this once
+### install.packages("tableone") Uncomment this (remove the ###) to run
+library(tableone)
+
+### Use the CreateTableOne() function to create a table using a subset of variables
+table_one <- CreateTableOne(vars = c("rf_age_calculated", "bf_hivstatus", "rf_enrollocation", "rf_country"),
+                            data = data)
+
+print(table_one, 
+      showAllLevels = TRUE,
+      nonnormal = TRUE) ### By include nonnormal = TRUE, this returns median and IQR rather than mean and sd
+```
+
+
+
