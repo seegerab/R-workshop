@@ -41,8 +41,8 @@ As an example, I saved my data "Stool4TB workshop subset week 2.csv" to this fil
 
 So, my code would look like:
 
-```{r  eval = FALSE}
-### This is just an example - if you run this, you will get an error 
+```{r eval = FALSE }
+### This is just an example - if you try and run this, you will get an error 
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
 ```
 
@@ -426,6 +426,34 @@ We can calculate the range by finding the difference between the minimum and max
 ```{r}
 
 ```
+
+## A quick note
+
+Do you recall how earlier, we learned that functions have optional arguments?
+
+One common optional argument for functions that apply to numeric variables is `na.rm`. This removes NA values when calculating the numeric value.
+
+For example, suppose we wanted to find the average age of the participants:
+
+```{r}
+mean(data$rf_age_calculated)
+```
+This returns NA!
+
+When we take a glance at the data, it seems a few participants are missing this value. Because it is auto-calculated in RedCap, they may be missing their date of birth or enrollment date.
+
+```{r}
+data$rf_age_calculated
+```
+
+
+If we include `na.rm = TRUE`, NA values will be removed before calculating the mean.
+
+```{r}
+mean(data$rf_age_calculated, na.rm = TRUE)
+```
+
+However, this should be used with caution. Those 2 missing ages need to be tracked down. So, `na.rm` is a good argument to use to have a general idea of the average age, but we should always look at the underlying data to see what exactly is missing and make efforts to find the data.
 
 ## Summaries by category
 

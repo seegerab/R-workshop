@@ -1555,33 +1555,33 @@ border-radius: 0px;
 
 <p>Welcome to week 2!</p>
 <p>In week 1, you installed R and R Studio, opened an R markdown (.Rmd)
-file, and became aquainted with the structure of an .Rmd file.</p>
+file, and became acquainted with the structure of an .Rmd file.</p>
 <p>This week, you will learn how to:</p>
 <ol style="list-style-type: decimal">
-<li>Read in data and learn how to investigate the data</li>
+<li>Read in data and learn how to investigate it</li>
 <li>Learn about different data types, and what we can do with each</li>
 <li>Create tables to look at categorical variables</li>
 <li>Evaluate the mean, median, standard deviation, and other important
 values for numeric variables</li>
 </ol>
 <p>In addition, we’ll learn about what exactly makes a variables
-<code>categorical</code> or <code>numeric</code>, and review what
-different statistical values - such as mean and standard deviation
-are.</p>
+<em>categorical</em> or <em>numeric</em>, and review what different
+statistical values - such as mean and standard deviation - are.</p>
 <div id="reading-in-data" class="section level1">
 <h1>Reading in data</h1>
 <p>To read in data, we will use the <code>read.csv()</code> function.
-Today, we’ll use a few different functions, and this is our first
+We’ll use a few different functions in this .Rmd, and this is our first
 one!</p>
 <p>A function is like a set of instructions that performs a specific
-task. It takes input called <em>arguments</em>, and it gives you a
-result. Different functions have different arguments, some of which are
-optional and some are required.</p>
+task. It takes input called <em>arguments</em> and it gives you a
+result. Different functions have different arguments - some are optional
+and some are required.</p>
 <p>To use <code>read.csv()</code>, you need to provide the file path of
 a .csv (comma-separated value) file. This will be different depending on
-where you save the .csv file that you downloaded! This .csv file is a
+where you save the .csv file that you downloaded. This .csv file is a
 subset of variables that were collected at the baseline visit. It does
-not include the contacts.</p>
+not include the contacts, and only includes participants from
+Eswatini.</p>
 <p>As an example, I saved my data “Stool4TB workshop subset week 2.csv”
 to this file path “C:/Users/u249135/OneDrive - Baylor College of
 Medicine/Stool4TB/Workshop”.</p>
@@ -1592,12 +1592,10 @@ Medicine/Stool4TB/Workshop”.</p>
 .csv file to.</p>
 <p>Make sure to save as <code>data</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">### Use the read.csv() function to read in your data</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="do">### You will need to provide the file path to your .csv file inside the parantheses</span></span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="do">### You will need to provide the file path to your .csv file inside the parentheses</span></span></code></pre></div>
 <p>The data includes the following variables:</p>
 <p><strong>record_id</strong>: the generic record ID of each
 participant</p>
-<p><strong>rf_country</strong>: the country the participant was enrolled
-in. For this subset, all were enrolled in Eswatini.</p>
 <p><strong>rf_enroll_date</strong>: the date the participant was
 enrolled</p>
 <p><strong>rf_age_calculated</strong>: the age of the participant,
@@ -1619,11 +1617,12 @@ minute</p>
 <p>If you read in the data successfully, you should see this in your
 environment (the upper right pane). You can also take a look at the
 dimensions of the data - you should see 574 obs. (so there are 574
-observations, or rows) and 11 variables (so there are 11 columns).</p>
+observations, or rows) and 9 variables (so there are 9 columns).</p>
 <p>If you click on <code>data</code> in the environment pane, it will
 open in a new tab. Take a moment to inspect the variables and scroll
 through the different observations!</p>
-<p>You can also take a look at the data using the head() function.</p>
+<p>You can also take a look at the data using the <code>head()</code>
+function.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(data)</span></code></pre></div>
 <pre><code>##   record_id rf_country rf_enroll_date rf_age_calculated rf_gender       rf_race
 ## 1         1   Eswatini     2022-06-27                48      Male Black/African
@@ -1659,10 +1658,10 @@ know. This tells you the data type of each variable.</p>
 <h2>Character</h2>
 <p>The data type <code>chr</code> is short for character.</p>
 <p>You can think of these as text fields. Examples of character data
-types include gender, race, enrollment location, and HIV status.</p>
-<p>These variables are all categorical variables - these are variables
-you can put in bins (or categories) and it wouldn’t make sense to
-perform any numeric operations on.</p>
+types include gender, enrollment location, and HIV status.</p>
+<p>These variables are all categorical variables - they can be put in
+bins (or categories) and it wouldn’t make sense to perform any numeric
+operations on them.</p>
 </div>
 <div id="integers" class="section level2">
 <h2>Integers</h2>
@@ -1671,17 +1670,18 @@ perform any numeric operations on.</p>
 <code>int</code> as the type. This is short for integer.</p>
 <p>You can think of this as a whole number. For heart rate and
 respiratory rate, this makes sense. You can’t have half of a heart beat
-or take half a breath</p>
+or take half a breath.</p>
 <p>For the <code>record_id</code>, even though it is entered as a
 number, it should really be a character. It wouldn’t make sense to add
 or subtract the <code>record_id</code> variable, because this is a
-generic way to identify paricipants.</p>
+generic way to identify participants.</p>
 <p>Let’s convert this to a character using a new function -
 as.character()! This takes as an argument the column that we want to
 convert to a character.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="do">### The $ operator let&#39;s us access the record_id column</span></span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="do">### The $ operator lets us access the record_id column</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="do">### We&#39;ll learn more about this in the next section</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>data<span class="sc">$</span>record_id <span class="ot">&lt;-</span> <span class="fu">as.character</span>(data<span class="sc">$</span>record_id)</span></code></pre></div>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>data<span class="sc">$</span>record_id <span class="ot">&lt;-</span> <span class="fu">as.character</span>(data<span class="sc">$</span>record_id)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="do">### There are other functions, such as as.numeric, that can convert to other data types</span></span></code></pre></div>
 <p>Now, let’s check to make sure the updated data type is in fact a
 character.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">str</span>(data)</span></code></pre></div>
@@ -1699,11 +1699,11 @@ character.</p>
 ##  $ bf_heartrate      : int  78 82 94 78 72 78 73 120 82 83 ...</code></pre>
 <p>Hopefully, you see <code>chr</code> rather than <code>int</code>
 above for the data type.</p>
-<p>The last variable that is an integer is their age. This is a
-calculated field in RedCap to be their age <strong>in years</strong>.
-Think of this as the age you tell someone when they ask how old you are.
-So, while age can technically also be a decimal value (represented as
-the <code>num</code> data type), here, it makes sense for it to be an
+<p>The last variable that is an integer is age. This is a calculated
+field in RedCap to be age <strong>in years</strong>. Think of this as
+the age you tell someone when they ask how old you are. So, while age
+can technically also be a decimal value (represented as the
+<code>num</code> data type), here, it makes sense for it to be an
 integer.</p>
 </div>
 <div id="numeric" class="section level2">
@@ -1721,14 +1721,14 @@ weight is reported out to one decimal place for kilograms.</p>
 <p>What we can do with different variables depends on the data type. For
 example, it might make sense to find the minimum heart rate, but it
 wouldn’t make sense to find the minimum enrollment location.</p>
-<p>To start, we’re going to focus on the character variables.</p>
+<p>To start, we’re going to focus on the categorical variables.</p>
 <div id="tables" class="section level2">
 <h2>Tables</h2>
-<p>One function that is create to evaluate character variables is the
-table() function.</p>
-<p>The table() function takes a categorical variable as the argument.
-You can access each variable by using <code>$</code>. This tells R to
-access that specific column name. It is super important to spell the
+<p>One function that is great to evaluate categorical variables is the
+<code>table()</code> function.</p>
+<p>The <code>table()</code> function takes a categorical variable as the
+argument. You can access each variable by using <code>$</code>. This
+tells R to access that specific column name. It is crucial to spell the
 column name exactly as it appears and with the correct
 capitalization.</p>
 <p>The <code>colnames()</code> function is helpful to see all of the
@@ -1887,16 +1887,23 @@ functions we’ve used so far). The <code>tidyverse</code> package is used
 to create to <strong>tidy</strong> data - to filter, select, and modify
 in a way that is neat and organized. We’ll learn more about
 <code>tidyverse</code> next week!</p>
+<p>To use a package, you first need to install it. Then, each time you
+want to use a function in the package, you need to first use the
+<code>library()</code> function to access everything in the package.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="do">### You will need to first install the package</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="do">### install.packages(&quot;tidyverse&quot;) </span><span class="al">###</span><span class="do"> You only need to do this once - uncomment this (remove the </span><span class="al">###</span><span class="do">) in order to install</span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="do">### You need to use the library() function to access the package  </span></span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="do">### install.packages(&quot;tidyverse&quot;) </span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="do">### You only need to do this once. Uncomment this (remove the </span><span class="al">###</span><span class="do">) in order to install if you did not install using the pop-up you may have seen when you opened the .Rmd</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="do">### Now, the library() function allows us to access the package  </span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
 <p>Essentially, you are telling R to first apply the
 <code>table()</code> function, and then the <code>addmargins()</code>
 function, which includes row and column totals in the table.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>rf_enrollocation, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="do">### You should now see a &quot;Sum&quot; column - this is the total number of participants</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>rf_enrollocation, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>## 
 ##       Home  Inpatient Outpatient        Sum 
 ##         19         22        533        574</code></pre>
@@ -1908,25 +1915,28 @@ function, which includes row and column totals in the table.</p>
 </ol>
 <p><em>Hint: if you can’t remember what the column name is called, use
 the <code>str()</code> function or the <code>colnames()</code> function
-or pull up the data in a new tab.</em></p>
+or pull up the data in a new tab by clicking on it in the
+environment.</em></p>
 <ol start="2" style="list-style-type: decimal">
-<li>What percent of participants are living with HIV?</li>
+<li>What proportion of participants are living with HIV?</li>
 </ol>
 <p><em>Hint - we learned how to divide in week 1. Look back to week 1 if
-you need a reminder.</em></p>
+you need a reminder. Your answer should be a number between 0 and
+1.</em></p>
 </div>
 </div>
 <div id="tables-continued" class="section level2">
 <h2>Tables continued</h2>
-<p>Often, we want to create 2x2 contingency tables to examine the
+<p>Often, we want to create two-by-two contingency tables to examine the
 relationship between two categorical variables. For example, we might
-want a breakdown of paritipant enrollment location and participant HIV
+want a breakdown of participant enrollment location and participant HIV
 status.</p>
 <p>To do this, we include two categorical variables in the function,
-separated by a comma. The first variable will be the rows and the second
-variable will be the columns of the table.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>rf_enrollocation, data<span class="sc">$</span>bf_hivstatus, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
+separated by a comma. The first variable will be the rows of the table
+and the second variable will be the columns.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="do">### Now, the addmargins() function includes both row and column totals</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>rf_enrollocation, data<span class="sc">$</span>bf_hivstatus, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>##             
 ##              Negative Positive Unknown Sum
 ##   Home              5       14       0  19
@@ -1936,11 +1946,6 @@ variable will be the columns of the table.</p>
 <p>There are 574 total participants in this table. 258 are not living
 with HIV, 304 are living with HIV, and 12 have an unknown HIV
 status.</p>
-<p>Of the 19 participants enrolled at home, ZZ were enrolled in an
-Outpatient setting (ZZ/Z = ZZ%). This is an example of a conditional
-probability - it is the chance that someone is enrolled in an outpatient
-setting, <strong>given</strong> we know that they were enrolled in
-Mozambique.</p>
 <p>Of the 304 participants living with HIV, 285 were enrolled in an
 outpatient setting (285/304 = 93.75%). This is an example of a
 conditional probability - it is the chance that someone is enrolled in
@@ -1949,7 +1954,7 @@ living with HIV.</p>
 <div id="try-it-2" class="section level3">
 <h3>Try it! 2</h3>
 <ol style="list-style-type: decimal">
-<li><p>Create a 2x2 table using the variables for gender and HIV
+<li><p>Create a two-by-two table using the variables for gender and HIV
 status.</p></li>
 <li><p>How many participants are living with HIV?</p></li>
 <li><p>How many participants are living with HIV <strong>and</strong>
@@ -1988,8 +1993,7 @@ divided by how many values we’re adding up.</p>
 \text{ kg}\)</span></p>
 <p>Rather than having to add up all 574 participants’ weights and
 dividing by 574, we can use the <code>mean()</code> function!</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="do">### I always include na.rm = TRUE in the function, because if there are any missing values this will return NA</span></span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="fu">mean</span>(data<span class="sc">$</span>bf_weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">mean</span>(data<span class="sc">$</span>bf_weight)</span></code></pre></div>
 <pre><code>## [1] 36.37404</code></pre>
 <p>The mean gives you an idea of the average weight. However, it can be
 pulled in the direction of outliers - data points that are very
@@ -2009,18 +2013,18 @@ order.</p>
 <p>For our 3 hypothetical participants with weights 85.0, 57.8, and 45.0
 kg, we first order them in ascending order:</p>
 <p>45.0, 57.8, 85.0 kg</p>
-<p>The median is the middle value - so 57.8.</p>
-<p>Notice that even when we look at the data with a mistake (450.0
-rather than 45.0), the median is the same! In this way, the median is
-more resistant to outliers than the mean is.</p>
+<p>The median is the middle value (57.8).</p>
+<p>Notice that even if we look at the data with a mistake (450.0 rather
+than 45.0), the median is the same! In this way, the median is more
+resistant to outliers than the mean is.</p>
 <p>Rather than ordering all 574 observations ourselves and finding the
 middle value, the <code>median()</code> function in R makes this
 easy.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="do">### Again, I always include na.rm = TRUE</span></span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">median</span>(data<span class="sc">$</span>bf_weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">median</span>(data<span class="sc">$</span>bf_weight)</span></code></pre></div>
 <pre><code>## [1] 23.1</code></pre>
-<p>Notice that the median value is less than the mean value. This has to
-do with the distribution of what the data looks like.</p>
+<p>Notice that the median value is less than the mean value. This gives
+us a clue that the distribution of weight may not be symmetric.</p>
 <p>We’ll learn about figures next week, however this is what the weight
 variable looks like as plotted in a histogram.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> data<span class="sc">%&gt;%</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rf_age_calculated)), <span class="fu">aes</span>(<span class="at">x =</span> bf_weight))<span class="sc">+</span></span>
@@ -2063,7 +2067,7 @@ deviation indicates that the data points are close to the mean, while a
 large standard deviation suggests more variability.</p>
 <p>We can calculate standard deviation using the <code>sd()</code>
 function.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">sd</span>(data<span class="sc">$</span>bf_weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">sd</span>(data<span class="sc">$</span>bf_weight)</span></code></pre></div>
 <pre><code>## [1] 26.30946</code></pre>
 <p>The standard deviation is similar to the mean in that it is impacted
 by outliers.</p>
@@ -2110,44 +2114,97 @@ rate.</li>
 </ol>
 </div>
 </div>
+<div id="a-quick-note" class="section level2">
+<h2>A quick note</h2>
+<p>Do you recall how earlier, we learned that functions have optional
+arguments?</p>
+<p>One common on for fuctions that apply to numeric variables is
+<code>na.rm</code>. This removes NA values when calculating the numeric
+value.</p>
+<p>For example, suppose we wanted to find the mean age of
+participants.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">mean</span>(data<span class="sc">$</span>rf_age_calculated)</span></code></pre></div>
+<pre><code>## [1] NA</code></pre>
+<p>This returns NA!</p>
+<p>When we take a glance at the data, it seems a few participants are
+missing this value. Because it is auto-calculated in RedCap, they may be
+missing their date of birth or enrollment date.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>data<span class="sc">$</span>rf_age_calculated</span></code></pre></div>
+<pre><code>##   [1] 48 22 24 77 60 41 20 34 43 22 16 61 39 54 52 32 49 75 21 NA 19 71 NA 69  5
+##  [26] 39 54 43 44 70  5  0  2 68  5 17 25  8 43 60 15 62 48  6 32 48  4 19 24  6
+##  [51] 17  2 39  5  1 40 20  5 75 27 62 32 24 22 21  5 55  3 16 43 20 19 22 34 19
+##  [76] 54 35 21 64 46 55 39 29 66 68 23 38 31 31 20 21 17 48  4  6 48 54 18 36 51
+## [101] 46 41 79 19 18 17  3 28 49 48 22 34 29 43  6 19  4 35 34 22  6  1 20 57 23
+## [126]  5  4  5 70 48 32  5  4 38  2 61 43  5 46  0 54  1  0 26  7 45  3  1 19 15
+## [151] 37 64  3 18  1 50 16 50  1 69 24 57  0 16  4  1  0 53  3 20  0  0 74  2  7
+## [176]  5  3  0  7  6 21 16 18 51 59 38  1 27 36  4  1 45 51 53 34 34 49 61  1 34
+## [201] 45 58  1  0 35 48  8  7  2 39 64 15 36  2 42  4 39 28  7  4  4  3 20 15 42
+## [226] 45 17 17 15 35  8  1  0  5  8  2  1 63  0  0  0  0 56 15  3  0  1 67 44  4
+## [251]  1 23  6  7 40  5  4  4  4 77 16  7  1  5  3  1 57  6 39  4 50 59  1  1  4
+## [276] 15  5 24 25  3  7 51 44  5 40 28  4 42 43  3  7  4 22 53  0 23 20  1 39 56
+## [301]  3  4  5  1 15 51 46 37 18 19  7 30 29  3  0 43  5 20 43 29 31 61 51  6  7
+## [326]  3  1  2 35 70  7  0  0 18 51 47 33 20 20  1  6 17 43 19  2 52 41  6 22 43
+## [351]  3  2 22 24 45  0  1 26 43 17 41 55  2 38 27  7  1  1  1  0  0 30 43 29 61
+## [376] 50 57  6 31 64  0  1  0  1  1 78 75  0 21 44 50 65 27 45 19  2 46  4  6  6
+## [401] 23 63 15  5 72 72  1  4 15  4  1  4  1 46  6  4  2  6  7  2 17 54  3  0  1
+## [426]  7  6  3  4  7 34  5  7 39  4  4  5  5  6  4  1  2  4  0  7  2  5  6  1  4
+## [451]  4  1  2  3  4  1  4  5  1  4  0  3  1  5  5  6  2  7  7  6  6  2  5  4  5
+## [476]  1  0  4  3  4  8  6  0  1  4  6  6  3  0  1  4  1  5  4  1  3  3  4  1  1
+## [501]  1  5  6  4  4  1  4  1  7  7  6  3  5  3  1  4  1  7  2  2  5  4  2  3  2
+## [526]  0  0  6  1  2  3  6  4  1  6  3  1  5  3  3  4  4  0  0  1  5  1  1  6  7
+## [551]  1  1  5  7  4  0  0  2  0  2  4  7  0  4  2  7  0  1  4  7  2  2  5  5</code></pre>
+<p>If we include <code>na.rm = TRUE</code>, NA values will be removed
+before calculating the mean.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">mean</span>(data<span class="sc">$</span>rf_age_calculated, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## [1] 19.27622</code></pre>
+<p>However, this should be used with caution. Those 2 missing ages need
+to be tracked down. So, <code>na.rm</code> is a good argument to use so
+we at least have a general idea of the average age, but we should always
+look at the underlying data to see what exactly is missing and make
+efforts to find the data.</p>
+</div>
 <div id="summaries-by-category" class="section level2">
 <h2>Summaries by category</h2>
 <p>Sometimes, we want to report numeric summaries by group. For example,
 we might want the mean heart rate by HIV status.</p>
 <p>To do this, we can use the <code>group_by()</code> and
-<code>summarize()</code> functions and the pipe operator (%&gt;%)!</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="do">### Use the pipe operator (%&gt;%) from the tidyverse package</span></span>
-<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a>  <span class="do">### Group by the categorical variable - in this case, HIV status</span></span>
-<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a>  <span class="fu">group_by</span>(bf_hivstatus)<span class="sc">%&gt;%</span></span>
-<span id="cb44-5"><a href="#cb44-5" tabindex="-1"></a>  <span class="do">### Calculate the mean heart rate by group</span></span>
-<span id="cb44-6"><a href="#cb44-6" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(bf_heartrate, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<code>summarize()</code> functions and the pipe operator
+(<code>%&gt;%</code>) that we learned earlier!</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="do">### Use the pipe operator (%&gt;%) from the tidyverse package</span></span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3" tabindex="-1"></a>  <span class="do">### Group by the categorical variable - in this case, HIV status</span></span>
+<span id="cb50-4"><a href="#cb50-4" tabindex="-1"></a>  <span class="fu">group_by</span>(bf_hivstatus)<span class="sc">%&gt;%</span></span>
+<span id="cb50-5"><a href="#cb50-5" tabindex="-1"></a>  <span class="do">### Calculate the mean heart rate by group</span></span>
+<span id="cb50-6"><a href="#cb50-6" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(bf_heartrate))</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 2
-##   bf_hivstatus `mean(bf_heartrate, na.rm = TRUE)`
-##   &lt;chr&gt;                                     &lt;dbl&gt;
-## 1 Negative                                  105. 
-## 2 Positive                                   81.7
-## 3 Unknown                                   111.</code></pre>
+##   bf_hivstatus `mean(bf_heartrate)`
+##   &lt;chr&gt;                       &lt;dbl&gt;
+## 1 Negative                    105. 
+## 2 Positive                     81.7
+## 3 Unknown                     111.</code></pre>
 <p>You can easily switch out the variables to group by for any other
 categorical variable, and replace the <code>mean()</code> function with
 other functions we’ve learned so far.</p>
 <p>For example, let’s find the minimum weight by gender:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="do">### Use the pipe operator (%&gt;%) from the tidyverse package</span></span>
-<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a>  <span class="do">### Group by the categorical variable - in this case, gender</span></span>
-<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>  <span class="fu">group_by</span>(rf_gender)<span class="sc">%&gt;%</span></span>
-<span id="cb46-5"><a href="#cb46-5" tabindex="-1"></a>  <span class="do">### Calculate the minimum weight by group</span></span>
-<span id="cb46-6"><a href="#cb46-6" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">min</span>(bf_weight, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="do">### Use the pipe operator (%&gt;%) from the tidyverse package</span></span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a>  <span class="do">### Group by the categorical variable - in this case, gender</span></span>
+<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a>  <span class="fu">group_by</span>(rf_gender)<span class="sc">%&gt;%</span></span>
+<span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a>  <span class="do">### Calculate the minimum weight by group</span></span>
+<span id="cb52-6"><a href="#cb52-6" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">min</span>(bf_weight))</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 2
-##   rf_gender `min(bf_weight, na.rm = TRUE)`
-##   &lt;chr&gt;                              &lt;dbl&gt;
-## 1 Female                               3.1
-## 2 Male                                 2.3</code></pre>
+##   rf_gender `min(bf_weight)`
+##   &lt;chr&gt;                &lt;dbl&gt;
+## 1 Female                 3.1
+## 2 Male                   2.3</code></pre>
 <div id="try-it-5" class="section level3">
 <h3>Try it! 5</h3>
 <ol style="list-style-type: decimal">
-<li>Find the median respiratory rate by gender. Which gender has a lower
-median respiratory rate?</li>
+<li><p>Find the mean respiratory rate by gender. Which gender has a
+lower mean respiratory rate?</p></li>
+<li><p>Find the standard deviation of weight by gender. Write one
+sentence about what this tells you about the spread of weight between
+the two genders.</p></li>
 </ol>
 </div>
 </div>
@@ -2167,17 +2224,17 @@ categorical and numeric data.</p>
 basic summary statistics, such as counts and percents for categorical
 variables or median and IQR for numeric variables.</p>
 <p>R has some packages that make this easy to do!</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="do">### Install the package - you only need to do this once</span></span>
-<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="do">### install.packages(&quot;tableone&quot;) Uncomment this (remove the </span><span class="al">###</span><span class="do">) to run</span></span>
-<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a><span class="fu">library</span>(tableone)</span>
-<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a></span>
-<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a><span class="do">### Use the CreateTableOne() function to create a table using a subset of variables</span></span>
-<span id="cb48-6"><a href="#cb48-6" tabindex="-1"></a>table_one <span class="ot">&lt;-</span> <span class="fu">CreateTableOne</span>(<span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;rf_age_calculated&quot;</span>, <span class="st">&quot;bf_hivstatus&quot;</span>, <span class="st">&quot;rf_enrollocation&quot;</span>, <span class="st">&quot;rf_country&quot;</span>),</span>
-<span id="cb48-7"><a href="#cb48-7" tabindex="-1"></a>                            <span class="at">data =</span> data)</span>
-<span id="cb48-8"><a href="#cb48-8" tabindex="-1"></a></span>
-<span id="cb48-9"><a href="#cb48-9" tabindex="-1"></a><span class="fu">print</span>(table_one, </span>
-<span id="cb48-10"><a href="#cb48-10" tabindex="-1"></a>      <span class="at">showAllLevels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb48-11"><a href="#cb48-11" tabindex="-1"></a>      <span class="at">nonnormal =</span> <span class="cn">TRUE</span>) <span class="do">### By include nonnormal = TRUE, this returns median and IQR rather than mean and sd</span></span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="do">### Install the package - you only need to do this once</span></span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="do">### install.packages(&quot;tableone&quot;) Uncomment this (remove the </span><span class="al">###</span><span class="do">) to run</span></span>
+<span id="cb54-3"><a href="#cb54-3" tabindex="-1"></a><span class="fu">library</span>(tableone)</span>
+<span id="cb54-4"><a href="#cb54-4" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" tabindex="-1"></a><span class="do">### Use the CreateTableOne() function to create a table using a subset of variables</span></span>
+<span id="cb54-6"><a href="#cb54-6" tabindex="-1"></a>table_one <span class="ot">&lt;-</span> <span class="fu">CreateTableOne</span>(<span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;rf_age_calculated&quot;</span>, <span class="st">&quot;bf_hivstatus&quot;</span>, <span class="st">&quot;rf_enrollocation&quot;</span>, <span class="st">&quot;rf_country&quot;</span>),</span>
+<span id="cb54-7"><a href="#cb54-7" tabindex="-1"></a>                            <span class="at">data =</span> data)</span>
+<span id="cb54-8"><a href="#cb54-8" tabindex="-1"></a></span>
+<span id="cb54-9"><a href="#cb54-9" tabindex="-1"></a><span class="fu">print</span>(table_one, </span>
+<span id="cb54-10"><a href="#cb54-10" tabindex="-1"></a>      <span class="at">showAllLevels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb54-11"><a href="#cb54-11" tabindex="-1"></a>      <span class="at">nonnormal =</span> <span class="cn">TRUE</span>) <span class="do">### By include nonnormal = TRUE, this returns median and IQR rather than mean and sd</span></span></code></pre></div>
 <pre><code>##                                   
 ##                                    level      Overall           
 ##   n                                            574              
