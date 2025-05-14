@@ -4,7 +4,7 @@ This week, you will learn how to read in data, about different data types, and h
 
 1. Watch <a href="https://youtu.be/VUrHP0HPWjc" target="_blank">this video</a>  
 2. Download the data that Abigail shared as an attachment in the Week 2 email. 
-3. Complete <a href="https://github.com/seegerab/R-workshop/blob/week2_dev/PreWorkshop/Week2/Week2.Rmd" target="_blank">Week2.Rmd</a>
+3. Complete <a href="https://github.com/seegerab/R-workshop/blob/main/PreWorkshop/Week2/Week2.Rmd" target="_blank">Week2.Rmd</a>
 
 When you first open the .Rmd, you will likely see a prompt at the top to install "tidyverse" and "tableone". You may click "Install", or wait until we learn about these packages further down in the .Rmd and install then. 
 
