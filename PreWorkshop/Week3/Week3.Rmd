@@ -1,0 +1,66 @@
+---
+title: "Manipulating data and creating figures"
+output:
+  html_document:
+    theme: cerulean 
+    highlight: tango
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+### Create a subset of data for the participants
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Database for Abi.csv")
+
+data%>%
+  select(-c(rf_race))%>%
+  select(bf_category)%>%
+  table(exclude = NULL)
+```
+
+
+# Manipulating data
+
+This week, we're going to start with manipulating data. 
+
+There are a few different ways to do this. One is using the built-in R functions (called "base" R). Another is using the `dplyr` package.
+
+We're going to start by building a foundation in base R. Then, we're going to pivot to using `dplyr`. I use `dplyr` about 90% of the time when I'm trying to manipulate data, however I still use base R occasionally and learning the base functions allows us to have a good foundation in R.
+
+I'm going to first present the base function, and then the `dplyr` equivalent.  
+
+## Filter
+
+The first operation we are going to learn how to filter to different rows in the data.
+
+I filter a lot! Often, we just want a specific time point. Or a specific subgroup of participants.
+
+To start, read in the data. Please reference week 2 if you need a reminder.
+
+```{r}
+### Include the read.csv() function here, and save as data
+```
+
+This dataset include the same variables as week 2, though it includes all 3 sites.
+
+It's always a good idea to start by taking a look at the data. The `head()` function allows us to take a look at the first few rows of the data
+
+```{r}
+head(data)
+```
+
+In week 2, I shared a clean-up dataframe. However, what we're looking at now is the data extracted from RedCap.
+
+We can see that each participant has more than one row in the data. Each row corresponds to a different `redcap_event_name` value. 
+
+
