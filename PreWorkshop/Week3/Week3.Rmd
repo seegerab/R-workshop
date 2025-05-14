@@ -35,11 +35,16 @@ This week, we're going to start with manipulating data.
 
 There are a few different ways to do this. One is using the built-in R functions (called "base" R). Another is using the `dplyr` package.
 
-We're going to start by building a foundation in base R. Then, we're going to pivot to using `dplyr`. I use `dplyr` about 90% of the time when I'm trying to manipulate data, however I still use base R occasionally and learning the base functions allows us to have a good foundation in R.
+We're going to focus primarily on `dplyr`. I find this to be more intuitive and quicker to learn that the base R equivalent. However, I'm also including a section at the bottom with the equivalent base R functions in case that may be helpful and to be a resource if you need to use base R in the future. 
 
-I'm going to first present the base function, and then the `dplyr` equivalent.  
+# Reference
 
-## Filter
+Please take 10 minutes to read what about what exactly `dplyr` is and examples of some of the functions we're goin to learn to better orient yourself before continuing.
+
+https://dplyr.tidyverse.org/articles/dplyr.html
+
+
+## Filtering
 
 The first operation we are going to learn how to filter to different rows in the data.
 
@@ -48,7 +53,7 @@ I filter a lot! Often, we just want a specific time point. Or a specific subgrou
 To start, read in the data. Please reference week 2 if you need a reminder.
 
 ```{r}
-### Include the read.csv() function here, and save as data
+### Include the read.csv() function here, include the correct file path, and  save as "data"
 ```
 
 This dataset include the same variables as week 2, though it includes all 3 sites.
@@ -59,8 +64,124 @@ It's always a good idea to start by taking a look at the data. The `head()` func
 head(data)
 ```
 
-In week 2, I shared a clean-up dataframe. However, what we're looking at now is the data extracted from RedCap.
+In week 2, I modified the data in order to send a clean version. However, what we're looking at now is the data extracted from RedCap.
 
-We can see that each participant has more than one row in the data. Each row corresponds to a different `redcap_event_name` value. 
+We can see that each participant has more than one row in the data. Each row corresponds to a different `redcap_event_name` value. So for example, record_id 1 has 4 rows in the data. Each row corresponds to a different time point, as well as a medication log.
+
+Here is the code to filter to just the Baseline data:
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline")
+```
+
+What’s happening here?
+
+We briefly introduced the pipe operator `(%>%)` last week . Let’s walk through what this code is doing:
+
+1. Start with data (the full dataset)
+
+2. The pipe operator `%>%` means “and then” - it passes the result (in our case, the full dataset) from one step to the next.
+
+3. `filter()` is a function from the dplyr package that keeps only the rows that meet a specific condition. In this case, it keeps only the rows where the value of redcap_event_name is "Baseline".
+
+So the final result is a version of your dataset that includes only the Baseline records.
+
+Often we want to access the subset of data later. Let's save this subset - hopefully, you see it in the "Data" tab in your environment. 
+
+```{r}
+baseline_data <- data%>%
+  filter(redcap_event_name == "Baseline")
+```
+
+Sometimes, we may want to filter based on a few different variables. For example, do you remember how last week we identified a few participants who were missing the `rf_age_calculated` variable?
+
+Let's filter to all participants at baseline who are missing this value.
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline" & is.na(rf_age_calculated))
+```
 
 
+### Fix it! 1
+
+I want to filter to everyone from Eswatini, at all time points. However, I'm getting an error! My code returns a data frame with 0 columns.
+
+```{r eval = FALSE}
+data%>%
+  filter(rf_country == "Eswatini ")
+```
+
+Hint: take a look at what the `rf_country` column looks like. I often use the `table()` function for this. Refer back to the week 2 assignment.
+
+```{r}
+
+```
+
+### Fix it! 2
+
+I want to filter to 
+
+```{r}
+
+```
+
+
+# Base R
+
+There are different ways to manipulate data. What we've learned so far has been using the `dplyr` package. I find `dplyr` to be more intuitive and quicker to learn than base R. However, there are certain situations where base R may be helpful to know. So, I'm briefly going to include the base R equivalents for all the operations we learned above!
+
+## Filter
+
+For some analysis, we want to just filter to just the baseline data. We're going to start with the base R version.
+
+Here is the code to filter to just the baseline data.
+
+```{r}
+### Base R - filter
+data[data$redcap_event_name == "Baseline", ]
+```
+
+What exactly is going on here? First, notice the brackets `[` and `]`. This allows us to index into the rows and columns of the data, and we put them in this order: `[rows, columns]`. If we leave the columns argument blank, it will returns all the columns. Similar idea if we leave the rows argument blank.
+
+Let's investigate this a bit more.
+
+This code returns the value for the first row and first column. Take a look at the output from `head()` above to verify that this is expected! The first column corresponds to the `record_id` variable. And the first row is for the participant with `record_id` of 1.
+
+```{r}
+### The first argument indexes into the rows, and the second indexes into the columns
+data[1,1]
+```
+What would happen if we leave the second argument blank?
+
+```{r}
+### This is the first row in the data
+data[1,]
+### We can also provide a range of values - this is the first 10 rows
+data[1:10, ]
+```
+
+We can also index into the first column and take a look at the `record_id` values in the first 10 rows:
+
+```{r}
+### This is the first column in the data
+data[1:10,1] ### This is the first column for the first 10 rows in the data
+```
+
+Now that we've learned about indexing into data using brackets, lets investigate what `data$redcap_event_name == "Baseline"` does in the code above. 
+
+```{r}
+### Remember, the $ operator let's us access the specific column - in this case, the redcap_event_name variable
+data$redcap_event_name
+### Adding == "Baseline" returns a BOOLEAN - either TRUE or FALSE - depending on if the timepoint is Baseline for a particular row.
+data$redcap_event_name == "Baseline"
+### If TRUE, we will index into that row
+### If FALSE, we will not include that row
+```
+
+Putting it all together, this will return just the rows where the boolean is TRUE with whether the timepoint is "Baseline". In other words - this filters to the baseline data!
+
+```{r}
+data[data$redcap_event_name == "Baseline", ]
+```
