@@ -18,14 +18,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-library(tidyverse)
 ### Create a subset of data for the participants
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Database for Abi.csv")
-
-data%>%
-  select(-c(rf_race))%>%
-  select(bf_category)%>%
-  table(exclude = NULL)
 ```
 
 
@@ -37,12 +31,17 @@ There are a few different ways to do this. One is using the built-in R functions
 
 We're going to focus primarily on `dplyr`. I find this to be more intuitive and quicker to learn that the base R equivalent. However, I'm also including a section at the bottom with the equivalent base R functions in case that may be helpful and to be a resource if you need to use base R in the future. 
 
-# Reference
+## Background information on dplyr
 
-Please take 10 minutes to read what about what exactly `dplyr` is and examples of some of the functions we're goin to learn to better orient yourself before continuing.
+Please take 10 minutes to read what about what exactly `dplyr` is and examples of some of the functions we're going to learn to better orient yourself before continuing.
 
 https://dplyr.tidyverse.org/articles/dplyr.html
 
+This is another create cheat sheet that includes lots of `dplyr` functions:
+
+https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf
+
+**Note**: we are still going to use `library(tidyverse)` to read in the `dplyr` package. This is because tidyverse a **bundle** of some really useful packages - including `dplyr` and `ggplot2`, two packages that we're use today.
 
 ## Filtering
 
@@ -68,10 +67,14 @@ In week 2, I modified the data in order to send a clean version. However, what w
 
 We can see that each participant has more than one row in the data. Each row corresponds to a different `redcap_event_name` value. So for example, record_id 1 has 4 rows in the data. Each row corresponds to a different time point, as well as a medication log.
 
-Here is the code to filter to just the Baseline data:
+Here is the code to filter to just the Baseline data.
 
-```{r}
-data%>%
+Often we want to access the subset of data later. Let's save this subset - hopefully, you see it in the "Data" tab in your environment. 
+
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)  ### You should have installed this package in week 2
+baseline_data <- data%>%
   filter(redcap_event_name == "Baseline")
 ```
 
@@ -85,16 +88,45 @@ We briefly introduced the pipe operator `(%>%)` last week . Let’s walk through
 
 3. `filter()` is a function from the dplyr package that keeps only the rows that meet a specific condition. In this case, it keeps only the rows where the value of redcap_event_name is "Baseline".
 
-So the final result is a version of your dataset that includes only the Baseline records.
+The final result is a version of your dataset that includes only the Baseline records.
 
-Often we want to access the subset of data later. Let's save this subset - hopefully, you see it in the "Data" tab in your environment. 
+Sometimes, we may want to filter based on a few different variables. 
+
+We can filter to all people with HIV from Eswatini, and save as a subset using the `&` operator.
 
 ```{r}
-baseline_data <- data%>%
-  filter(redcap_event_name == "Baseline")
+eswatini_pwh <- data%>%
+  filter(rf_country == "Eswatini" & bf_hivstatus == "Positive")
 ```
 
-Sometimes, we may want to filter based on a few different variables. For example, do you remember how last week we identified a few participants who were missing the `rf_age_calculated` variable?
+We could also use `filter()` twice - this will give the same output.
+
+```{r}
+eswatini_pwh <- data%>%
+  filter(rf_country == "Eswatini")%>%
+  filter(bf_hivstatus == "Positive")
+```
+
+As a quick check, we can verify that we filtered to just the rows with "Eswatini" for `rf_country` and "Positive" for `bf_hivstatus`.
+
+```{r}
+table(eswatini_pwh$rf_country)%>%
+  addmargins()
+table(eswatini_pwh$bf_hivstatus)%>%
+  addmargins()
+```
+
+We can filter on numeric columns, in addition to categorical variables. Suppose we want to filter to all participants who are 100 kg or heavier at baseline.
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  filter(bf_weight >= 100)
+```
+
+Filtering is also very helpful in identifying participants with missing data.
+
+Do you remember how last week we identified a few participants who were missing the `rf_age_calculated` variable?
 
 Let's filter to all participants at baseline who are missing this value.
 
@@ -103,6 +135,184 @@ data%>%
   filter(redcap_event_name == "Baseline" & is.na(rf_age_calculated))
 ```
 
+If we take a look at the bottom of the output, we see that there are 1,432 rows missing this variable! 2 are from Eswatini - which are the participants we saw last week - and the rest are from Mozambique and Uganda. 
+
+Pull up `data` in a new tab and take a look at this variable. It seems that this variable is just for participants from Eswatini. However, we can create a new variable for age by calculating this using the two date columns - `rf_enroll_date` and `rf_dob`. 
+ 
+## Creating new variables
+
+The `mutate()` function from `dplyr` allows us to create new variables.
+
+Once again, we are going to use the pipe operator (`%>%`).
+
+Creating a new variable using the two date fields is going to be a little complicated, so let's start with something simpler.
+
+To start, let's create a column, `study`, that is **Stool4TB** for all participants. In order for the changes to be saved in `data`, we need to make sure to assign this as `data`.
+
+```{r}
+data <- data%>%
+  mutate(study = "Stool4TB")
+```
+
+Some important things to note:
+
+1. The `filter()` function used two equals signs, however mutate just uses one.
+2. It's important that we put the study name - "Stool4TB" in quotation marks. If we don't, we will see this error:
+
+```{r eval = FALSE }
+data <- data%>%
+  mutate(study = Stool4TB)
+```
+
+Let's take a look at this variable!
+
+```{r}
+table(data$study, exclude = NULL)%>%
+  addmargins()
+```
+
+We've just created a new variable called `study` that has "Stool4TB" for each row in the data.
+
+This is a bit simple - let's move on to creating a variable for age. 
+
+Right now, the structure of each date is a character. 
+
+```{r}
+str(data$rf_enroll_date)
+str(data$rf_dob)
+```
+
+However, we can convert each to a **date** type, and then subtract the date of birth from the enrollment date to get the age they were at enrollment.
+
+Let's break this down in steps. First, let's convert each column to a **date** type. To do this, we're going to use the `ymd()` function in the `lubridate` package.
+
+`ymd()` tells R that the date is formatted in year, month, day order. However, `lubridate` has other functions if the date is formatted differently, such as `mdy()`.
+
+```{r}
+### Remember, you only need to install packages once
+### install.packages(lubridate)
+library(lubridate)
+data <- data%>%
+  mutate(rf_enroll_date = ymd(rf_enroll_date))%>%
+  ### You can string together multiple functions using the pipe operator!
+  mutate(rf_dob = ymd(rf_dob)) 
+
+### Notice here that I am saving each variable as the original variable name 
+### However, you could also create a copy of each variable by naming it something else if you prefer
+```
+
+```{r}
+str(data$rf_enroll_date)
+str(data$rf_dob)
+```
+
+Hopefully you see that both variables are now `Date` type. However, you will also see some `NA` values! This could be because the dates are only collected at enrollment - the "Baseline" `redcap_event_name` value. However, this could also be because some dates are missing at Baseline. We will investigate this shortly.
+
+Now, let's find the difference between the two dates.
+
+```{r}
+data <- data%>%
+  ### Create a new variable, date_diff
+  
+  ### interval and time_length are both functions in the lubridate package
+  
+  ### interval creates an interval between two dates - this will give something like Interval: 2018-01-01 to 2020-06-01
+  
+  ### time_length finds the length of time in the interval, and by specifying unit = "years" we get the difference in years versus days or months 
+  mutate(date_diff = time_length(interval(rf_dob, rf_enroll_date), unit = "years"))
+```
+
+We're getting close! However, upon inspecting the variable, it seems like  `date_diff` is reporting years out to a decimal place. We want to know their integer age, rounding down to the nearest whole number.
+
+The `floor()` function rounds down to the nearest integer.
+
+```{r}
+data <- data%>%
+  mutate(date_diff = floor(date_diff))
+```
+
+We're moving in the right direction!
+
+```{r}
+table(data$date_diff)
+```
+## Renaming variables
+
+We just created a variable called `date_diff`. However, there is probably a better, more informative name for this.
+
+Let's rename this variable to be `calculated_age`.
+
+Again - we're going to use the same pipe operator with a new function - `rename()`. The new name goes first, followed by the old name.
+
+```{r }
+data <- data%>%
+  rename(calculated_age = date_diff)
+```
+
+## Selecting columns
+
+At this point, let's confirm that everyone at baseline has an age reported.
+
+We want to filter to all participants at baseline who are missing this newly created variable, and select just the important columns.
+
+This is where we'll use a new function - `select()`.
+
+```{r}
+data%>%
+  ### Filter to all participants at baseline missing calculated_age
+  filter(redcap_event_name == "Baseline" & is.na(calculated_age))%>%
+  select(record_id, calculated_age, rf_dob, rf_age, rf_enroll_date)
+```
+
+143 participants do not have this value. And, it looks like this is missing because they are missing `rf_dob`. 
+
+However, they do have another variable - `rf_age`. Let's use the `rf_age` variable if the calculated age is missing. To do this, we're going to use the `ifelse()` function. Essentially, if the first condition is met, go with the first value. Else, go with the second value.
+
+So here - if the `calculated_age` value is NA, use the value in `rf_age`. Else - if the `calculated_age` value is not missing, retain this age.
+
+Let's save as a new variable - `composite_age` - so we know that this is a combination of our calculated age and the `rf_age` variable. 
+
+```{r}
+data <- data%>%
+  mutate(composite_age = ifelse(is.na(calculated_age), rf_age, calculated_age))
+```
+
+As a final check, is anyone still missing age at enrollment?
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline" & is.na(composite_age))%>%
+  select(record_id, composite_age, rf_dob, rf_enroll_date, rf_age)
+
+```
+
+One participant is missing rf_dob so we couldn't calculate the age, and the rf_age value is also missing
+
+This should be a query to the clinical teams so they can track down this information.
+
+## Arrange
+
+Lastly, `dplyr` has a function, `arrange()` that can order numeric variables.
+
+For example, let's filter to the baseline data, and then sort by the `bf_weight` variable.
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  arrange(bf_weight)%>%
+  select(record_id, bf_weight)
+```
+
+This sorts the data in ascending order for weight. We can easily sort in descending order by including `desc()` in the code:
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  arrange(desc(bf_weight))%>%
+  select(record_id, bf_weight)
+```
+
+## Correct my mistakes
 
 ### Fix it! 1
 
@@ -121,67 +331,77 @@ Hint: take a look at what the `rf_country` column looks like. I often use the `t
 
 ### Fix it! 2
 
-I want to filter to 
+I want to filter to all participants at baseline, and save as a subset called `baseline_subset`. However, I'm getting an error - my code doesn't run.
+
+```{r eval = FALSE}
+baseline_subset <- data%>%
+  filter(redcap_event_name = "Baseline")
+```
+
+### Fix it! 3
+
+I want to filter to the missing data in the `composite_age` column. This is returning 0 rows, however we already identified 1 participant with missing data. Something is wrong - can you fix it? 
+
+```{r eval = FALSE}
+data%>%
+  filter(redcap_event_name == "Baseline" & composite_age == "")
+```
+
+### Fix it! 4
+
+I want to rename the `bf_weight` column to be `baseline_weight`. However, I am unable to get the code to run.
+
+```{r eval = FALSE}
+data%>%
+  rename(bf_weight = baseline_weight)
+```
+
+### Fix it! 5
+
+I want to create a new column called `60_weight` that is "Weight is less than 60kg" if `bf_weight` is less than 60, "Weight is less than 60kg" is not.
+
+Update the code so this works!
+
+**Hint**: we haven't covered this specific error before. One important thing to learn when coding is how to search for the solution to coding error! Please Google or use ChatGPT to figure out why this is causing an error and how to fix it.
+
+```{r eval = FALSE}
+data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  mutate(60_weight = ifelse(bf_weight < 60, "Weight is less than 60kg", "Weight is greater than or equal to 60kg"))
+```
+## Practice
+
+### Try it! 1
+
+Filter to all participants from Mozambique who are female. Select the column for participant ID and respiratory rate, and arrange the respiratory rate column in descending order. 
 
 ```{r}
 
 ```
+
+**Above and beyond** - can you figure out how to print out just the 10 highest respiratory rates?
+
+### Try it! 2
+
+After consulting with some clinicians, they tell you that any heart rate above 150 beats/minute may be too high and to provide a list of all participants who meet this condition in order to double-check that the data is correct.
+
+Filter to all heart rates above 150 beats/minute at baseline, and select the heart rate and participant ID columns. 
+
+
+```{r}
+data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  filter(bf_heartrate > 150)%>%
+  select(record_id, bf_heartrate)
+```
+
+
+### Try it! 3
+
+
 
 
 # Base R
 
-There are different ways to manipulate data. What we've learned so far has been using the `dplyr` package. I find `dplyr` to be more intuitive and quicker to learn than base R. However, there are certain situations where base R may be helpful to know. So, I'm briefly going to include the base R equivalents for all the operations we learned above!
+There are different ways to manipulate data. What you've learned so far has been using the `dplyr` package. I find `dplyr` to be more intuitive and quicker to learn than base R. However, there are certain situations where base R may be helpful to know. Here are resources to learn more about base R data manipulation if you are interested in learning!
 
-## Filter
-
-For some analysis, we want to just filter to just the baseline data. We're going to start with the base R version.
-
-Here is the code to filter to just the baseline data.
-
-```{r}
-### Base R - filter
-data[data$redcap_event_name == "Baseline", ]
-```
-
-What exactly is going on here? First, notice the brackets `[` and `]`. This allows us to index into the rows and columns of the data, and we put them in this order: `[rows, columns]`. If we leave the columns argument blank, it will returns all the columns. Similar idea if we leave the rows argument blank.
-
-Let's investigate this a bit more.
-
-This code returns the value for the first row and first column. Take a look at the output from `head()` above to verify that this is expected! The first column corresponds to the `record_id` variable. And the first row is for the participant with `record_id` of 1.
-
-```{r}
-### The first argument indexes into the rows, and the second indexes into the columns
-data[1,1]
-```
-What would happen if we leave the second argument blank?
-
-```{r}
-### This is the first row in the data
-data[1,]
-### We can also provide a range of values - this is the first 10 rows
-data[1:10, ]
-```
-
-We can also index into the first column and take a look at the `record_id` values in the first 10 rows:
-
-```{r}
-### This is the first column in the data
-data[1:10,1] ### This is the first column for the first 10 rows in the data
-```
-
-Now that we've learned about indexing into data using brackets, lets investigate what `data$redcap_event_name == "Baseline"` does in the code above. 
-
-```{r}
-### Remember, the $ operator let's us access the specific column - in this case, the redcap_event_name variable
-data$redcap_event_name
-### Adding == "Baseline" returns a BOOLEAN - either TRUE or FALSE - depending on if the timepoint is Baseline for a particular row.
-data$redcap_event_name == "Baseline"
-### If TRUE, we will index into that row
-### If FALSE, we will not include that row
-```
-
-Putting it all together, this will return just the rows where the boolean is TRUE with whether the timepoint is "Baseline". In other words - this filters to the baseline data!
-
-```{r}
-data[data$redcap_event_name == "Baseline", ]
-```
