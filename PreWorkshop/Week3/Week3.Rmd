@@ -17,45 +17,45 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r}
-### Create a subset of data for the participants
-data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Database for Abi.csv")
-```
-
-
 # Manipulating data
 
-This week, we're going to start with manipulating data. 
+This week, we're going to start with manipulating data.
 
 There are a few different ways to do this. One is using the built-in R functions (called "base" R). Another is using the `dplyr` package.
 
-We're going to focus primarily on `dplyr`. I find this to be more intuitive and quicker to learn that the base R equivalent. However, I'm also including a section at the bottom with the equivalent base R functions in case that may be helpful and to be a resource if you need to use base R in the future. 
+We're going to focus primarily on `dplyr`. I find this to be more intuitive and quicker to learn than the base R equivalent. However, I'm also including a section at the bottom with the equivalent base R functions in case that may be helpful and to be a resource if you need to use base R in the future. 
 
 ## Background information on dplyr
 
-Please take 10 minutes to read what about what exactly `dplyr` is and examples of some of the functions we're going to learn to better orient yourself before continuing.
+Please take 10 minutes to read about what exactly `dplyr` is and examples of some of the functions we're going to learn to better orient yourself before continuing.
 
 https://dplyr.tidyverse.org/articles/dplyr.html
 
-This is another create cheat sheet that includes lots of `dplyr` functions:
+This is another great cheat sheet that includes lots of `dplyr` functions:
 
 https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf
 
-**Note**: we are still going to use `library(tidyverse)` to read in the `dplyr` package. This is because tidyverse a **bundle** of some really useful packages - including `dplyr` and `ggplot2`, two packages that we're use today.
+**Note**: we are still going to use `library(tidyverse)` to read in the `dplyr` package. This is because tidyverse is a **bundle** of some really useful packages - including `dplyr` which we'll use here and `ggplot2`, which we'll use in the next assignment. 
 
 ## Filtering
 
-The first operation we are going to learn how to filter to different rows in the data.
+The first operation we are going to learn is how to filter to different rows in the data.
 
-I filter a lot! Often, we just want a specific time point. Or a specific subgroup of participants.
+Often, we're interested in a specific time point or a specific subgroup of participants.
 
 To start, read in the data. Please reference week 2 if you need a reminder.
 
 ```{r}
-### Include the read.csv() function here, include the correct file path, and  save as "data"
+### Update the file path here to the location that you saved the data
+
+### Right now, this is my file path - so the original code will give you an error if you try and run it
+
+### Please review the week 2 video if you are stuck on this step
+
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Database for Abi.csv")
 ```
 
-This dataset include the same variables as week 2, though it includes all 3 sites.
+This dataset includes the same variables as week 2, though it includes all 3 sites, noted by the `rf_coutnry` variable.
 
 It's always a good idea to start by taking a look at the data. The `head()` function allows us to take a look at the first few rows of the data
 
@@ -65,11 +65,11 @@ head(data)
 
 In week 2, I modified the data in order to send a clean version. However, what we're looking at now is the data extracted from RedCap.
 
-We can see that each participant has more than one row in the data. Each row corresponds to a different `redcap_event_name` value. So for example, record_id 1 has 4 rows in the data. Each row corresponds to a different time point, as well as a medication log.
+We can see that each participant has more than one row in the data. Each row corresponds to a different `redcap_event_name` value. For example, `record_id` 1 has 4 rows in the data. Each row corresponds to a different time point, as well as a medication log.
 
-Here is the code to filter to just the Baseline data.
+Here is the code to filter to just the baseline data.
 
-Often we want to access the subset of data later. Let's save this subset - hopefully, you see it in the "Data" tab in your environment. 
+Often, we want to access the subset of data later. Let's save this subset as `baseline_data` - hopefully, you see it in the "Data" tab in your environment. 
 
 
 ```{r warning = FALSE, message = FALSE}
@@ -88,7 +88,7 @@ We briefly introduced the pipe operator `(%>%)` last week . Let’s walk through
 
 3. `filter()` is a function from the dplyr package that keeps only the rows that meet a specific condition. In this case, it keeps only the rows where the value of redcap_event_name is "Baseline".
 
-The final result is a version of your dataset that includes only the Baseline records.
+The final result is a version of your dataset that includes only the baseline records.
 
 Sometimes, we may want to filter based on a few different variables. 
 
@@ -99,7 +99,7 @@ eswatini_pwh <- data%>%
   filter(rf_country == "Eswatini" & bf_hivstatus == "Positive")
 ```
 
-We could also use `filter()` twice - this will give the same output.
+If you prefer, we could also use `filter()` twice - this will give the same output.
 
 ```{r}
 eswatini_pwh <- data%>%
@@ -383,25 +383,61 @@ Filter to all participants from Mozambique who are female. Select the column for
 
 ### Try it! 2
 
-After consulting with some clinicians, they tell you that any heart rate above 150 beats/minute may be too high and to provide a list of all participants who meet this condition in order to double-check that the data is correct.
+After consulting with some clinicians, they tell you that any heart rate above 150 beats/minute may be extreme and to provide a list of all participants who meet this condition in order to double-check that the data is correct.
 
 Filter to all heart rates above 150 beats/minute at baseline, and select the heart rate and participant ID columns. 
 
+Save the result as `heartrate_investigation_subset`.
 
-```{r}
-data%>%
-  filter(redcap_event_name == "Baseline")%>%
-  filter(bf_heartrate > 150)%>%
-  select(record_id, bf_heartrate)
+```{r }
+
 ```
 
+**Above and beyond** - in most cases, team members who are resolving queries require an Excel spreadsheet. We have learned the `read.csv()` function. There is another function `write.csv()` that exports the data to a .csv file!
+
+If you did Try it! 2 above correctly, this code chunk should save the output to a .csv file in the same file location that your .Rmd and data are saved to. 
+
+```{r eval = FALSE }
+write.csv(heartrate_investigation_subset, "Example Export.csv")
+```
 
 ### Try it! 3
 
+In week 2, you learned how to perform summary statistics on the data.
 
+Here, I want you to create two subsets. Save each as a separate data frame - you can choose what to name them.
 
+The first should include children < 8 at baseline who are living with HIV.
+
+The second should include children < 8 at baseline who are not living with HIV.
+
+I want you to compare 3 different summary statistics between these two subsets. You may choose to use any of the variables in the data to summarize. You could create some tables and report the proportions in each group. 
+
+```{r}
+### Create subset 1 
+
+```
+
+```{r}
+### Create subset 2
+
+```
+
+```{r}
+### Summary statistics for subset 1
+```
+
+```{r}
+### Summary statistics for subset 2
+```
+
+Provide some commentary on how these two groups are the same or may be different. 
 
 # Base R
 
-There are different ways to manipulate data. What you've learned so far has been using the `dplyr` package. I find `dplyr` to be more intuitive and quicker to learn than base R. However, there are certain situations where base R may be helpful to know. Here are resources to learn more about base R data manipulation if you are interested in learning!
+There are different ways to manipulate data. What you've learned so far has been using the `dplyr` package. I find `dplyr` to be more intuitive and quicker to learn than base R. However, there are certain situations where base R may be helpful to know. Here is a resource to learn more about base R data manipulation if you are interested!
+
+https://stats.oarc.ucla.edu/r/modules/subsetting-data/
+
+
 

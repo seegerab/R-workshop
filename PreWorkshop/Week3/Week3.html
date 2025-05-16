@@ -1572,6 +1572,9 @@ need to use base R in the future.</p>
 <code>dplyr</code> is and examples of some of the functions we’re going
 to learn to better orient yourself before continuing.</p>
 <p><a href="https://dplyr.tidyverse.org/articles/dplyr.html" class="uri">https://dplyr.tidyverse.org/articles/dplyr.html</a></p>
+<p>This is another create cheat sheet that includes lots of
+<code>dplyr</code> functions:</p>
+<p><a href="https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf" class="uri">https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf</a></p>
 <p><strong>Note</strong>: we are still going to use
 <code>library(tidyverse)</code> to read in the <code>dplyr</code>
 package. This is because tidyverse a <strong>bundle</strong> of some
@@ -1674,14 +1677,80 @@ with “Eswatini” for <code>rf_country</code> and “Positive” for
 <pre><code>## 
 ## Positive      Sum 
 ##      264      264</code></pre>
+<p>We can filter on numeric columns, in addition to categorical
+variables. Suppose we want to filter to all participants who are 100 kg
+or heavier at baseline.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">filter</span>(bf_weight <span class="sc">&gt;=</span> <span class="dv">100</span>)</span></code></pre></div>
+<pre><code>##    record_id redcap_event_name rf_country rf_enroll_date rf_age_calculated
+## 1          5          Baseline   Eswatini     2022-08-03                60
+## 2          6          Baseline   Eswatini     2022-08-04                41
+## 3         34          Baseline   Eswatini     2022-10-17                68
+## 4         42          Baseline   Eswatini     2022-11-03                62
+## 5        231          Baseline   Eswatini     2023-09-28                64
+## 6        306          Baseline   Eswatini     2023-11-20                28
+## 7        314          Baseline   Eswatini     2023-11-21                53
+## 8        406          Baseline   Eswatini     2024-02-01                78
+## 9  4TB-2-036          Baseline Mozambique     2022-03-04                NA
+## 10 4TB-2-140          Baseline Mozambique     2023-01-30                NA
+## 11 4TB-2-203          Baseline Mozambique     2023-04-26                NA
+## 12 4TB-2-249          Baseline Mozambique     2023-06-23                NA
+## 13 4TB-3-026          Baseline     Uganda     2022-01-06                NA
+## 14 4TB-3-142          Baseline     Uganda     2022-10-17                NA
+##    rf_age     rf_dob rf_gender rf_race rf_enrollocation bf_hivstatus
+## 1      NA 1961-12-11    Female       1       Outpatient             
+## 2      NA 1981-07-06    Female       1       Outpatient             
+## 3      NA 1954-05-05    Female       1       Outpatient             
+## 4      NA 1960-01-14    Female       1       Outpatient             
+## 5      NA 1959-09-05    Female       1       Outpatient             
+## 6      NA 1995-02-27    Female       1       Outpatient             
+## 7      NA 1970-01-20    Female       1       Outpatient             
+## 8      NA 1945-10-03    Female       1       Outpatient             
+## 9      NA 1965-10-02    Female      NA       Outpatient             
+## 10     NA 1974-01-29    Female      NA       Outpatient             
+## 11     NA 1965-04-10      Male      NA       Outpatient             
+## 12     NA 1979-06-30      Male      NA       Outpatient             
+## 13     NA 1974-08-22    Female      NA       Outpatient             
+## 14     NA 1983-04-13    Female      NA       Outpatient             
+##                  bf_category bf_weight bf_respiratoryrate bf_heartrate
+## 1  HIV adult presumptive  TB     104.0                 18           72
+## 2  HIV adult presumptive  TB     100.8                 18           78
+## 3  HIV adult presumptive  TB     120.0                 18           61
+## 4  HIV adult presumptive  TB     105.0                 18           81
+## 5  HIV adult presumptive  TB     109.0                 22           86
+## 6  HIV adult presumptive  TB     136.0                 84           99
+## 7  HIV adult presumptive  TB     105.0                 22           84
+## 8  HIV adult presumptive  TB     104.0                 18           69
+## 9  HIV adult presumptive  TB     117.0                 32          113
+## 10 HIV adult presumptive  TB     104.2                 16           81
+## 11 HIV adult presumptive  TB     106.0                 19           86
+## 12 HIV adult presumptive  TB     112.9                 19           68
+## 13 HIV adult presumptive  TB     103.0                 17           70
+## 14 HIV adult presumptive  TB     120.0                 18           75
+##    ps_child_casetype   ps_adult_casetype
+## 1                    Presumptive TB case
+## 2                    Presumptive TB case
+## 3                    Presumptive TB case
+## 4                    Presumptive TB case
+## 5                    Presumptive TB case
+## 6                    Presumptive TB case
+## 7                    Presumptive TB case
+## 8                    Presumptive TB case
+## 9                    Presumptive TB case
+## 10                   Presumptive TB case
+## 11                   Presumptive TB case
+## 12                   Presumptive TB case
+## 13                   Presumptive TB case
+## 14                   Presumptive TB case</code></pre>
 <p>Filtering is also very helpful in identifying participants with
 missing data.</p>
 <p>Do you remember how last week we identified a few participants who
 were missing the <code>rf_age_calculated</code> variable?</p>
 <p>Let’s filter to all participants at baseline who are missing this
 value.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(rf_age_calculated))</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(rf_age_calculated))</span></code></pre></div>
 <pre><code>##      record_id redcap_event_name rf_country rf_enroll_date rf_age_calculated
 ## 1           20          Baseline   Eswatini     2022-09-14                NA
 ## 2           23          Baseline   Eswatini     2022-09-20                NA
@@ -7436,8 +7505,8 @@ little complicated, so let’s start with something simpler.</p>
 <strong>Stool4TB</strong> for all participants. In order for the changes
 to be saved in <code>data</code>, we need to make sure to assign this as
 <code>data</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">study =</span> <span class="st">&quot;Stool4TB&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">study =</span> <span class="st">&quot;Stool4TB&quot;</span>)</span></code></pre></div>
 <p>Some important things to note:</p>
 <ol style="list-style-type: decimal">
 <li>The <code>filter()</code> function used two equals signs, however
@@ -7445,11 +7514,11 @@ mutate just uses one.</li>
 <li>It’s important that we put the study name - “Stool4TB” in quotation
 marks. If we don’t, we will see this error:</li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">study =</span> Stool4TB)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">study =</span> Stool4TB)</span></code></pre></div>
 <p>Let’s take a look at this variable!</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>study, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>study, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>## 
 ## Stool4TB      Sum 
 ##     7214     7214</code></pre>
@@ -7458,9 +7527,9 @@ marks. If we don’t, we will see this error:</li>
 <p>This is a bit simple - let’s move on to creating a variable for
 age.</p>
 <p>Right now, the structure of each date is a character.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_enroll_date)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_enroll_date)</span></code></pre></div>
 <pre><code>##  chr [1:7214] &quot;2022-06-27&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;2022-06-27&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;2022-07-05&quot; &quot;&quot; ...</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_dob)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_dob)</span></code></pre></div>
 <pre><code>##  chr [1:7214] &quot;1974-01-01&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;2000-01-09&quot; &quot;&quot; &quot;&quot; &quot;&quot; &quot;1997-11-26&quot; &quot;&quot; ...</code></pre>
 <p>However, we can convert each to a <strong>date</strong> type, and
 then subtract the date of birth from the enrollment date to get the age
@@ -7471,19 +7540,19 @@ they were at enrollment.</p>
 <p><code>ymd()</code> tells R that the date is formatted in year, month,
 day order. However, <code>lubridate</code> has other functions if the
 date is formatted differently, such as <code>mdy()</code>.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="do">### Remember, you only need to install packages once</span></span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="do">### install.packages(lubridate)</span></span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rf_enroll_date =</span> <span class="fu">ymd</span>(rf_enroll_date))<span class="sc">%&gt;%</span></span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>  <span class="do">### You can string together multiple functions using the pipe operator!</span></span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rf_dob =</span> <span class="fu">ymd</span>(rf_dob)) </span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a></span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="do">### Notice here that I am saving each variable as the original variable name </span></span>
-<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="do">### However, you could also create a copy of each variable by naming it something else if you prefer</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_enroll_date)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="do">### Remember, you only need to install packages once</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="do">### install.packages(lubridate)</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rf_enroll_date =</span> <span class="fu">ymd</span>(rf_enroll_date))<span class="sc">%&gt;%</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>  <span class="do">### You can string together multiple functions using the pipe operator!</span></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rf_dob =</span> <span class="fu">ymd</span>(rf_dob)) </span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a><span class="do">### Notice here that I am saving each variable as the original variable name </span></span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a><span class="do">### However, you could also create a copy of each variable by naming it something else if you prefer</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_enroll_date)</span></code></pre></div>
 <pre><code>##  Date[1:7214], format: &quot;2022-06-27&quot; NA NA NA &quot;2022-06-27&quot; NA NA NA &quot;2022-07-05&quot; NA NA ...</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_dob)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">str</span>(data<span class="sc">$</span>rf_dob)</span></code></pre></div>
 <pre><code>##  Date[1:7214], format: &quot;1974-01-01&quot; NA NA NA &quot;2000-01-09&quot; NA NA NA &quot;1997-11-26&quot; NA NA ...</code></pre>
 <p>Hopefully you see that both variables are now <code>Date</code> type.
 However, you will also see some <code>NA</code> values! This could be
@@ -7492,25 +7561,25 @@ because the dates are only collected at enrollment - the “Baseline”
 because some dates are missing at Baseline. We will investigate this
 shortly.</p>
 <p>Now, let’s find the difference between the two dates.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="do">### Create a new variable, date_diff</span></span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  </span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>  <span class="do">### interval and time_length are both functions in the lubridate package</span></span>
-<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>  </span>
-<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>  <span class="do">### interval creates an interval between two dates - this will give something like Interval: 2018-01-01 to 2020-06-01</span></span>
-<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>  </span>
-<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>  <span class="do">### time_length finds the length of time in the interval, and by specifying unit = &quot;years&quot; we get the difference in years versus days or months </span></span>
-<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_diff =</span> <span class="fu">time_length</span>(<span class="fu">interval</span>(rf_dob, rf_enroll_date), <span class="at">unit =</span> <span class="st">&quot;years&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>  <span class="do">### Create a new variable, date_diff</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  </span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>  <span class="do">### interval and time_length are both functions in the lubridate package</span></span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a>  </span>
+<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a>  <span class="do">### interval creates an interval between two dates - this will give something like Interval: 2018-01-01 to 2020-06-01</span></span>
+<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a>  </span>
+<span id="cb29-8"><a href="#cb29-8" tabindex="-1"></a>  <span class="do">### time_length finds the length of time in the interval, and by specifying unit = &quot;years&quot; we get the difference in years versus days or months </span></span>
+<span id="cb29-9"><a href="#cb29-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_diff =</span> <span class="fu">time_length</span>(<span class="fu">interval</span>(rf_dob, rf_enroll_date), <span class="at">unit =</span> <span class="st">&quot;years&quot;</span>))</span></code></pre></div>
 <p>We’re getting close! However, upon inspecting the variable, it seems
 like <code>date_diff</code> is reporting years out to a decimal place.
 We want to know their integer age, rounding down to the nearest whole
 number.</p>
 <p>The <code>floor()</code> function rounds down to the nearest
 integer.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_diff =</span> <span class="fu">floor</span>(date_diff))</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_diff =</span> <span class="fu">floor</span>(date_diff))</span></code></pre></div>
 <p>We’re moving in the right direction!</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>date_diff)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>date_diff)</span></code></pre></div>
 <pre><code>## 
 ##   0   1   2   3   4   5   6   7   8  15  16  17  18  19  20  21  22  23  24  25 
 ## 184 262 127 151 159 110 127  92   8  10   6  10   9  14  13   6  13  10  10   4 
@@ -7529,8 +7598,8 @@ there is probably a better, more informative name for this.</p>
 <p>Again - we’re going to use the same pipe operator with a new function
 - <code>rename()</code>. The new name goes first, followed by the old
 name.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">calculated_age =</span> date_diff)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">calculated_age =</span> date_diff)</span></code></pre></div>
 </div>
 <div id="selecting-columns" class="section level2">
 <h2>Selecting columns</h2>
@@ -7539,10 +7608,10 @@ reported.</p>
 <p>We want to filter to all participants at baseline who are missing
 this newly created variable, and select just the important columns.</p>
 <p>This is where we’ll use a new function - <code>select()</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>  <span class="do">### Filter to all participants at baseline missing calculated_age</span></span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(calculated_age))<span class="sc">%&gt;%</span></span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>  <span class="fu">select</span>(record_id, calculated_age, rf_dob, rf_age, rf_enroll_date)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>  <span class="do">### Filter to all participants at baseline missing calculated_age</span></span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(calculated_age))<span class="sc">%&gt;%</span></span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>  <span class="fu">select</span>(record_id, calculated_age, rf_dob, rf_age, rf_enroll_date)</span></code></pre></div>
 <pre><code>##     record_id calculated_age rf_dob rf_age rf_enroll_date
 ## 1   4TB-2-354             NA   &lt;NA&gt;      5     2022-10-19
 ## 2   4TB-2-391             NA   &lt;NA&gt;      5     2023-03-20
@@ -7700,12 +7769,12 @@ value is not missing, retain this age.</p>
 <p>Let’s save as a new variable - <code>composite_age</code> - so we
 know that this is a combination of our calculated age and the
 <code>rf_age</code> variable.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">composite_age =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(calculated_age), rf_age, calculated_age))</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">composite_age =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(calculated_age), rf_age, calculated_age))</span></code></pre></div>
 <p>As a final check, is anyone still missing age at enrollment?</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(composite_age))<span class="sc">%&gt;%</span></span>
-<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>  <span class="fu">select</span>(record_id, composite_age, rf_dob, rf_enroll_date, rf_age)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(composite_age))<span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>  <span class="fu">select</span>(record_id, composite_age, rf_dob, rf_enroll_date, rf_age)</span></code></pre></div>
 <pre><code>##   record_id composite_age rf_dob rf_enroll_date rf_age
 ## 1 4TB-2-906            NA   &lt;NA&gt;     2025-04-04     NA</code></pre>
 <p>One participant is missing rf_dob so we couldn’t calculate the age,
@@ -7719,10 +7788,10 @@ this information.</p>
 that can order numeric variables.</p>
 <p>For example, let’s filter to the baseline data, and then sort by the
 <code>bf_weight</code> variable.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>  <span class="fu">arrange</span>(bf_weight)<span class="sc">%&gt;%</span></span>
-<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a>  <span class="fu">select</span>(record_id, bf_weight)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  <span class="fu">arrange</span>(bf_weight)<span class="sc">%&gt;%</span></span>
+<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>  <span class="fu">select</span>(record_id, bf_weight)</span></code></pre></div>
 <pre><code>##      record_id bf_weight
 ## 1          353    2.3000
 ## 2    4TB-2-624    3.0000
@@ -9750,10 +9819,10 @@ that can order numeric variables.</p>
 ## 2024 4TB-2-778        NA</code></pre>
 <p>This sorts the data in ascending order for weight. We can easily sort
 in descending order by including <code>desc()</code> in the code:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(bf_weight))<span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>  <span class="fu">select</span>(record_id, bf_weight)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(bf_weight))<span class="sc">%&gt;%</span></span>
+<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a>  <span class="fu">select</span>(record_id, bf_weight)</span></code></pre></div>
 <pre><code>##      record_id bf_weight
 ## 1          306  136.0000
 ## 2           34  120.0000
@@ -11779,13 +11848,16 @@ in descending order by including <code>desc()</code> in the code:</p>
 ## 2022 4TB-2-468        NA
 ## 2023 4TB-2-677        NA
 ## 2024 4TB-2-778        NA</code></pre>
+</div>
+<div id="correct-my-mistakes" class="section level2">
+<h2>Correct my mistakes</h2>
 <div id="fix-it-1" class="section level3">
 <h3>Fix it! 1</h3>
 <p>I want to filter to everyone from Eswatini, at all time points.
 However, I’m getting an error! My code returns a data frame with 0
 columns.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  <span class="fu">filter</span>(rf_country <span class="sc">==</span> <span class="st">&quot;Eswatini &quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>  <span class="fu">filter</span>(rf_country <span class="sc">==</span> <span class="st">&quot;Eswatini &quot;</span>)</span></code></pre></div>
 <p>Hint: take a look at what the <code>rf_country</code> column looks
 like. I often use the <code>table()</code> function for this. Refer back
 to the week 2 assignment.</p>
@@ -11795,8 +11867,8 @@ to the week 2 assignment.</p>
 <p>I want to filter to all participants at baseline, and save as a
 subset called <code>baseline_subset</code>. However, I’m getting an
 error - my code doesn’t run.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>baseline_subset <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="at">redcap_event_name =</span> <span class="st">&quot;Baseline&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>baseline_subset <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="at">redcap_event_name =</span> <span class="st">&quot;Baseline&quot;</span>)</span></code></pre></div>
 </div>
 <div id="fix-it-3" class="section level3">
 <h3>Fix it! 3</h3>
@@ -11804,16 +11876,16 @@ error - my code doesn’t run.</p>
 <code>composite_age</code> column. This is returning 0 rows, however we
 already identified 1 participant with missing data. Something is wrong -
 can you fix it?</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> composite_age <span class="sc">==</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> composite_age <span class="sc">==</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 </div>
 <div id="fix-it-4" class="section level3">
 <h3>Fix it! 4</h3>
 <p>I want to rename the <code>bf_weight</code> column to be
 <code>baseline_weight</code>. However, I am unable to get the code to
 run.</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">bf_weight =</span> baseline_weight)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">bf_weight =</span> baseline_weight)</span></code></pre></div>
 </div>
 <div id="fix-it-5" class="section level3">
 <h3>Fix it! 5</h3>
@@ -11825,9 +11897,59 @@ run.</p>
 One important thing to learn when coding is how to search for the
 solution to coding error! Please Google or use ChatGPT to figure out why
 this is causing an error and how to fix it.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
-<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="dv">60</span><span class="at">_weight =</span> <span class="fu">ifelse</span>(bf_weight <span class="sc">&lt;</span> <span class="dv">60</span>, <span class="st">&quot;Weight is less than 60kg&quot;</span>, <span class="st">&quot;Weight is greater than or equal to 60kg&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="dv">60</span><span class="at">_weight =</span> <span class="fu">ifelse</span>(bf_weight <span class="sc">&lt;</span> <span class="dv">60</span>, <span class="st">&quot;Weight is less than 60kg&quot;</span>, <span class="st">&quot;Weight is greater than or equal to 60kg&quot;</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="practice" class="section level2">
+<h2>Practice</h2>
+<div id="try-it-1" class="section level3">
+<h3>Try it! 1</h3>
+<p>Filter to all participants from Mozambique who are female. Select the
+column for participant ID and respiratory rate, and arrange the
+respiratory rate column in descending order.</p>
+<p><strong>Above and beyond</strong> - can you figure out how to print
+out just the 10 highest respiratory rates?</p>
+</div>
+<div id="try-it-2" class="section level3">
+<h3>Try it! 2</h3>
+<p>After consulting with some clinicians, they tell you that any heart
+rate above 150 beats/minute may be extreme and to provide a list of all
+participants who meet this condition in order to double-check that the
+data is correct.</p>
+<p>Filter to all heart rates above 150 beats/minute at baseline, and
+select the heart rate and participant ID columns.</p>
+<p>Save the result as <code>heartrate_investigation_subset</code>.</p>
+<p><strong>Above and beyond</strong> - in most cases, team members who
+are resolving queries require an Excel spreadsheet. We have learned the
+<code>read.csv()</code> function. There is another function
+<code>write.csv()</code> that exports the data to a .csv file!</p>
+<p>If you did Try it! 2 above correctly, this code chunk should save the
+output to a .csv file in the same file location that your .Rmd and data
+are saved to.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">write.csv</span>(heartrate_investigation_subset, <span class="st">&quot;Example Export.csv&quot;</span>)</span></code></pre></div>
+</div>
+<div id="try-it-3" class="section level3">
+<h3>Try it! 3</h3>
+<p>In week 2, you learned how to perform summary statistics on the
+data.</p>
+<p>Here, I want you to create two subsets. Save each as a separate data
+frame - you can choose what to name them.</p>
+<p>The first should include children &lt; 8 at baseline who are living
+with HIV.</p>
+<p>The second should include children &lt; 8 at baseline who are not
+living with HIV.</p>
+<p>I want you to compare 3 different summary statistics between these
+two subsets. You may choose to use any of the variables in the data to
+summarize. You could create some tables and report the proportions in
+each group.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="do">### Create subset 1 </span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="do">### Create subset 2</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="do">### Summary statistics for subset 1</span></span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="do">### Summary statistics for subset 2</span></span></code></pre></div>
+<p>Provide some commentary on how these two groups are the same or may
+be different.</p>
 </div>
 </div>
 </div>
@@ -11837,8 +11959,9 @@ this is causing an error and how to fix it.</p>
 far has been using the <code>dplyr</code> package. I find
 <code>dplyr</code> to be more intuitive and quicker to learn than base
 R. However, there are certain situations where base R may be helpful to
-know. Here are resources to learn more about base R data manipulation if
-you are interested in learning!</p>
+know. Here is a resource to learn more about base R data manipulation if
+you are interested!</p>
+<p><a href="https://stats.oarc.ucla.edu/r/modules/subsetting-data/" class="uri">https://stats.oarc.ucla.edu/r/modules/subsetting-data/</a></p>
 </div>
 
 
