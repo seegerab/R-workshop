@@ -23,7 +23,7 @@ This week, we're going to start with manipulating data.
 
 There are a few different ways to do this. One is using the built-in R functions (called "base" R). Another is using the `dplyr` package.
 
-We're going to focus primarily on `dplyr`. I find this to be more intuitive and quicker to learn than the base R equivalent. However, I'm also including a section at the bottom with the equivalent base R functions in case that may be helpful and to be a resource if you need to use base R in the future. 
+We're going to focus primarily on `dplyr`. I find this to be more intuitive and quicker to learn than the base R equivalent. However, I'm also including a section at the bottom with resources on base R functions in case that may be helpful.
 
 ## Background information on dplyr
 
@@ -128,7 +128,7 @@ Filtering is also very helpful in identifying participants with missing data.
 
 Do you remember how last week we identified a few participants who were missing the `rf_age_calculated` variable?
 
-Let's filter to all participants at baseline who are missing this value.
+Let's filter to all participants at baseline who are missing this value to investigate this more. 
 
 ```{r}
 data%>%
@@ -186,7 +186,7 @@ However, we can convert each to a **date** type, and then subtract the date of b
 
 Let's break this down in steps. First, let's convert each column to a **date** type. To do this, we're going to use the `ymd()` function in the `lubridate` package.
 
-`ymd()` tells R that the date is formatted in year, month, day order. However, `lubridate` has other functions if the date is formatted differently, such as `mdy()`.
+`ymd()` tells R that the date is formatted in year, month, day order. However, `lubridate` has other functions if you are working with dates that are formatted differently, such as `mdy()`.
 
 ```{r}
 ### Remember, you only need to install packages once
@@ -206,9 +206,9 @@ str(data$rf_enroll_date)
 str(data$rf_dob)
 ```
 
-Hopefully you see that both variables are now `Date` type. However, you will also see some `NA` values! This could be because the dates are only collected at enrollment - the "Baseline" `redcap_event_name` value. However, this could also be because some dates are missing at Baseline. We will investigate this shortly.
+Hopefully you see that both variables are now `Date` type. However, you will also see some `NA` values! This could be because the dates are only collected at enrollment - the "Baseline" `redcap_event_name` value. However, this could also be because some dates are missing at baseline. We will investigate this shortly.
 
-Now, let's find the difference between the two dates.
+Next, let's find the difference between the two dates.
 
 ```{r}
 data <- data%>%
@@ -229,6 +229,7 @@ The `floor()` function rounds down to the nearest integer.
 ```{r}
 data <- data%>%
   mutate(date_diff = floor(date_diff))
+### Hint - if you ever need to round to the nearest integer or the nearest decimal place, you can use the round() function
 ```
 
 We're moving in the right direction!
@@ -264,7 +265,7 @@ data%>%
   select(record_id, calculated_age, rf_dob, rf_age, rf_enroll_date)
 ```
 
-143 participants do not have this value. And, it looks like this is missing because they are missing `rf_dob`. 
+143 participants do not have this value. And, it looks like this is missing because they are missing `rf_dob`.
 
 However, they do have another variable - `rf_age`. Let's use the `rf_age` variable if the calculated age is missing. To do this, we're going to use the `ifelse()` function. Essentially, if the first condition is met, go with the first value. Else, go with the second value.
 
@@ -286,7 +287,7 @@ data%>%
 
 ```
 
-One participant is missing rf_dob so we couldn't calculate the age, and the rf_age value is also missing
+One participant is missing `rf_dob` so we couldn't calculate the age, and the `rf_age` value is also missing
 
 This should be a query to the clinical teams so they can track down this information.
 
@@ -312,20 +313,23 @@ data%>%
   select(record_id, bf_weight)
 ```
 
+Now, on to some practice! 
+
 ## Correct my mistakes
 
 ### Fix it! 1
 
-I want to filter to everyone from Eswatini, at all time points. However, I'm getting an error! My code returns a data frame with 0 columns.
+I want to filter to all participants from Eswatini at all time points. However, I'm getting an error! My code returns a data frame with 0 columns.
 
 ```{r eval = FALSE}
 data%>%
   filter(rf_country == "Eswatini ")
 ```
 
-Hint: take a look at what the `rf_country` column looks like. I often use the `table()` function for this. Refer back to the week 2 assignment.
+
 
 ```{r}
+### Hint: take a look at what the `rf_country` column looks like. I often use the `table()` function for this. Refer back to the week 2 assignment
 
 ```
 
@@ -358,11 +362,11 @@ data%>%
 
 ### Fix it! 5
 
-I want to create a new column called `60_weight` that is "Weight is less than 60kg" if `bf_weight` is less than 60, "Weight is less than 60kg" is not.
+I want to create a new column called `60_weight` that is "Weight is less than 60kg" if `bf_weight` is less than 60 and "Weight is greater than or equal to 60kg" if not.
 
-Update the code so this works!
+Update the code so this works.
 
-**Hint**: we haven't covered this specific error before. One important thing to learn when coding is how to search for the solution to coding error! Please Google or use ChatGPT to figure out why this is causing an error and how to fix it.
+**Hint**: we haven't reviewed this specific error before. One important thing to learn when coding is how to search for the solution to coding error! Please Google or use ChatGPT to figure out why this is causing an error and how to fix it.
 
 ```{r eval = FALSE}
 data%>%
@@ -393,9 +397,9 @@ Save the result as `heartrate_investigation_subset`.
 
 ```
 
-**Above and beyond** - in most cases, team members who are resolving queries require an Excel spreadsheet. We have learned the `read.csv()` function. There is another function `write.csv()` that exports the data to a .csv file!
+**Above and beyond** - in most cases, team members who are resolving queries require an Excel spreadsheet. We have learned the `read.csv()` function. There is another function `write.csv()` that exports the data to a .csv file.
 
-If you did Try it! 2 above correctly, this code chunk should save the output to a .csv file in the same file location that your .Rmd and data are saved to. 
+If you did Try it! 2 above correctly, the code chunk below should save the output to a .csv file in the same file location that your .Rmd and data are saved to. 
 
 ```{r eval = FALSE }
 write.csv(heartrate_investigation_subset, "Example Export.csv")
@@ -411,7 +415,7 @@ The first should include children < 8 at baseline who are living with HIV.
 
 The second should include children < 8 at baseline who are not living with HIV.
 
-I want you to compare 3 different summary statistics between these two subsets. You may choose to use any of the variables in the data to summarize. You could create some tables and report the proportions in each group. 
+I want you to compare 3 different summary statistics between these two subsets. You may choose to use any of the variables in the data to summarize. You could create some tables and report the proportions in each group, or investigate some of the numeric variables. 
 
 ```{r}
 ### Create subset 1 
@@ -431,7 +435,7 @@ I want you to compare 3 different summary statistics between these two subsets. 
 ### Summary statistics for subset 2
 ```
 
-Provide some commentary on how these two groups are the same or may be different. 
+Provide commentary on how these two groups are the same or different. 
 
 # Base R
 
