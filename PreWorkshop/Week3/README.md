@@ -10,11 +10,11 @@ The deadline for both Friday, May 30 - the day of our workshop at the Stool4TB m
 
 1. There is no video this week. Start by downloading the data that Abigail shared as an attachment in the Week 3 email. 
 
-2. Complete <a href="https://github.com/seegerab/R-workshop/blob/week3_dev/PreWorkshop/Week3/Week3_dplyr.Rmd" target="_blank">Week3_dplyr.Rmd</a>
+2. Complete <a href="https://github.com/seegerab/R-workshop/blob/week3_dev/PreWorkshop/Week3/Week3%20dplyr.Rmd" target="_blank">Week3_dplyr.Rmd</a>
 
 When you first open the .Rmd, you may  see a prompt at the top to install "lubridate". You may click "Install", or wait until we learn about these packages further down in the .Rmd and install then. 
 
-3. Complete <a href="https://github.com/seegerab/R-workshop/blob/week3_dev/PreWorkshop/Week3/Week3.Rmd" target="_blank">Week3_ggplot.Rmd</a>. **This link will be updated on Wednesday, May 21.**
+3. Complete <a href="https://github.com/seegerab/R-workshop/blob/week3_dev/PreWorkshop/Week3/Week3%20dplyr.Rmd" target="_blank">Week3_ggplot.Rmd</a>. **This link will be updated on Wednesday, May 21.**
 
 4. Fill out <a href="https://docs.google.com/forms/d/e/1FAIpQLSc2vHKUMCgr13BO-WJCK9AGshvD_By9hNIM0PARiiMYxGQkow/viewform?usp=header" target="_blank">this survey</a>  
 
