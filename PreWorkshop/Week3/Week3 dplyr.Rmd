@@ -122,10 +122,11 @@ table(eswatini_pwh$bf_hivstatus)%>%
 
 We can filter on numeric columns, in addition to categorical variables. Suppose we want to filter to all participants who are 100 kg or heavier at baseline.
 
-```{r}
+```{r }
 data%>%
   filter(redcap_event_name == "Baseline")%>%
-  filter(bf_weight >= 100)
+  filter(bf_weight >= 100)%>%
+  head()
 ```
 
 Filtering is also very helpful in identifying participants with missing data.
@@ -162,9 +163,9 @@ Some important things to note:
 
 1. The `filter()` function used two equals signs, however `mutate()` just uses one. 
 
-** In `mutate()`, you are creating or modifying a column. You use one equals sign (=) to assign values to a new or existing variable. 
+  - In `mutate()`, you are creating or modifying a column. You use one equals sign (=) to assign values to a new or existing variable. 
 
-** In `filter()`, you're testing for a condition. To check whether a variable is equal to a value, you use two equals signs (==).
+  - In `filter()`, you're testing for a condition. To check whether a variable is equal to a value, you use two equals signs (==).
 
 2. It's important that we put the study name - "Stool4TB" in quotation marks. If we don't, we will see this error:
 
@@ -264,7 +265,7 @@ data <- data%>%
 
 At this point, let's confirm that everyone at baseline has an age reported.
 
-We want to filter to all participants at baseline who are missing this newly created variable, and select just the important columns.
+We want to filter to all participants at baseline who are missing this newly created variable, and select just the important columns related to participant age.
 
 This is where we'll use a new function - `select()`.
 
@@ -311,7 +312,9 @@ For example, let's filter to the baseline data, and then sort by the `bf_weight`
 data%>%
   filter(redcap_event_name == "Baseline")%>%
   arrange(bf_weight)%>%
-  select(record_id, bf_weight)
+  select(record_id, bf_weight)%>%
+  ### Rather than printing out all the rows, let's use the head() function to take a peek at the first few rows 
+  head()
 ```
 
 This sorts the data in ascending order for weight. We can easily sort in descending order by including `desc()` in the code:
