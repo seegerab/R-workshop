@@ -27,13 +27,17 @@ We're going to focus primarily on `dplyr`. I find this to be more intuitive and 
 
 ## Background information on dplyr
 
-Please take 10 minutes to read about what exactly `dplyr` is and examples of some of the functions we're going to learn to better orient yourself before continuing.
+Please take 20 minutes to use these resources to learn about what exactly `dplyr` is and examples of some of the functions we're going to learn to better orient yourself before continuing.
 
 https://dplyr.tidyverse.org/articles/dplyr.html
 
 This is another great cheat sheet that includes lots of `dplyr` functions:
 
 https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf
+
+Here is a good video that walks you through some of the functions you read about in the first link:
+
+https://www.youtube.com/watch?v=Gvhkp-Yw65U&ab_channel=Dataslice
 
 **Note**: we are still going to use `library(tidyverse)` to read in the `dplyr` package. This is because tidyverse is a **bundle** of some really useful packages - including `dplyr` which we'll use here and `ggplot2`, which we'll use in the next assignment. 
 
@@ -137,7 +141,7 @@ data%>%
 
 If we take a look at the bottom of the output, we see that there are 1,432 rows missing this variable! 2 are from Eswatini - which are the participants we saw last week - and the rest are from Mozambique and Uganda. 
 
-Pull up `data` in a new tab and take a look at this variable. It seems that this variable is just for participants from Eswatini. However, we can create a new variable for age by calculating this using the two date columns - `rf_enroll_date` and `rf_dob`. 
+Pull up `data` in a new tab by clicking on `data` in your environment and take a look at this variable. It seems that this variable is just for participants from Eswatini. However, we can create a new variable for age by calculating this using the two date columns - `rf_enroll_date` and `rf_dob`. 
  
 ## Creating new variables
 
@@ -156,7 +160,12 @@ data <- data%>%
 
 Some important things to note:
 
-1. The `filter()` function used two equals signs, however mutate just uses one.
+1. The `filter()` function used two equals signs, however `mutate()` just uses one. 
+
+** In `mutate()`, you are creating or modifying a column. You use one equals sign (=) to assign values to a new or existing variable. 
+
+** In `filter()`, you're testing for a condition. To check whether a variable is equal to a value, you use two equals signs (==).
+
 2. It's important that we put the study name - "Stool4TB" in quotation marks. If we don't, we will see this error:
 
 ```{r eval = FALSE }
@@ -237,6 +246,7 @@ We're moving in the right direction!
 ```{r}
 table(data$date_diff)
 ```
+
 ## Renaming variables
 
 We just created a variable called `date_diff`. However, there is probably a better, more informative name for this.
@@ -319,7 +329,7 @@ Now, on to some practice!
 
 ### Fix it! 1
 
-I want to filter to all participants from Eswatini at all time points. However, I'm getting an error! My code returns a data frame with 0 columns.
+I want to filter to all participants from Eswatini at all time points. However, I'm getting an error! My code returns a data frame with 0 rows.
 
 ```{r eval = FALSE}
 data%>%
@@ -373,7 +383,10 @@ data%>%
   filter(redcap_event_name == "Baseline")%>%
   mutate(60_weight = ifelse(bf_weight < 60, "Weight is less than 60kg", "Weight is greater than or equal to 60kg"))
 ```
+
 ## Practice
+
+If you get stuck on any of the "Try it!" questions, please review the code and notes above. You've learned all the operations you need to complete these questions. 
 
 ### Try it! 1
 

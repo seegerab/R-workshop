@@ -2,7 +2,7 @@
 
 This week and next will be broken into two assignments.
 
-The first will cover how to manipulte data using a package called dplyr and will be released on Monday, May 16.
+The first will cover how to manipulate data using a package called dplyr and will be released on Monday, May 16.
 
 The second will cover how to create figures using a package called ggplot2 and will be released on Wednesday, May 18.
 
@@ -14,7 +14,7 @@ The deadline for both Friday, May 30 - the day of our workshop at the Stool4TB m
 
 When you first open the .Rmd, you may  see a prompt at the top to install "lubridate". You may click "Install", or wait until we learn about these packages further down in the .Rmd and install then. 
 
-3. Complete <a href="https://github.com/seegerab/R-workshop/blob/week3_dev/PreWorkshop/Week3/Week3%20dplyr.Rmd" target="_blank">Week3_ggplot.Rmd</a>. **This link will be updated on Wednesday, May 21.**
+3. Complete the .Rmd on creating figures. **This link will be included on Wednesday, May 21.**
 
 4. Fill out <a href="https://docs.google.com/forms/d/e/1FAIpQLSc2vHKUMCgr13BO-WJCK9AGshvD_By9hNIM0PARiiMYxGQkow/viewform?usp=header" target="_blank">this survey</a>  
 
