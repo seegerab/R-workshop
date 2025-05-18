@@ -325,9 +325,9 @@ data%>%
 
 Now, on to some practice! 
 
-## Correct my mistakes
+# Correct my mistakes
 
-### Fix it! 1
+## Fix it! 1
 
 I want to filter to all participants from Eswatini at all time points. However, I'm getting an error! My code returns a data frame with 0 rows.
 
@@ -343,7 +343,7 @@ data%>%
 
 ```
 
-### Fix it! 2
+## Fix it! 2
 
 I want to filter to all participants at baseline, and save as a subset called `baseline_subset`. However, I'm getting an error - my code doesn't run.
 
@@ -352,7 +352,7 @@ baseline_subset <- data%>%
   filter(redcap_event_name = "Baseline")
 ```
 
-### Fix it! 3
+## Fix it! 3
 
 I want to filter to the missing data in the `composite_age` column. This is returning 0 rows, however we already identified 1 participant with missing data. Something is wrong - can you fix it? 
 
@@ -370,7 +370,7 @@ data%>%
   rename(bf_weight = baseline_weight)
 ```
 
-### Fix it! 5
+## Fix it! 5
 
 I want to create a new column called `60_weight` that is "Weight is less than 60kg" if `bf_weight` is less than 60 and "Weight is greater than or equal to 60kg" if not.
 
@@ -384,11 +384,11 @@ data%>%
   mutate(60_weight = ifelse(bf_weight < 60, "Weight is less than 60kg", "Weight is greater than or equal to 60kg"))
 ```
 
-## Practice
+# Practice
 
 If you get stuck on any of the "Try it!" questions, please review the code and notes above. You've learned all the operations you need to complete these questions. 
 
-### Try it! 1
+## Try it! 1
 
 Filter to all participants from Mozambique who are female. Select the column for participant ID and respiratory rate, and arrange the respiratory rate column in descending order. 
 
@@ -398,7 +398,7 @@ Filter to all participants from Mozambique who are female. Select the column for
 
 **Above and beyond** - can you figure out how to print out just the 10 highest respiratory rates?
 
-### Try it! 2
+## Try it! 2
 
 After consulting with some clinicians, they tell you that any heart rate above 150 beats/minute may be extreme and to provide a list of all participants who meet this condition in order to double-check that the data is correct.
 
@@ -418,7 +418,7 @@ If you did Try it! 2 above correctly, the code chunk below should save the outpu
 write.csv(heartrate_investigation_subset, "Example Export.csv")
 ```
 
-### Try it! 3
+## Try it! 3
 
 In week 2, you learned how to perform summary statistics on the data.
 
@@ -428,7 +428,7 @@ The first should include children < 8 at baseline who are living with HIV.
 
 The second should include children < 8 at baseline who are not living with HIV.
 
-I want you to compare 3 different summary statistics between these two subsets. You may choose to use any of the variables in the data to summarize. You could create some tables and report the proportions in each group, or investigate some of the numeric variables. 
+**Please remember to use the composite_age variable that we created above!**
 
 ```{r}
 ### Create subset 1 
@@ -439,6 +439,10 @@ I want you to compare 3 different summary statistics between these two subsets. 
 ### Create subset 2
 
 ```
+
+I want you to compare 3 different summary statistics between these two subsets. You may choose to use any of the variables in the data to summarize. You could create some tables and report the proportions in each group, or investigate some of the numeric variables.
+
+**Please include na.rm = TRUE in any numeric summary functions you choose to use! There are a small number of missing values, and the summary statistic will be NA if you do not include this.**
 
 ```{r}
 ### Summary statistics for subset 1

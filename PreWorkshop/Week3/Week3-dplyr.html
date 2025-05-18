@@ -1561,18 +1561,20 @@ R functions (called “base” R). Another is using the <code>dplyr</code>
 package.</p>
 <p>We’re going to focus primarily on <code>dplyr</code>. I find this to
 be more intuitive and quicker to learn than the base R equivalent.
-However, I’m also including a section at the bottom with the equivalent
-base R functions in case that may be helpful and to be a resource if you
-need to use base R in the future.</p>
+However, I’m also including a section at the bottom with resources on
+base R functions in case that may be helpful.</p>
 <div id="background-information-on-dplyr" class="section level2">
 <h2>Background information on dplyr</h2>
-<p>Please take 10 minutes to read about what exactly <code>dplyr</code>
-is and examples of some of the functions we’re going to learn to better
-orient yourself before continuing.</p>
+<p>Please take 20 minutes to use these resources to learn about what
+exactly <code>dplyr</code> is and examples of some of the functions
+we’re going to learn to better orient yourself before continuing.</p>
 <p><a href="https://dplyr.tidyverse.org/articles/dplyr.html" class="uri">https://dplyr.tidyverse.org/articles/dplyr.html</a></p>
 <p>This is another great cheat sheet that includes lots of
 <code>dplyr</code> functions:</p>
 <p><a href="https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf" class="uri">https://posit.co/wp-content/uploads/2022/10/data-transformation.pdf</a></p>
+<p>Here is a good video that walks you through some of the functions you
+read about in the first link:</p>
+<p><a href="https://www.youtube.com/watch?v=Gvhkp-Yw65U&amp;ab_channel=Dataslice" class="uri">https://www.youtube.com/watch?v=Gvhkp-Yw65U&amp;ab_channel=Dataslice</a></p>
 <p><strong>Note</strong>: we are still going to use
 <code>library(tidyverse)</code> to read in the <code>dplyr</code>
 package. This is because tidyverse is a <strong>bundle</strong> of some
@@ -7493,10 +7495,11 @@ value to investigate this more.</p>
 1,432 rows missing this variable! 2 are from Eswatini - which are the
 participants we saw last week - and the rest are from Mozambique and
 Uganda.</p>
-<p>Pull up <code>data</code> in a new tab and take a look at this
-variable. It seems that this variable is just for participants from
-Eswatini. However, we can create a new variable for age by calculating
-this using the two date columns - <code>rf_enroll_date</code> and
+<p>Pull up <code>data</code> in a new tab by clicking on
+<code>data</code> in your environment and take a look at this variable.
+It seems that this variable is just for participants from Eswatini.
+However, we can create a new variable for age by calculating this using
+the two date columns - <code>rf_enroll_date</code> and
 <code>rf_dob</code>.</p>
 </div>
 <div id="creating-new-variables" class="section level2">
@@ -7516,7 +7519,15 @@ to be saved in <code>data</code>, we need to make sure to assign this as
 <p>Some important things to note:</p>
 <ol style="list-style-type: decimal">
 <li>The <code>filter()</code> function used two equals signs, however
-mutate just uses one.</li>
+<code>mutate()</code> just uses one.</li>
+</ol>
+<p>** In <code>mutate()</code>, you are creating or modifying a column.
+You use one equals sign (=) to assign values to a new or existing
+variable.</p>
+<p>** In <code>filter()</code>, you’re testing for a condition. To check
+whether a variable is equal to a value, you use two equals signs
+(==).</p>
+<ol start="2" style="list-style-type: decimal">
 <li>It’s important that we put the study name - “Stool4TB” in quotation
 marks. If we don’t, we will see this error:</li>
 </ol>
@@ -11858,34 +11869,34 @@ in descending order by including <code>desc()</code> in the code:</p>
 ## 2024 4TB-2-778        NA</code></pre>
 <p>Now, on to some practice!</p>
 </div>
-<div id="correct-my-mistakes" class="section level2">
-<h2>Correct my mistakes</h2>
-<div id="fix-it-1" class="section level3">
-<h3>Fix it! 1</h3>
+</div>
+<div id="correct-my-mistakes" class="section level1">
+<h1>Correct my mistakes</h1>
+<div id="fix-it-1" class="section level2">
+<h2>Fix it! 1</h2>
 <p>I want to filter to all participants from Eswatini at all time
 points. However, I’m getting an error! My code returns a data frame with
-0 columns.</p>
+0 rows.</p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
 <span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="fu">filter</span>(rf_country <span class="sc">==</span> <span class="st">&quot;Eswatini &quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="do">### Hint: take a look at what the `rf_country` column looks like. I often use the `table()` function for this. Refer back to the week 2 assignment</span></span></code></pre></div>
 </div>
-<div id="fix-it-2" class="section level3">
-<h3>Fix it! 2</h3>
+<div id="fix-it-2" class="section level2">
+<h2>Fix it! 2</h2>
 <p>I want to filter to all participants at baseline, and save as a
 subset called <code>baseline_subset</code>. However, I’m getting an
 error - my code doesn’t run.</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>baseline_subset <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
 <span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="at">redcap_event_name =</span> <span class="st">&quot;Baseline&quot;</span>)</span></code></pre></div>
 </div>
-<div id="fix-it-3" class="section level3">
-<h3>Fix it! 3</h3>
+<div id="fix-it-3" class="section level2">
+<h2>Fix it! 3</h2>
 <p>I want to filter to the missing data in the
 <code>composite_age</code> column. This is returning 0 rows, however we
 already identified 1 participant with missing data. Something is wrong -
 can you fix it?</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
 <span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;Baseline&quot;</span> <span class="sc">&amp;</span> composite_age <span class="sc">==</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-</div>
 <div id="fix-it-4" class="section level3">
 <h3>Fix it! 4</h3>
 <p>I want to rename the <code>bf_weight</code> column to be
@@ -11894,8 +11905,9 @@ run.</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>data<span class="sc">%&gt;%</span></span>
 <span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">bf_weight =</span> baseline_weight)</span></code></pre></div>
 </div>
-<div id="fix-it-5" class="section level3">
-<h3>Fix it! 5</h3>
+</div>
+<div id="fix-it-5" class="section level2">
+<h2>Fix it! 5</h2>
 <p>I want to create a new column called <code>60_weight</code> that is
 “Weight is less than 60kg” if <code>bf_weight</code> is less than 60 and
 “Weight is greater than or equal to 60kg” if not.</p>
@@ -11909,18 +11921,21 @@ why this is causing an error and how to fix it.</p>
 <span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="dv">60</span><span class="at">_weight =</span> <span class="fu">ifelse</span>(bf_weight <span class="sc">&lt;</span> <span class="dv">60</span>, <span class="st">&quot;Weight is less than 60kg&quot;</span>, <span class="st">&quot;Weight is greater than or equal to 60kg&quot;</span>))</span></code></pre></div>
 </div>
 </div>
-<div id="practice" class="section level2">
-<h2>Practice</h2>
-<div id="try-it-1" class="section level3">
-<h3>Try it! 1</h3>
+<div id="practice" class="section level1">
+<h1>Practice</h1>
+<p>If you get stuck on any of the “Try it!” questions, please review the
+code and notes above. You’ve learned all the operations you need to
+complete these questions.</p>
+<div id="try-it-1" class="section level2">
+<h2>Try it! 1</h2>
 <p>Filter to all participants from Mozambique who are female. Select the
 column for participant ID and respiratory rate, and arrange the
 respiratory rate column in descending order.</p>
 <p><strong>Above and beyond</strong> - can you figure out how to print
 out just the 10 highest respiratory rates?</p>
 </div>
-<div id="try-it-2" class="section level3">
-<h3>Try it! 2</h3>
+<div id="try-it-2" class="section level2">
+<h2>Try it! 2</h2>
 <p>After consulting with some clinicians, they tell you that any heart
 rate above 150 beats/minute may be extreme and to provide a list of all
 participants who meet this condition in order to double-check that the
@@ -11937,8 +11952,8 @@ save the output to a .csv file in the same file location that your .Rmd
 and data are saved to.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">write.csv</span>(heartrate_investigation_subset, <span class="st">&quot;Example Export.csv&quot;</span>)</span></code></pre></div>
 </div>
-<div id="try-it-3" class="section level3">
-<h3>Try it! 3</h3>
+<div id="try-it-3" class="section level2">
+<h2>Try it! 3</h2>
 <p>In week 2, you learned how to perform summary statistics on the
 data.</p>
 <p>Here, I want you to create two subsets. Save each as a separate data
@@ -11947,17 +11962,21 @@ frame - you can choose what to name them.</p>
 with HIV.</p>
 <p>The second should include children &lt; 8 at baseline who are not
 living with HIV.</p>
+<p><strong>Please remember to use the composite_age variable that we
+created above!</strong></p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="do">### Create subset 1 </span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="do">### Create subset 2</span></span></code></pre></div>
 <p>I want you to compare 3 different summary statistics between these
 two subsets. You may choose to use any of the variables in the data to
 summarize. You could create some tables and report the proportions in
 each group, or investigate some of the numeric variables.</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="do">### Create subset 1 </span></span></code></pre></div>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="do">### Create subset 2</span></span></code></pre></div>
+<p><strong>Please include na.rm = TRUE in any numeric summary functions
+you choose to use! There are a small number of missing values, and the
+summary statistic will be NA if you do not include this.</strong></p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="do">### Summary statistics for subset 1</span></span></code></pre></div>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="do">### Summary statistics for subset 2</span></span></code></pre></div>
 <p>Provide commentary on how these two groups are the same or
 different.</p>
-</div>
 </div>
 </div>
 <div id="base-r" class="section level1">
