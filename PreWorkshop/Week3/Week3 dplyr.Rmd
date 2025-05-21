@@ -1,5 +1,5 @@
 ---
-title: "Manipulating data and creating figures"
+title: "Manipulating data"
 output:
   html_document:
     theme: cerulean 

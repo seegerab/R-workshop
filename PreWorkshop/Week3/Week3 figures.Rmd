@@ -24,13 +24,15 @@ We will use the `ggplot2` package to create figures. This is a package bundled i
 
 Please spend some time reading the overview and the cheat sheet here: https://ggplot2.tidyverse.org/
 
+Watch this short video: https://www.youtube.com/watch?v=FdVy57oGJuc
+
 Get inspired with the types of figures you can create in R here! Many of these are created using `ggplot2`: https://r-graph-gallery.com/
 
 # Getting set up
 
 To start, read in the data.
 
-This is the same data that we used in the dplyr assignment.
+This is the same data that we used in the `dplyr` assignment.
 
 ```{r warning = FALSE, message = FALSE}
 library(tidyverse)
@@ -267,6 +269,8 @@ Modify the figure you created in Try it! 1 to include HIV status as the fill.
 
 ```
 
+Hint: it may look a little strange because there appears to be a group that it missing their HIV status! This is because this variable was only captured for children, not adults. This is one of the important reasons to look at the data - it gives us clues into any missingness or trends.
+
 # Two numeric variables
 
 Sometimes, we want to look at the relationship between two quantitative variables.
@@ -315,7 +319,7 @@ Notice here we're using color rather than fill.
     - `geom_boxplot()`
     - `geom_histogram()`
 
-We can further build on this figure by including a trend line for each country using `geom_smooth()`.
+We can further build on this figure by including a trend line for each country using `geom_smooth()`. Inside the function, we include the method argument to be `lm` - this is telling R to plot a straight line. And, we can specific `se = FALSE`. This is telling R to just plot the line, without any shaded regions for the error.
 
 ```{r}
 ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = bf_heartrate, color = rf_country))+
@@ -329,13 +333,16 @@ ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = bf_heartrate, col
 
 # Try it! 3
 
-Create a scatter plot with weight on the x-axis and respiratory rate on the y-axis.
+Create a scatter plot with weight on the x-axis and heart rate on the y-axis.
 
 Include a trend line and color in the points by gender.
 
 ```{r}
 
 ```
+
+
+**Think about it** - do there appear to be any clusters in the data? If so - think about why that may be!
 
 # Two categorical variables
 
@@ -390,7 +397,7 @@ This looks great! We can see that most participants were enrolled in an outpatie
 
 # Try it! 4
 
-Create a side-by-side barplot of the gender and HIV variables. 
+Create a side-by-side barplot of the gender and country variables. 
 
 Again, make sure you change the x and y axis labels, as well as the title. 
 
