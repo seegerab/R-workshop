@@ -1,0 +1,419 @@
+---
+title: "Creating figures"
+output:
+  html_document:
+    theme: cerulean 
+    highlight: tango
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This will be a shorter assignment, focused solely on creating figures.
+
+We will use the `ggplot2` package to create figures. This is a package bundled in the `tidyverse` package (similar to how `dplyr` was also bundled in the same package).
+
+# Background information on ggplot2
+
+Please spend some time reading the overview and the cheat sheet here: https://ggplot2.tidyverse.org/
+
+Watch this short video: https://www.youtube.com/watch?v=FdVy57oGJuc
+
+Get inspired with the types of figures you can create in R here! Many of these are created using `ggplot2`: https://r-graph-gallery.com/
+
+# Getting set up
+
+To start, read in the data.
+
+This is the same data that we used in the `dplyr` assignment.
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)
+### Read in the data here
+### You will need to update the file path, but you should be a pro at this by now :) 
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Data Week 3.csv")
+```
+
+You should have learned a bit about `ggplot2` in the resources above. We're going to practice creating some of these figures using our own data. And, we're going to investigate the different types of figures we can create depending on the type of variables we're interested in.
+
+# One numeric variable
+
+To start, we're going to plot some numeric data. Let's suppose we are interested in looking at the distribution of the `bf_respiratoryrate` variable at baseline. 
+
+Often, the first step to creating figures in `ggplot2` is filtering to the correct subset of participants. We learned how to do this in the `dplyr` assignment!
+
+First, let's create a subset of just the baseline data. 
+
+```{r}
+baseline_subset <- data%>%
+  filter(redcap_event_name == "Baseline")
+```
+
+By plotting the distribution, we can investigate things like the shape of the distribution - is it symmetric? Is it skewed towards low values or high values? We can also investigate outliers - are there any points that are clearly outside the range of the other values? We can also evaluate the data’s spread by looking at the range.
+
+`ggplot2` is great because we can build upon figures to create complex visualizations. Here, let's start with a simple figure and then we can customize it to be more complex.
+
+All figures - regardless of the type of figure you're intending to create - start with this syntax:
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))
+```
+
+Let's break this down: 
+
+1. We are applying the `ggplot()` function. This starts the process of making a graph using the `ggplot2` package
+
+2. The `data` argument tells R what data we want plotted. In this case, because we want to use the baseline subset we created, we have **data = baseline_subset**.
+
+3. `aes()` is short for **aesthetics**. This tells R how to map your data to things on the plot, like in our case the x-axis. However, later we'll update this to include other aspects of the plot, like y-axis, color, and size.
+
+4. Inside of `aes()`, we included **x = bf_respiratoryrate**. This is telling R that we want the `bf_respiratoryrate` plotted on the x-axis.
+
+At this point, you should see a gray box with `bf_respiratoryrate` on the x-axis, but no data visualized yet.
+
+To visualize a single numeric variable like this, a **histogram** is a great choice. To add it, we can include:
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))+
+  geom_histogram()
+```
+
+The `+` sign connects the layers of your plot — in this case, adding a histogram to the base plot we started above.
+
+Figures should always have appropriate labels - let's update the x and y axis labels and the title.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))+
+  geom_histogram()+
+  labs(x = "Respiratory rate at baseline",
+       y = "Count",
+       title = "Histogram of respiratory rate at baseline for all Stool4TB participants")
+```
+
+This is looking better! Let's make a few modifications. With histograms, we can update the **bin-width**. The default histogram uses 30 bins. But, we can update this value. 
+
+The same data is being plotted, but you may notice that the shape of the figure changes a bit.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))+
+  geom_histogram(binwidth = 10)+
+  labs(x = "Respiratory rate at baseline",
+       y = "Count",
+       title = "Histogram of respiratory rate at baseline for all Stool4TB participants")
+```
+
+Finally, we can change the way this figure looks by changing the theme. You can investigate the different themes here: https://ggplot2.tidyverse.org/reference/ggtheme.html
+
+Let's change it to the "light" theme.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))+
+  geom_histogram(binwidth = 10)+
+  labs(x = "Respiratory rate at baseline",
+       y = "Count",
+       title = "Histogram of respiratory rate at baseline for all Stool4TB participants")+
+  theme_light()
+```
+
+This looks great! In addition to a histogram, there are some other ways to visualize a single numeric variable.
+
+We could construct a density plot or a boxplot. Another great thing about `ggplot2` is that it is easy to change the type of figure we're plotting. For example, I  updated the y-axis label and title and changed `geom_histogram(binwidth = 10)` to be `geom_density()` and I have this updated figure.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))+
+  geom_density()+
+  labs(x = "Respiratory rate at baseline",
+       y = "Density",
+       title = "Density plot of respiratory rate at baseline for all Stool4TB participants")+
+  theme_light()
+```
+
+Looking at the density plot and the histogram, we can see that the shape of the data is skewed to the right. Most of the data appears to be below a respiratory rate of 45, but there are a few higher values that extend the tail to the right.
+
+With a few modifications, we can also easily create a box plot.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate))+
+  geom_boxplot()+
+  labs(x = "Respiratory rate at baseline",
+       title = "Boxplot of respiratory rate at baseline for all Stool4TB participants")+
+  theme_light()
+```
+
+The `geom_boxplot` function expects a grouping variable, so we can set `y = ""` to remove the numbers on the y-axis.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = ""))+
+  geom_boxplot()+
+  labs(x = "Respiratory rate at baseline",
+       y = "",
+       title = "Boxplot of respiratory rate at baseline for all Stool4TB participants")+
+  theme_light()
+```
+
+We can also easily modify the figure to have the values on the y-axis rather than the x-axis.
+
+```{r}
+ggplot(data = baseline_subset, aes(y = bf_respiratoryrate, x = ""))+
+  geom_boxplot()+
+  labs(y = "Respiratory rate at baseline",
+       x = "",
+       title = "Boxplot of respiratory rate at baseline for all Stool4TB participants")+
+  theme_light()
+```
+
+How do we interpret this figure? 
+
+* The thick, middle line is the median. 
+
+Remember, we learned how to calculate this value! Let's double check this:
+
+```{r}
+median(baseline_subset$bf_respiratoryrate, na.rm = TRUE)
+```
+This lines up with the figure.
+
+* The width of the box is the IQR.
+
+We also learned the `IQR` function. Remember, `IQR` is the inner-quartile range. It is the middle 50% of the data - the 75th percentile minus the 25th percentile.
+
+```{r}
+IQR(baseline_subset$bf_respiratoryrate, na.rm = TRUE)
+```
+
+The calculated IQR is **7**. The top of the box appears to be approximately **26**, and the bottom of the box appears to be approximately **19**, which aligns with the calculated IQR of **7**.
+
+The lines extending from the box (called whiskers) represent the range of values excluding outliers.
+
+These whiskers typically end at **Q1 − 1.5 × IQR** and **Q3 + 1.5 × IQR**.
+
+Any values **less than Q1 − 1.5 × IQR** or **greater than Q3 + 1.5 × IQR** are shown as individual points (dots) and are considered **potential outliers**.
+
+# Try it! 1 
+
+Please create a box plot to visualize the `bf_heartrate` variable.
+
+Make sure to include correct labels for the axes and an informative title.
+
+```{r}
+
+```
+
+# One numeric variable, one categorical variable
+
+Often, we want to create figures that show a numeric variable by different categorical variables.
+
+For example - suppose we want to investigate the `bf_respiratoryrate` variable by `rf_gender`.
+
+Let's create a boxplot to investigate this! This is what we're starting with:
+
+```{r}
+ggplot(data = baseline_subset, aes(y = bf_respiratoryrate, x = ""))+
+  geom_boxplot()+
+  labs(y = "Respiratory rate at baseline",
+       x = "",
+       title = "Boxplot of respiratory rate at baseline for all Stool4TB participants")+
+  theme_light()
+```
+
+Rather than leaving the x-axis blank and not including a variable to be plotted on the x-axis, let's update this to include `rf_gender`.
+
+```{r}
+ggplot(data = baseline_subset, aes(y = bf_respiratoryrate, x = rf_gender))+
+  geom_boxplot()+
+  labs(y = "Respiratory rate at baseline",
+       x = "Gender",
+       title = "Boxplot of respiratory rate at baseline by gender for all Stool4TB participants")+
+  theme_light()
+```
+
+This looks fantastic! Let's include some color to better distinguish between the two groups.
+
+```{r}
+ggplot(data = baseline_subset, aes(y = bf_respiratoryrate, x = rf_gender, fill = rf_gender))+
+  geom_boxplot()+
+  labs(y = "Respiratory rate at baseline",
+       x = "Gender",
+       title = "Boxplot of respiratory rate at baseline by gender for all Stool4TB participants",
+       fill = "Gender")+
+  theme_light()
+```
+
+This uses the default colors. We can easily change the color palette to our own - by spelling out the name or using the hexcode for colors - using the `scale_fill_manual()` function.
+
+```{r}
+ggplot(data = baseline_subset, aes(y = bf_respiratoryrate, x = rf_gender, fill = rf_gender))+
+  geom_boxplot()+
+  labs(y = "Respiratory rate at baseline",
+       x = "Gender",
+       title = "Boxplot of respiratory rate at baseline by gender for all Stool4TB participants",
+       fill = "Gender")+
+  theme_light()+
+  scale_fill_manual(values = c("purple", "green"))
+```
+
+*Above and beyond* - if interested, learn more about colors in `ggplot2` here: https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/
+
+# Try it! 2 
+
+Modify the figure you created in Try it! 1 to include HIV status as the fill.
+
+```{r}
+
+```
+
+Hint: it may look a little strange because there appears to be a group that it missing their HIV status! This is because this variable was only captured for children, not adults. This is one of the important reasons to look at the data - it gives us clues into any missingness or trends.
+
+# Two numeric variables
+
+Sometimes, we want to look at the relationship between two quantitative variables.
+
+To do this, we can create a scatter plot.
+
+Suppose we want to investigate the relationship between `bf_respiratoryrate` and `bf_heartrate`. We can do this using `geom_point()`!
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = bf_heartrate))+
+  geom_point()
+```
+
+Let's build on this by including clear labels.
+ 
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = bf_heartrate))+
+  geom_point()+
+  labs(x = "Respiratory rate",
+       y = "Heart rate",
+       title = "Scatter plot of heart rate by at baseline by respiratory rate for all Stool4TB participants")
+```
+
+We can build on this by including a color by a categorical variable! Let's color in the points by `rf_country`
+ 
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = bf_heartrate, color = rf_country))+
+  geom_point()+
+  labs(x = "Respiratory rate",
+       y = "Heart rate",
+       title = "Scatter plot of heart rate by at baseline by respiratory rate for all Stool4TB participants",
+       color = "Country")
+```
+
+Notice here we're using color rather than fill. 
+
+- `color` is for **outlines**
+  - Used to change the **border** or **line color** of shapes.
+  - Applies to things like:
+    - `geom_point()`
+    
+- `fill` is for **interiors**
+  - Used to change the **inside color** of filled shapes.
+  - Applies to things like:
+    - `geom_bar()`
+    - `geom_boxplot()`
+    - `geom_histogram()`
+
+We can further build on this figure by including a trend line for each country using `geom_smooth()`. Inside the function, we include the method argument to be `lm` - this is telling R to plot a straight line. And, we can specific `se = FALSE`. This is telling R to just plot the line, without any shaded regions for the error.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = bf_respiratoryrate, y = bf_heartrate, color = rf_country))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(x = "Respiratory rate",
+       y = "Heart rate",
+       title = "Scatter plot of heart rate by at baseline by respiratory rate for all Stool4TB participants",
+       color = "Country")
+```
+
+# Try it! 3
+
+Create a scatter plot with weight on the x-axis and heart rate on the y-axis.
+
+Include a trend line and color in the points by gender.
+
+```{r}
+
+```
+
+
+**Think about it** - do there appear to be any clusters in the data? If so - think about why that may be!
+
+# Two categorical variables
+
+Lastly, we can plot the distribution of two categorical variables.
+
+Suppose we are interested in the relationship between country and enrollment location. We can make side-by-side barplots to investigate this.
+
+```{r}
+ggplot(data = baseline_subset, aes(x = rf_country, fill = rf_enrollocation))+
+  geom_bar()+
+  labs(x = "Country",
+       y = "Count",
+       title = "Bar plot of enrollment location by country for all Stool4TB participants",
+       fill = "Enrollment location")
+```
+
+There are some things we can improve in this. First, it appears that some participants at baseline do not have an enrollment location reported.
+
+As a reminder from the `dplyr` assignment, here is how we can filter to see who is missing this value:
+
+```{r}
+baseline_subset%>%
+  filter(rf_enrollocation == "")%>%
+  select(record_id, rf_country, rf_enrollocation)
+```
+
+It appears 2 participants from Mozambique are missing this information.
+
+Let's remove them from the figure by filtering in the `data` argument.
+
+```{r}
+ggplot(data = baseline_subset%>%filter(rf_enrollocation != ""), aes(x = rf_country, fill = rf_enrollocation))+
+  geom_bar()+
+  labs(x = "Country",
+       y = "Count",
+       title = "Bar plot of enrollment location by country for all Stool4TB participants",
+       fill = "Enrollment location")
+```
+
+Next, it's kind of hard to evalutate the number of participants in each enrollment location group because this barplot is stacked. Let's convert it to be a side-by-side barplot:
+
+```{r}
+ggplot(data = baseline_subset%>%filter(rf_enrollocation != ""), aes(x = rf_country, fill = rf_enrollocation))+
+  geom_bar(position = "dodge")+
+  labs(x = "Country",
+       y = "Count",
+       title = "Bar plot of enrollment location by country for all Stool4TB participants",
+       fill = "Enrollment location")
+```
+
+This looks great! We can see that most participants were enrolled in an outpatient setting, regardless of country.
+
+# Try it! 4
+
+Create a side-by-side barplot of the gender and country variables. 
+
+Again, make sure you change the x and y axis labels, as well as the title. 
+
+```{r}
+
+```
+
+
+# A final note
+
+This is just scratching the surface of the figures `ggplot2` is capable of making! Through `ggplot2`, you can use R to make essentially any figure you can think of, including maps. 
+
+The best way to learn `ggplot2` is to practice. If you want extra, optional practice - create a figure using any of these variables. It could be a figure we did in this assignment or one that you read about. Make it as fancy as you can - use Google or consult the references to see if you can find additional ways to customize the figure.
+
+Email the figure to Abigail and it may be featured in the in-person workshop!
+
+```{r}
+### Create the optional figure here
+```
