@@ -2,9 +2,9 @@
 
 This week and next will be broken into two assignments.
 
-The first will cover how to manipulate data using a package called dplyr and will be released on Monday, May 16.
+The first will cover how to manipulate data using a package called dplyr and will be released on Monday, May 19.
 
-The second will cover how to create figures using a package called ggplot2 and will be released on Wednesday, May 18.
+The second will cover how to create figures using a package called ggplot2 and will be released on Wednesday, May 21.
 
 The deadline for both Friday, May 30 - the day of our workshop at the Stool4TB meeting.
 
