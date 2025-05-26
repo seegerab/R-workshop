@@ -17,18 +17,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Notes for meeting with Zanele
-
-# Abigail to-do
-
-Include info on paired and one-sample t-test in the extra section
-
 # Set up
 
 First, read in the data.
 
 ```{r}
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
+colnames(data)[colnames(data) == "X...record_id"] <- "record_id"
 ```
 
 We'll use `ggplot2` and `dplyr` today. We need to read in the `tidyverse` package (remember, `ggplot2` and `dplyr` are bundled in the `tidyverse` package) to use them.
@@ -46,6 +41,13 @@ data <- data%>%
   mutate(date_diff = time_length(interval(rf_dob, rf_enroll_date), unit = "years"))%>%
   mutate(date_diff = floor(date_diff))%>%
   mutate(age = ifelse(is.na(date_diff), rf_age, date_diff))
+```
+
+We are just using the baseline data, so filter to the baseline time point.
+
+```{r}
+data <- data%>%
+  filter(redcap_event_name == "Baseline")
 ```
 
 # t-test
@@ -71,19 +73,16 @@ First, let's create some subsets.
 ```{r}
 ### Create a subset for children
 children_subset <- data%>%
-  filter(redcap_event_name == "Baseline")%>%
   filter(age <= 8)%>%
   ### Remove the 4 participants who are missing this variable
   filter(!is.na(bf_respiratoryrate))
 ### Create subsets by gender
 female_subset <- data%>%
-  filter(redcap_event_name == "Baseline")%>%
   filter(rf_gender == "Female")%>%
   filter(age <= 8)%>%
   ### There are 3 NA values; remove them here
   filter(!is.na(bf_respiratoryrate))
 male_subset <- data%>%
-  filter(redcap_event_name == "Baseline")%>%
   filter(rf_gender == "Male")%>%
   filter(age <= 8)%>%
   ### There is 1 NA value; remove it here
@@ -137,29 +136,120 @@ This test is non-parametric, meaning it does **not assume a normal distribution*
 wilcox.test(data = children_subset,
             bf_respiratoryrate ~ rf_gender)
 ```
-# Step 3. Interpret the results
+## Step 3. Interpret the results
 
-The p-value is 0.2964. This is greater than 0.05. Therefore, we do **not** have evidence to reject the null hypothesis that the distribution of the two groups is the same. We cannot conclude a difference in respiratory rates between genders. 
+The p-value is 0.3116. This is greater than 0.05. Therefore, we do **not** have evidence to reject the null hypothesis that the distribution of the two groups is the same. We cannot conclude a difference in respiratory rates between genders. 
 
 # Chi-squared test
 
-Let's consider just people living with HIV. Suppose we want to see if there's an association between having a CD4 count less than 200 and the country the participant was enrolled in.
+Let's consider just people living with HIV. Suppose we want to see if there's an association between having a CD4 count <= 200 and age. 
 
-First, let's create a subset of participants living with HIV. And, create a variable from the CD4 count that is binary - "<=200" and ">200".
+Chi-squared tests require two categorical variables. Right now, CD4 count and age are both numeric. Let's create two new categorical variables.
+
+To start, create a variable for age that is categorical. 
 
 ```{r}
 data <- data%>%
-  ### Filter to just the baseline data
-  filter(redcap_event_name == "Baseline")%>%
-  ### Filter to all people living with HIV
-  
-  
+   ### Create a binary variable from the age variable
+  mutate(age_cat = ifelse(age <= 8, "0-8", "15 and older"))
 ```
 
-Let's do a quick check - are any people living with HIV missing the CD4 count?
+Next, create a subset of just people living with HIV. 
 
 ```{r}
+### First, create a subset of just people with HIV
+table(data$age_cat, data$bf_hivstatus)
+```
+Note that the `bf_hivstatus` variable is just for the 0-8 age category. All adults are living with HIV, however they have a blank value ("") for this variable. Let's populate the missing values here with "Positive".
 
+```{r}
+data <- data%>%
+  ### Create a new variable, "hiv_status"
+  
+  ### When the participant is in the 15 and older category AND the HIV status is missing, the value is positive
+  
+  mutate(hiv_status = case_when(age_cat == "15 and older" & bf_hivstatus == "" ~ "Positive",
+  ### When that condition is NOT met (so for all the participants in the 0-8 category), retain the value of the bf_hivstatus variable
+                                TRUE ~ bf_hivstatus))
+```
+
+
+```{r}
+table(data$hiv_status, data$bf_hivstatus, exclude = NULL)%>%addmargins()
+```
+The **rows** are the newly created variable, `hiv_status`. The **columns** are the original variable, `bf_hivstatus`. So, 707 values that were originally missing ("") are now "Positive". We still have 1 missing the HIV status, though they are a child.
+
+```{r}
+### Filter to all people living with HIV
+hiv_subset <- data%>%
+  filter(hiv_status == "Positive")
+```
+
+Let's do a quick check - are any people living with HIV missing the CD4 count? We're going to have to do something with this variable. When we use the `head()` function to take a look at the first few rows of the data, we can see that there is a variable for CD4 result performed at the visit (`bf_cd4result`) and CD4 from the previous six months (`bf_recentcd4`).
+
+```{r}
+hiv_subset%>%
+  select(record_id, bf_cd4result, bf_recentcd4)%>%
+  head()
+```
+
+Let's create a new variable - `composite_cd4` - that is the CD4 from the current visit if the data is available, and the CD4 from the past 6 months if there is no data from the current visit.
+
+First, let's ensure that the data is numeric. Taking a look, it appears that this variable is a character data type.
+
+```{r}
+str(hiv_subset$bf_cd4result)
+str(hiv_subset$bf_recentcd4)
+```
+And, taking a look, it appears that some values include characters. When we try and convert to a numeric, anything with a character will be NA, even if we may want to retain any relevant information.
+
+```{r}
+unique(hiv_subset$bf_recentcd4) ### This looks okay
+unique(hiv_subset$bf_cd4result) ### I'm seeing "discarded" here
+### Convert "discarded" to ""
+hiv_subset$bf_cd4result[hiv_subset$bf_cd4result == "discarded"] <- ""
+```
+
+```{r}
+### Convert each of the CD4 variables to be a numeric data type
+hiv_subset <- hiv_subset%>%
+  mutate(bf_cd4result = as.numeric(bf_cd4result))%>%
+  mutate(bf_recentcd4 = as.numeric(bf_recentcd4))
+### Anything that was originally "" will be converted to NA - in our case, that is okay 
+```
+
+
+```{r}
+hiv_subset <- hiv_subset%>%
+  mutate(composite_cd4 = ifelse(is.na(bf_cd4result), bf_recentcd4, bf_cd4result))
+```
+
+```{r}
+### Let's take another peek at the data
+hiv_subset%>%
+  select(record_id, composite_cd4, bf_recentcd4, bf_cd4result)%>%
+  head() ### This looks good!
+```
+
+Are any participants living with HIV still missing CD4 count?
+
+```{r}
+hiv_subset%>%
+  filter(is.na(composite_cd4))%>%
+  nrow() ### 96 participants are missing CD4
+
+### For our purposes, filter to exclude these participants in order to compare CD4 to age 
+hiv_subset <- hiv_subset%>%
+  filter(!is.na(composite_cd4))
+
+### Create a categorical variable for CD4 
+hiv_subset <- hiv_subset%>%
+  mutate(cd4_category = ifelse(composite_cd4 <= 200, "CD4 <= 200", "CD4 > 200"))
+```
+
+```{r}
+table(hiv_subset$age_cat, hiv_subset$cd4_category, exclude = NULL)%>%
+  addmargins()
 ```
 
 ## Step 1. Check the assumptions
@@ -172,10 +262,122 @@ The formula for this is: $\frac{\text{Row total} * \text{Column total}}{\text{To
 
 Let's do these calculations!
 
+CD4 <= 200 and 0-8:
+
+```{r}
+56 * 87 / 693
+```
+
+CD4 <= 200 and 15 and older:
+
+```{r}
+637 * 87 / 693
+```
+CD4 > 200 and 0-8:
+
+```{r}
+56 * 606 / 693
+```
+
+CD4 > 200 and 15 and older:
+
+```{r}
+637 * 606 / 693
+```
+
+All of the **expected values** are greater than 5, so the assumptions are met and we can proceed with the chi-squared test. 
+
 ## Step 2. Conduct the test 
 
+We use the `chisq.test()` function to conduct a chi-squared test.
+
+As an argument to the function, we include a table with the categorical CD4 variable, as well as the categorical age variable.
+
+**It is super important that we don't include addmargins() to the table! This will give the incorrect result**
+
+```{r}
+chisq.test(table(hiv_subset$cd4_category, hiv_subset$age_cat))
+```
+
+## Step 3. Interpret the results 
+
+The p-value is 0.05668. This is super close to being less than 0.05, however it is still greater than 0.05. Therefore, we do not have evidence to reject the null hypothesis that there is no association between age and CD4.
+
+# Correlation
+
+Let's investigate the correlation between weight and height among adults.
+
+First, create an adult subset.
+
+```{r}
+adult_subset <- data%>%
+  filter(age_cat == "15 and older")
+```
+
+## Step 1. Check the assumptions
+
+Let's check that each variable is normally distributed. 
+
+First, is either weight or height missing for any participant?
+
+```{r}
+### Participants missing weight
+adult_subset%>%
+  filter(is.na(bf_weight))%>%
+  select(record_id, bf_weight)
+### Participants missing height
+adult_subset%>%
+  filter(is.na(bf_height))%>%
+  select(record_id, bf_height)
+
+### 1 participant is missing weight. Remove the participant in order to calculate the correlation
+adult_subset <- adult_subset%>%
+  filter(!is.na(bf_weight))
+```
 
 
+
+```{r}
+ggplot(data = adult_subset, aes(x = bf_height))+
+  geom_histogram()+
+  labs(x = "Height (cm)",
+       y = "Count",
+       title = "Histogram of height for all adults")
+
+ggplot(data = adult_subset, aes(x = bf_weight))+
+  geom_histogram()+
+  labs(x = "Weight (kg)",
+       y = "Count",
+       title = "Histogram of weight for all adults")
+```
+
+The weight variable appears right-skewed, with most participants weighing less than 100 kg but a few outliers above 100 kg.
+
+The height variable appears left-skewed, with most participants 150 cm or taller, but some values below 100 cm.
+
+Due to the non-normal distribution and presence of potential outliers, Spearman’s rank correlation is more appropriate than Pearson’s correlation, as it does not assume normality and is less sensitive to outliers.
+
+## Step 2. Conduct the test 
+
+First, let's visualize the relationship between the two variables. 
+
+```{r}
+ggplot(data = adult_subset, aes(x = bf_weight, y = bf_height))+
+  geom_point()+
+  labs(x = "Weight (kg)",
+       y = "Height (cm)",
+       title = "Scatterplot of weight by height for all adults")
+```
+
+Looking at the scatter plot, there is not really a clear relationship between height and weight among the adults. 
+
+```{r}
+cor(adult_subset$bf_weight, adult_subset$bf_height, method = "spearman")
+```
+
+## Step 3. Interpret the results 
+
+Spearman's correlation coefficient can range from -1 to 1. 0.194847 indicates a weak, positive relationship - which aligns with scatter plot we made.
 
 # Notes
 
@@ -244,11 +446,11 @@ How do we interpret these results? The null hypothesis for this test is that the
 
 More information on the Levene test can be found here: https://www.sthda.com/english/wiki/compare-multiple-sample-variances-in-r
 
-## t.test
+### t.test() function
 
 In the above example, we concluded that the data was not normally distributed, so we moved forward with a Wilcoxon rank-sum test.
 
-However, this is a resource to use if the assumptions are met to use a t-test (the "2-sample t-test" section):
+However, this is a resource to use if the assumptions are met to use a t-test (the "2-sample t-test" section). This is also helpful for more information on a 1-sample t-test:
 
 https://bookdown.org/ndphillips/YaRrr/t-test-t-test.html
 
@@ -256,5 +458,27 @@ https://bookdown.org/ndphillips/YaRrr/t-test-t-test.html
 ### You can also look at the help documentation for this function
 ?t.test()
 ```
+
+## Chi-squared
+
+When we checked the assumptions for the test above, we found that each of the expected counts were greater than or equal to 5 so we moved forward with the chi-squared test.
+
+However, if we would have found that any of the expected counts were less than 5, the assumptions for the test would not have been met and we would have proceeded with Fisher's exact test.
+
+Here is more information on Fisher's exact test if you ever need to use this in the future.
+
+```{r eval = FALSE}
+?fisher.test()
+```
+
+## Correlation
+
+One argument of the `cor()` function is `method`.
+
+By looking at the results of `?cor()`, we can see that there are 3 methods - pearson, kendall, and spearman.
+
+We used spearman above, because the assumptions for using the pearson method were not met. However, in the future, you can change `method = "pearson"` if the assumptions for performing the test are met. 
+
+## ANOVA 
 
 
