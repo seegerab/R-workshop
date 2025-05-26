@@ -54,7 +54,7 @@ data <- data%>%
 
 Today, we're going to use t-tests to compare two independent groups. However, t-tests can also be used for paired data. 
 
-Let's investigate whether there is a **statistically significant** different in respiratory rate at baseline by gender, among children <= 8.
+Let's investigate whether there is a **statistically significant difference**  in respiratory rate at baseline by gender among children <= 8.
 
 There are some assumptions that we need to check in order to conduct this test.
 
@@ -154,7 +154,7 @@ data <- data%>%
   mutate(age_cat = ifelse(age <= 8, "0-8", "15 and older"))
 ```
 
-Next, create a subset of just people living with HIV. 
+In order to create a subset of just people living with HIV, first investigate the `bf_hivstatus` variable. 
 
 ```{r}
 ### First, create a subset of just people with HIV
@@ -379,6 +379,97 @@ cor(adult_subset$bf_weight, adult_subset$bf_height, method = "spearman")
 
 Spearman's correlation coefficient can range from -1 to 1. 0.194847 indicates a weak, positive relationship - which aligns with scatter plot we made.
 
+# ANOVA 
+
+The last test we're going to focus on is the ANOVA test! 
+
+The ANOVA test is used to compare the mean of more than 2 groups.
+
+As an exploration, let's investigate whether there are any differences in the CD4 count between countries, using the same `hiv_subset` that we created for the chi-squared test.
+
+## Step 1. Check the assumptions
+
+An assumption of the ANOVA is that the data within each group (or category) are approximately normally distributed.
+
+To check this, let’s split our data into three subsets — one for each country — and look at their distributions. This helps us see if the normality assumption is reasonable before conducting the ANOVA.
+
+```{r}
+### Create subsets for each country
+eswatini_subset <- hiv_subset%>%
+  filter(rf_country == "Eswatini")
+mozambique_subset <- hiv_subset%>%
+  filter(rf_country == "Mozambique")
+uganda_subset <- hiv_subset%>%
+  filter(rf_country == "Uganda")
+```
+
+```{r}
+### Eswatini
+ggplot(data = eswatini_subset, aes(x = composite_cd4))+
+  geom_histogram()+
+  labs(x = "CD4",
+       y = "Count",
+       title = "Histogram of CD4, among participants living with HIV in Eswatini",
+       subtitle = "In those with an available CD4 value")
+### Uganda
+ggplot(data = uganda_subset, aes(x = composite_cd4))+
+  geom_histogram()+
+  labs(x = "CD4",
+       y = "Count",
+       title = "Histogram of CD4, among participants living with HIV in Uganda",
+       subtitle = "In those with an available CD4 value")
+### Mozambique
+ggplot(data = mozambique_subset, aes(x = composite_cd4))+
+  geom_histogram()+
+  labs(x = "CD4",
+       y = "Count",
+       title = "Histogram of CD4, among participants living with HIV in Mozambique",
+       subtitle = "In those with an available CD4 value")
+```
+
+All of the distributions appear to be skewed to the right. Most participants have a CD4 value less than 1000, however some exceed 2000.
+
+Therefore, the assumption of normality is **not met** and we will proceed with the Kruskal-Wallis test.
+
+We could also create side-by-side boxplots to visualize this data. 
+
+```{r}
+ggplot(data = hiv_subset, aes(x = rf_country, y = composite_cd4, fill = rf_country))+
+  geom_boxplot()+
+  labs(x = "Country",
+       y = "CD4",
+       title = "Boxplot of CD4 by country among participants living with HIV",
+       subtitle = "In those with an available CD4 value",
+       fill = "Country")
+```
+And, we may be interested in calculating the median and IQR of the CD4 values for each group.
+
+```{r}
+### Median
+hiv_subset%>%
+  group_by(rf_country)%>%
+  summarize(median_cd4 = median(composite_cd4))
+### IQR 
+hiv_subset%>%
+  group_by(rf_country)%>%
+  summarize(iqr_cd4 = IQR(composite_cd4))
+```
+
+It appears that the median CD4 value for Mozambique is lower than the other two sites. And, Uganda has the higher inner-quartile range among the three sites. 
+
+## Step 2. Conduct the test
+
+```{r}
+kruskal.test(data = hiv_subset,
+             composite_cd4 ~ rf_country)
+```
+
+## Step 3. Interpret the results
+
+The Kruskal-Wallis test indicated a statistically significant difference in CD4 values between sites (p < 0.05). This suggests that at least one site differs in CD4 distribution from the others
+
+One important note is that both the ANOVA and the Kruskal-Wallis test can indicate whether there are differences between the groups, though not what **specific** groups are different. Please refer to the notes section for how to determine which groups exactly are different. 
+
 # Notes
 
 We do not have time to cover every detail outlined in the presentation. Please refer to this section for more details. 
@@ -477,8 +568,22 @@ One argument of the `cor()` function is `method`.
 
 By looking at the results of `?cor()`, we can see that there are 3 methods - pearson, kendall, and spearman.
 
-We used spearman above, because the assumptions for using the pearson method were not met. However, in the future, you can change `method = "pearson"` if the assumptions for performing the test are met. 
+We used spearman above, because the assumptions for using the pearson method were not met. However, in the future, you can change `method = "pearson"` if the assumptions for performing the test are met.
 
-## ANOVA 
+The kendall method is similar to the spearman method, however it is more robust to smaller sample sizes. 
+
+## ANOVA
+
+If the assumptions are met to conduct an ANOVA, rather than a Kruskal-Wallis test, the following function can be used:
+
+```{r eval = FALSE }
+?aov()
+```
+
+Determining the differences between groups after an ANOVA or Kruskal-Wallis test has been conducted is called **post-hoc analysis**.
+
+For an ANOVA test, here is a good resource: https://www.r-bloggers.com/2021/08/how-to-perform-tukey-hsd-test-in-r/
+
+For the Kruskal-Wallis test, here is a good resource: https://www.statology.org/dunns-test-in-r/
 
 
