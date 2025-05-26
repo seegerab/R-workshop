@@ -37,7 +37,7 @@ library(tidyverse)
 library(lubridate)
 ```
 
-We are interested in the stool Xpert Ultra trace results. First, lets filter to all participants who have a positive stool Xpert Ultra result.
+We are interested in the stool Xpert Ultra trace results. First, lets filter to all participants who have a positive stool Xpert Ultra result. And, create a binary variable with whether or not the stool Xpert Ultra result is trace or not. 
 
 ```{r}
 data <- data%>%
@@ -188,14 +188,6 @@ table(data$age_cat, data$stool_semiquant_bin, exclude = NULL)%>%
 ```
 ```{r}
 ggplot(data = data, aes(x = age_cat, fill = stool_semiquant_bin))+
-  geom_bar(position = "dodge")+
-  labs(x = "Age category",
-       y = "Count",
-       fill = "Stool Xpert Ultra Semi-Quantitative Bin",
-       title = "Side-by-side Barplot of Stool Xpert Ultra Semi-Quantitative bin by Age",
-       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
-
-ggplot(data = data, aes(x = age_cat, fill = stool_semiquant_bin))+
   geom_bar()+
   labs(x = "Age category",
        y = "Count",
@@ -223,10 +215,12 @@ So far, we've just looked at the relationship of each variable to our outcome. H
 
 ```{r}
 library(GGally)
-ggpairs(data%>%select(bf_weight, bmi, age))
+ggpairs(data%>%select(bf_weight, bmi, bf_height))
 ```
 
 ```{r}
 ```
+
+# Build the logistic regression model
 
 

@@ -1,13 +1,27 @@
 ---
 title: "Workshop part 1"
-author: "Abigail Seeger"
-date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document:
+    theme: cerulean 
+    highlight: tango
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Notes for meeting with Zanele
+
+# Abigail to-do
+
+Include info on paired and one-sample t-test in the extra section
 
 # Set up
 
@@ -15,6 +29,12 @@ First, read in the data.
 
 ```{r}
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
+```
+
+We'll use `ggplot2` and `dplyr` today. We need to read in the `tidyverse` package (remember, `ggplot2` and `dplyr` are bundled in the `tidyverse` package) to use them.
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)
 ```
 
 ```{r}
@@ -28,36 +48,144 @@ data <- data%>%
   mutate(age = ifelse(is.na(date_diff), rf_age, date_diff))
 ```
 
-We'll use `ggplot2` and `dplyr` today. We need to read in the `tidyverse` package (remember, `ggplot2` and `dplyr` are bundled in the `tidyverse` package) to use them.
-
-```{r}
-library(tidyverse)
-```
-
-
 # t-test
 
-Today, we're going to use t-tests to compare two independent groups.
+Today, we're going to use t-tests to compare two independent groups. However, t-tests can also be used for paired data. 
 
-Let's investigate whether there is a **statistically significant** different in heart rate at baseline by gender.
+Let's investigate whether there is a **statistically significant** different in respiratory rate at baseline by gender, among children <= 8.
 
 There are some assumptions that we need to check in order to conduct this test.
 
-## Step 1. 
+## Step 1. Check the assumptions
 
 Is the data normally distributed? 
 
-We need to check that **each group** (the heart rate for males, and the heart rate for females) is normally distributed.
+We need to check that in each group **each group** (males and females <= 8) the respiratory rate is normally distributed.
 
 To check this, we are going to plot a histogram for each group.
 
-We could also check this using the Shapiro-Wilk test.
+We could also check this using the Shapiro-Wilk test; please see steps for this in the "Notes" section below.
+
+First, let's create some subsets. 
+
+```{r}
+### Create a subset for children
+children_subset <- data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  filter(age <= 8)%>%
+  ### Remove the 4 participants who are missing this variable
+  filter(!is.na(bf_respiratoryrate))
+### Create subsets by gender
+female_subset <- data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  filter(rf_gender == "Female")%>%
+  filter(age <= 8)%>%
+  ### There are 3 NA values; remove them here
+  filter(!is.na(bf_respiratoryrate))
+male_subset <- data%>%
+  filter(redcap_event_name == "Baseline")%>%
+  filter(rf_gender == "Male")%>%
+  filter(age <= 8)%>%
+  ### There is 1 NA value; remove it here
+  filter(!is.na(bf_respiratoryrate))
+```
+
+Use `ggplot2()` to create a histogram of the `bf_respiratoryrate` variable for each subset. 
+
+```{r}
+### Females
+ggplot(data = female_subset, aes(x = bf_respiratoryrate))+
+  geom_histogram()+
+  labs(x = "Respiratory rate",
+       y = "Count",
+       title = "Histogram of respiratory rate for females <= 8")
+### Males
+ggplot(data = male_subset, aes(x = bf_respiratoryrate))+
+  geom_histogram()+
+  labs(x = "Respiratory rate",
+       y = "Count",
+       title = "Histogram of respiratory rate for males <= 8")
+```
+
+Each of these distributions are **skewed to the right**. Most respiratory rates are less than 50, however some participants have respiratory rates that approach 100.
+
+The assumptions of normality is **not met**. If we follow the flow-chart that Zanele shared, this means that we need to conduct a **Wilcoxon test** rather than a **t-test**. Please reference the "Notes" section for code for a t-test.
+
+## Step 2. Conduct the test
+
+We are going to use the `wilcox.test()` function. This function takes `data` as an argument.
+
+We're going to use the *children_subset* as the data. Remember, this is the subset we created that is children <=8 at baseline who are not missing the `bf_respiratoryrate` variable.
+
+After the data argument, we specify `bf_respiratoryrate ~ rf_gender`. The numeric variable always goes first, followed by the tilde (~) symbol, followed by the binary categorical variable. This can be read as "compare the variable for respiratory rate **by** gender".
+
+What's going on behind the scenes here?
+
+The function:
+
+1. **Splits** the `bf_respiratoryrate` values into two groups based on `rf_gender`  
+
+2. **Ranks** all the values (from lowest to highest), ignoring group membership  
+
+3. **Compares** the sum of ranks between the two groups  
+
+4. Returns a **p-value** that tests whether the distributions of `bf_respiratoryrate` differ between the two `rf_gender` groups  
+
+This test is non-parametric, meaning it does **not assume a normal distribution** of the outcome variable. It's useful when the outcome is skewed, ordinal, or contains outliers.
+
+```{r}
+wilcox.test(data = children_subset,
+            bf_respiratoryrate ~ rf_gender)
+```
+# Step 3. Interpret the results
+
+The p-value is 0.2964. This is greater than 0.05. Therefore, we do **not** have evidence to reject the null hypothesis that the distribution of the two groups is the same. We cannot conclude a difference in respiratory rates between genders. 
+
+# Chi-squared test
+
+Let's consider just people living with HIV. Suppose we want to see if there's an association between having a CD4 count less than 200 and the country the participant was enrolled in.
+
+First, let's create a subset of participants living with HIV. And, create a variable from the CD4 count that is binary - "<=200" and ">200".
+
+```{r}
+data <- data%>%
+  ### Filter to just the baseline data
+  filter(redcap_event_name == "Baseline")%>%
+  ### Filter to all people living with HIV
+  
+  
+```
+
+Let's do a quick check - are any people living with HIV missing the CD4 count?
+
+```{r}
+
+```
+
+## Step 1. Check the assumptions
+
+The assumption for the chi-squared test is that the **expected counts** are all greater than or equal to 5.
+
+We need to calculate the expected counts for each cell in the table, and each needs to be >= 5 in order for the assumption to be met. 
+
+The formula for this is: $\frac{\text{Row total} * \text{Column total}}{\text{Total number of participants}}$
+
+Let's do these calculations!
+
+## Step 2. Conduct the test 
+
+
+
 
 # Notes
 
+We do not have time to cover every detail outlined in the presentation. Please refer to this section for more details. 
+
+## t-test 
+
 Remember that for a t-test, we need to check a few assumptions. We did that above by looking at histograms of the data. However, there are some tests we conduct to investigate whether the data for each group is normal and has equal variances.
 
-## Normality
+### Normality
 
 To test normality, we can use the `shapiro.test()` function.
 
@@ -66,10 +194,6 @@ As an example, we investigated the normality of respiratory rate by gender for c
 We need to conduct the Shapiro-Wilk test for each group - males and females. Let's start by creating subsets for each group.
 
 ```{r}
-### Create a subset for children
-children_subset <- data%>%
-  filter(redcap_event_name == "Baseline")%>%
-  filter(age <= 8)
 ### Create subsets by gender
 female_subset <- data%>%
   filter(redcap_event_name == "Baseline")%>%
@@ -94,13 +218,13 @@ Here is a reference on this test and more explanation on the code: https://www.s
 
 For a lot more detail on this test - and also on qqplots, another way we can assess normality - please reference this video: https://www.youtube.com/watch?v=eh9eYLBecWk
 
-## Equal variances
+### Equal variances
 
 Another assumption for the t-test is that the two groups have equal variances.
 
 To check this, you can use the Levene test. The code for the Levene test is in the `car` package. Let's install the package (remember, we just need to do this once) and use the `library()` function to read in the package.
 
-```{r}
+```{r warning = FALSE, message = FALSE}
 ### install.packages("car")
 library(car)
 ```
@@ -119,5 +243,18 @@ leveneTest(bf_respiratoryrate ~ rf_gender,
 How do we interpret these results? The null hypothesis for this test is that the variance of the two groups are equal. Our p-value is **greater than 0.05**. Therefore, we have no evidence to reject the null hypothesis that the variance of the two groups are equal. 
 
 More information on the Levene test can be found here: https://www.sthda.com/english/wiki/compare-multiple-sample-variances-in-r
+
+## t.test
+
+In the above example, we concluded that the data was not normally distributed, so we moved forward with a Wilcoxon rank-sum test.
+
+However, this is a resource to use if the assumptions are met to use a t-test (the "2-sample t-test" section):
+
+https://bookdown.org/ndphillips/YaRrr/t-test-t-test.html
+
+```{r eval = FALSE}
+### You can also look at the help documentation for this function
+?t.test()
+```
 
 
