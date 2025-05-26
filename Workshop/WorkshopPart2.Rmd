@@ -1,0 +1,232 @@
+---
+title: "Workshop part 2"
+output:
+  html_document:
+    theme: cerulean 
+    highlight: tango
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For the second half of the workshop, we're going to be working on a bigger piece of analysis. The goal is to turn this in to a manuscript.
+
+# Research question
+
+What are the clinical traits associated with having a stool Xpert Ultra trace result?
+
+# Set-up
+
+Start by reading in the data.
+
+```{r}
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
+```
+
+We're going to be using the `dplyr` and `ggplot2` packages today.
+
+```{r warning = FALSE, message = FALSE }
+library(tidyverse)
+library(lubridate)
+```
+
+We are interested in the stool Xpert Ultra trace results. First, lets filter to all participants who have a positive stool Xpert Ultra result.
+
+```{r}
+data <- data%>%
+  ### Filter to all participants at baseline
+  filter(redcap_event_name == "Baseline")%>%
+  ### Filter to those with a positive stool Xpert Ultra result
+  filter(pe_stoolxpertresult == "MTB Detected")%>%
+  ### Create a variable that is "Trace" if the semi-quantitative value is "Trace" and "Not Trace" otherwise
+  mutate(stool_semiquant_bin = ifelse(pe_stoolsemiresult == "Trace", "Trace", "Not Trace"))
+```
+
+# Where to start
+
+We are going to build a **logistic regression model**.
+
+Logistic regression models are used to predict an outcome with **2 levels**. In our case, we want to predict whether a stool Xpert Ultra will be trace or not. 
+
+We are going to use other variables in the data to make an informed prediction.
+
+# Look at the data
+
+When doing an analysis like this, the first - and a very important - step is to look at the data. By creating tables and visualizations, we can investigate:
+
+1. Is there any missing data?
+
+2. Are there any outliers?
+
+3. What are some of the trends and relationships we see in the data? Are any of the predictors `collinear` - that is, are any of them strongly correlated with each other?
+
+This will inform us both if there is any data cleaning that still needs to be done, as well as the variables we ultimately include in the model. 
+
+```{r}
+### How many participants does this include?
+nrow(data)
+### What does our outcome - the newly created variable - look like?
+table(data$stool_semiquant_bin, exclude = NULL)%>%
+  addmargins()
+```
+
+There are 89 participants in the data. Of these, 57 have a trace result. 
+
+```{r}
+57 / 89
+```
+
+Let's investigate the relationship between this outcome and the variables we're going to include in the model.
+
+But - how do we know where to start? What variables should we include in the model?
+
+There are different ways to approach this.
+
+1. If we were to take more of a machine learning approach, we could include **all** of the variables as predictors in the model.
+
+2. We could include a penalty for each variable included in the model by fitting a penalized regression model, like lasso or ridge regression.
+
+3. We could fit a logistic regression model with *all* the predictors and then perform backwards variable selection.
+
+4. We could fit a logistic regression model with a small subset of variables that subject matter experts have deemed important.
+
+How do we choose what approach to use? 
+
+For this analysis, we're going to conduct this with the subset of variables that clinicians have decided are important.
+
+* Age
+* Country
+* Sex
+* Enrollment location
+* BMI
+* Add others here based on the feedback from Anca
+
+```{r}
+### BMI is not a variable in the data, but weight and height are
+data <- data%>%
+  ### Create a variable for BMI
+  
+  ### Height is in centimeters, so divide by 100 to convert to meters
+  mutate(bmi = bf_weight / ((bf_height / 100)^2))
+```
+
+```{r}
+### Create a variable for age 
+### This should be familiar - we did this in the dplyr assignment
+
+data <- data%>%
+  ### Convert the dates to a date data type
+  mutate(rf_enroll_date = ymd(rf_enroll_date))%>%
+  mutate(rf_dob = ymd(rf_dob))%>%
+  mutate(date_diff = time_length(interval(rf_dob, rf_enroll_date), unit = "years"))%>%
+  mutate(date_diff = floor(date_diff))%>%
+  mutate(age = ifelse(is.na(date_diff), rf_age, date_diff))
+```
+
+
+```{r}
+### Let's take a look at this variable
+ggplot(data = data, aes(x = bmi))+
+  geom_histogram()+
+  labs(x = "BMI",
+       y = "Count",
+       title = "Histogram of BMI",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+```
+
+For each variable, plot the variable along with the outcome.
+
+```{r}
+ggplot(data = data, aes(x = stool_semiquant_bin, y = bmi))+
+  geom_boxplot()+
+  labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
+       y = "BMI",
+       title = "Boxplots of BMI by stool Xpert Ultra semi-quantitative bin",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+```
+
+```{r}
+ggplot(data = data, aes(x = stool_semiquant_bin, y = age))+
+  geom_boxplot()+
+  labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
+       y = "Age (years)",
+       title = "Boxplots of age by stool Xpert Ultra semi-quantitative bin",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+```
+
+We can represent numeric variables as categorical by creating bins. This is commonly done for variables such as age, when we know that younger children have a different response to TB than older adults.
+
+```{r}
+table(data$age)%>%
+  addmargins()
+```
+
+Create a categorical variable from age, 0-8 and 15 and older.
+
+```{r}
+data <- data%>%
+  mutate(age_cat = ifelse(age <= 8, "0-8", "15 and older"))
+```
+
+```{r}
+table(data$age_cat, exclude = NULL)%>%
+  addmargins()
+```
+
+Let's look at the relationship between age category and the outcome.
+
+```{r}
+table(data$age_cat, data$stool_semiquant_bin, exclude = NULL)%>%
+  addmargins()
+```
+```{r}
+ggplot(data = data, aes(x = age_cat, fill = stool_semiquant_bin))+
+  geom_bar(position = "dodge")+
+  labs(x = "Age category",
+       y = "Count",
+       fill = "Stool Xpert Ultra Semi-Quantitative Bin",
+       title = "Side-by-side Barplot of Stool Xpert Ultra Semi-Quantitative bin by Age",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+
+ggplot(data = data, aes(x = age_cat, fill = stool_semiquant_bin))+
+  geom_bar()+
+  labs(x = "Age category",
+       y = "Count",
+       fill = "Stool Xpert Ultra Semi-Quantitative Bin",
+       title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Age",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+```
+
+## Think about it! 
+
+Discuss with someone near you - what does the above table and figure tell us about the relationship between age and whether a stool Xpert Ultra result is trace or not?
+
+
+```{r}
+ggplot(data = data, aes(x = rf_country, fill = stool_semiquant_bin))+
+  geom_bar()+
+  labs(x = "Country",
+       y = "Count",
+       fill = "Stool Xpert Ultra Semi-Quantitative Bin",
+       title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Country",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+```
+
+So far, we've just looked at the relationship of each variable to our outcome. However, it's also important to look at the relationship of the different variables with **each other**.
+
+```{r}
+library(GGally)
+ggpairs(data%>%select(bf_weight, bmi, age))
+```
+
+```{r}
+```
+
+
