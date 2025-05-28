@@ -168,21 +168,21 @@ data <- data%>%
   
   ### When the participant is in the 15 and older category AND the HIV status is missing, the value is positive
   
-  mutate(hiv_status = case_when(age_cat == "15 and older" & bf_hivstatus == "" ~ "Positive",
+  mutate(new_hiv_status = case_when(age_cat == "15 and older" & bf_hivstatus == "" ~ "Positive",
   ### When that condition is NOT met (so for all the participants in the 0-8 category), retain the value of the bf_hivstatus variable
                                 TRUE ~ bf_hivstatus))
 ```
 
 
 ```{r}
-table(data$hiv_status, data$bf_hivstatus, exclude = NULL)%>%addmargins()
+table(data$new_hiv_status, data$bf_hivstatus, exclude = NULL)%>%addmargins()
 ```
 The **rows** are the newly created variable, `hiv_status`. The **columns** are the original variable, `bf_hivstatus`. So, 707 values that were originally missing ("") are now "Positive". We still have 1 missing the HIV status, though they are a child.
 
 ```{r}
 ### Filter to all people living with HIV
 hiv_subset <- data%>%
-  filter(hiv_status == "Positive")
+  filter(new_hiv_status == "Positive")
 ```
 
 Let's do a quick check - are any people living with HIV missing the CD4 count? We're going to have to do something with this variable. When we use the `head()` function to take a look at the first few rows of the data, we can see that there is a variable for CD4 result performed at the visit (`bf_cd4result`) and CD4 from the previous six months (`bf_recentcd4`).
@@ -441,7 +441,16 @@ ggplot(data = hiv_subset, aes(x = rf_country, y = composite_cd4, fill = rf_count
        title = "Boxplot of CD4 by country among participants living with HIV",
        subtitle = "In those with an available CD4 value",
        fill = "Country")
+### Let's exclude the outlier and zoom in on CD4 values ranging from 0 to 2500 to better observe the same of the each distribution
+ggplot(data = hiv_subset%>%filter(composite_cd4 <= 2500), aes(x = rf_country, y = composite_cd4, fill = rf_country))+
+  geom_boxplot()+
+  labs(x = "Country",
+       y = "CD4",
+       title = "Boxplot of CD4 by country among participants living with HIV",
+       subtitle = "In those with an available CD4 value; excluding 3 outliers",
+       fill = "Country")
 ```
+
 And, we may be interested in calculating the median and IQR of the CD4 values for each group.
 
 ```{r}
