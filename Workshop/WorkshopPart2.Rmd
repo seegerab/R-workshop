@@ -20,31 +20,61 @@ For the second half of the workshop, we're going to be working on a bigger piece
 
 # Research question
 
+Working with Anna, Anca, and Joanna, the following research question was developed:
+
 What are the clinical traits associated with having a stool Xpert Ultra trace result?
 
 # Set-up
 
-Start by reading in the data.
+Start by reading in the data. This is the same data that we've been using for the pre-workshop activities, with a few additional columns. 
 
 ```{r}
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
 ```
 
-We're going to be using the `dplyr` and `ggplot2` packages today.
+```{r}
+### Let's start by taking a look at the column names of the data
+colnames(data)
+```
+
+We're going to be using a few packages that we've learned today, so read in the `dplyr`, `ggplot2`, and `lubridate` packages. 
 
 ```{r warning = FALSE, message = FALSE }
 library(tidyverse)
 library(lubridate)
 ```
 
-We are interested in the stool Xpert Ultra trace results. First, lets filter to all participants who have a positive stool Xpert Ultra result. And, create a binary variable with whether or not the stool Xpert Ultra result is trace or not. 
+We will also use a few new packages today. Please install a few additional packages. 
+
+```{r}
+install.packages("GGally")
+```
+
+```{r}
+library(GGally)
+```
+
+For the analysis question, we are interested in the stool Xpert Ultra trace results. So to start, let's filter to all participants who have a positive stool Xpert Ultra result. 
 
 ```{r}
 data <- data%>%
   ### Filter to all participants at baseline
   filter(redcap_event_name == "Baseline")%>%
   ### Filter to those with a positive stool Xpert Ultra result
-  filter(pe_stoolxpertresult == "MTB Detected")%>%
+  filter(pe_stoolxpertresult == "MTB Detected")
+```
+
+Let's take a peek at the semi-quantitative results of the stool Xpert Ultra test:
+
+```{r}
+table(data$pe_stoolsemiresult, exclude = NULL)%>%
+  addmargins()
+```
+
+Create a variable with whether or not a participant has a stool Xpert Ultra trace result.
+
+```{r}
+data <- data%>%
   ### Create a variable that is "Trace" if the semi-quantitative value is "Trace" and "Not Trace" otherwise
   mutate(stool_semiquant_bin = ifelse(pe_stoolsemiresult == "Trace", "Trace", "Not Trace"))
 ```
@@ -64,7 +94,7 @@ We are going to use other variables in the data to make an informed prediction.
 data <- data%>%
   ### Create a variable for BMI
   
-  ### Height is in centimeters, so divide by 100 to convert to meters
+  ### Height is in centimeters, so divide by 100 to convert to meters 
   mutate(bmi = bf_weight / ((bf_height / 100)^2))
 ```
 
@@ -76,13 +106,16 @@ data <- data%>%
   ### Convert the dates to a date data type
   mutate(rf_enroll_date = ymd(rf_enroll_date))%>%
   mutate(rf_dob = ymd(rf_dob))%>%
+  ### Find the difference, in years, between the dates
   mutate(date_diff = time_length(interval(rf_dob, rf_enroll_date), unit = "years"))%>%
+  ### Round down to the nearest integer age
   mutate(date_diff = floor(date_diff))%>%
+  ### Some dates were not able to be calculated due to missing dates
   mutate(age = ifelse(is.na(date_diff), rf_age, date_diff))
 ```
 
 ```{r}
-### We did these same steps in the first .Rmd
+## Create a variable for CD4 result
 data <- data%>%
   ### Convert both variables to be numeric
   mutate(bf_cd4result = as.numeric(bf_cd4result))%>%
@@ -91,161 +124,17 @@ data <- data%>%
   mutate(composite_cd4 = ifelse(is.na(bf_cd4result), bf_recentcd4, bf_cd4result))
 ```
 
-```{r}
-data <- data%>%
-  ### Remove the 2 participants missing CD4 from the analysis
-  filter(!is.na(composite_cd4))%>%
-  ### Create a binary variable from CD4 
-  mutate(cd4_cat = ifelse(composite_cd4 < 200, "CD4 < 200", "CD4 >= 200"))
-```
+# What predictors to include?
 
-# Visualize the relationship of the variables to each other
-
-So far, we've just looked at the relationship of each variable to our outcome. However, it's also important to look at the relationship of the different variables with **each other**.
-
-For example, consider the relationship between `bf_weight`, `bf_height`, and our newly created variable `bmi`.
-
-We can use the `ggpairs()` function form the `GGally` package to get useful information about the relationship between variables. This function provides a scatterplot and correlations for each pair, as well as density plots for each variable.
-
-## Height, weight, and BMI
-
-```{r}
-### Uncomment to install the package
-### install.packages("GGally")
-library(GGally)
-ggpairs(data%>%select(bf_weight, bf_height, bmi))
-```
-
-Notice that height and weight are highly correlated, as well as BMI and weight. 
-
-It wouldn't make sense to include all three variables in the model. Rather, we will just include BMI. 
-
-Multicollinearity -when two or more variables in a model are highly correlated- can lead to several problems in model estimation:
-
-1. **Unstable model estimates**: when predictors are highly correlated, small changes in the data can cause large swings in the estimated coefficients.
-2. **Difficult interpretation**: when predictors convey overlapping information, it becomes challenging to isolate the effect of each one on the outcome.
-3. **Reduced predictive power**: While the model may fit the training data well, multicollinearity can hurt generalization to new data.
-
-## Age and HIV status
-
-Let's look at the relationship between age and HIV status:
-
-```{r}
-### We did this in the first portion of the workshop activity
-data <- data%>%
-  ### Create a new variable, "hiv_status"
-  
-  ### When the participant is in the 15 and older category AND the HIV status is missing, the value is positive
-  
-  mutate(new_hiv_status = case_when(age_cat == "15 and older" & bf_hivstatus == "" ~ "Positive",
-  ### When that condition is NOT met (so for all the participants in the 0-8 category), retain the value of the bf_hivstatus variable
-                                TRUE ~ bf_hivstatus))
-```
-
-This is a problem for logistic regression modeling.
-
-Take a look at the breakdown:
-
-```{r}
-table(data$age_cat, data$new_hiv_status)%>%
-  addmargins()
-```
-
-100% of adults are living with HIV. This means there's no variation in HIV status among adults — their HIV status is completely determined by age. This is known as **perfect separation** or **perfect collinearity** between age and HIV status.
-
-In logistic regression, each predictor should explain unique, independent information about the outcome. When one predictor (like age) perfectly predicts another (like HIV status), the model can't tell which one is truly driving the relationship with the outcome. This can lead to:
-
-* Unstable or infinite estimates
-* Large standard errors
-* Model convergence issues
-* Misleading results
-
-# What subset to use moving forward? 
-
-In light of what we've investigated so far, we have a few options moving forward. 
-
-## 1. Just adults.
-
-This would allow us to include CD4 in the model.
-
-```{r}
-adult_subset <- data%>%
-  filter(age_cat == "15 and older")
-```
-
-
-
-```{r}
-sum(is.na(adult_subset$composite_cd4))
-nrow(adult_subset)
-```
-
-```{r}
-57 / 59 
-```
-This variable is mostly complete; just 2 adults living with HIV are missing CD4 count. 
-
-## 2. Just children
-
-This would allow us to include HIV status in the model.
-
-```{r}
-children_subset <- data%>%
-  filter(age_cat == "0-8")
-table(children_subset$outcome, children_subset$bf_hivstatus, exclude = NULL)%>%
-  addmargins()
-```
-
-However, only 2 participants are living with HIV, and both have a stool Xpert Ultra trace result. This will lead to model fit issues.
-
-## 3. Include both age categories
-
-If we include all ages, we won't be able to include HIV status because of the perfect separation we identified above.
-
-## Think about it!
-
-Moving forward in this workshop, we will just use the adult analytic cohort and include the CD4 count as a variable in the model. 
-
-For the workshop, we'll continue with this analytic subgroup. However, what should we do differently for the manuscript?
-
-
-# Visualize the variables in relation to the outcome
-
-When doing an analysis like this, the first - and a very important - step is to look at the data. By creating tables and visualizations, we can investigate:
-
-1. Is there any missing data?
-
-2. Are there any outliers?
-
-3. What are some of the trends and relationships we see in the data? Are any of the predictors `collinear` - that is, are any of them strongly correlated with each other?
-
-This will inform us both if there is any data cleaning that still needs to be done, as well as the variables we ultimately include in the model. 
-
-```{r}
-### How many participants does this include?
-nrow(data)
-### What does our outcome - the newly created variable - look like?
-table(data$stool_semiquant_bin, exclude = NULL)%>%
-  addmargins()
-```
-
-There are 89 participants in the data. Of these, 57 have a trace result. 
-
-```{r}
-57 / 89
-```
-
-Let's investigate the relationship between this outcome and the variables we're going to include in the model.
-
-But - how do we know where to start? What variables should we include in the model?
+We've defined the research question. But, how do we know what variables to include that may explain whether a participant has a trace or not trace stool Xpert Ultra result?
 
 There are different ways to approach this.
 
-1. If we were to take more of a machine learning approach, we could include **all** of the variables as predictors in the model.
+1. If we were to take more of a machine learning approach, we could include **all** of the variables that we collected as predictors in the model.
 
 2. We could include a penalty for each variable included in the model by fitting a penalized regression model, like lasso or ridge regression.
 
-3. We could fit a logistic regression model with *all* the predictors and then perform backwards variable selection.
+3. We could fit a logistic regression model with *all* the predictors and then perform backwards variable selection to find an optimal subset of variables.
 
 4. We could fit a logistic regression model with a small subset of variables that subject matter experts have deemed important.
 
@@ -258,6 +147,7 @@ For this analysis, we're going to conduct this with the subset of variables that
 * Sex
 * Enrollment location
 * BMI
+* CD4 count, in participants living with HIV 
 
 ## Think about it!
 
@@ -265,11 +155,157 @@ For the workshop today, we are just going to use the variables listed above.
 
 However, what are some other variables that may be related to a participant having a stool Xpert Ultra trace result?
 
+# Visualize the relationship of the variables to each other
 
+When doing an analysis like this, the first - and a very important - step is to look at the data. By creating tables and figures, we can investigate:
+
+1. Is there any missing data?
+
+2. Are there any outliers?
+
+3. What are any trends or relationships in the data? Are any of the predictors strongly correlated with each other?
+
+This will inform us both if there is any data cleaning that still needs to be done, as well as the variables we ultimately include in the model.
+
+To start, consider the relationship between the predictors. Consider `bf_weight`, `bf_height`, and our newly created variable `bmi`.
+
+We can use the `ggpairs()` function form the `GGally` package to get useful information about the relationship between multiple variables without having to create a ton of figures. This function provides a scatterplot and correlations for each pair as well as density plots for each variable.
+
+## Height, weight, and BMI
+
+```{r}
+### Inside the ggpairs function, include a subset of the variables that we want to include in the figure
+ggpairs(data%>%
+          select(bf_weight, bf_height, bmi))
+```
+
+## Think about it!
+
+What relationships do you see in the data? There's a lot of information here - can you figure out what is being plotted?
+
+
+
+Multicollinearity (when two or more variables in a model are highly correlated) can lead to several problems in model estimation:
+
+1. **Unstable model estimates**: when predictors are highly correlated, small changes in the data can cause large swings in the estimated coefficients.
+2. **Difficult interpretation**: when predictors convey overlapping information, it becomes challenging to isolate the effect of each one on the outcome.
+3. **Reduced predictive power**: While the model may fit the training data well, multicollinearity can hurt generalization to new data.
+
+## Age and HIV status
+
+Let's look at the relationship between age and HIV status. First, we need to modify the variable for HIV status, because it was just collected for the 0-8 subgroup and is missing for the adults. 
+
+```{r}
+### We did this in the first portion of the workshop activity
+
+data <- data%>%
+  ### Create a new variable, "new_hiv_status"
+  
+  ### When the participant is in the 15 and older category AND the HIV status is missing, the value is positive
+  
+  mutate(new_hiv_status = case_when(age_cat == "15 and older" & bf_hivstatus == "" ~ "Positive",
+  ### When that condition is NOT met (so for all the participants in the 0-8 category), retain the value of the bf_hivstatus variable
+                                TRUE ~ bf_hivstatus))
+```
+
+Let's investigate the relationship between age and HIV status:
+
+```{r}
+table(data$age_cat, data$new_hiv_status)%>%
+  addmargins()
+```
+
+100% of adults are living with HIV. This means there's no variation in HIV status among adults - their HIV status is completely determined by age. This is known as **perfect separation** or between age and HIV status.
+
+This is a problem for logistic regression modeling.
+
+In logistic regression, each predictor should explain unique, independent information about the outcome. When one predictor (like age) perfectly predicts another (like HIV status), the model can't tell which one is truly driving the relationship with the outcome. This can lead to:
+
+* Unstable or infinite estimates
+* Large standard errors
+* Model convergence issues
+* Misleading results
+
+Currently, it doesn't make sense to include both age and HIV status in the model with all participants. 
+
+# What subset to use moving forward? 
+
+In light of what we've investigated so far, we have a few options. 
+
+## 1. Just adults.
+
+This would allow us to include CD4 in the model, because all adults are living with HIV.
+
+```{r}
+adult_subset <- data%>%
+  filter(age_cat == "15 and older")
+```
+
+```{r}
+sum(is.na(adult_subset$composite_cd4))
+nrow(adult_subset)
+```
+
+```{r}
+57 / 59 
+```
+
+This variable is 96.6% complete; just 2 adults living with HIV are missing CD4 count. 
+
+## 2. Just children
+
+This would allow us to include HIV status in the model.
+
+```{r}
+children_subset <- data%>%
+  filter(age_cat == "0-8")
+table(children_subset$outcome, children_subset$bf_hivstatus, exclude = NULL)%>%
+  addmargins()
+```
+
+However, only 2 participants are living with HIV, and both have a stool Xpert Ultra trace result. This could potentially lead to model fit issues.
+
+## 3. Include both age categories
+
+If we include all ages, we won't be able to include HIV status because of the perfect separation we identified above. This is a limitation, because it will be difficult to tease out if the effect is due to HIV status or age. 
+
+## Think about it!
+
+Moving forward in this workshop, we will just use the adult analytic cohort and include the CD4 count as a variable in the model. 
+
+However, what should we do differently for the manuscript?
+
+```{r}
+### Before proceeding, remove the 2 participants missing CD4 from the analysis
+adult_subset <- adult_subset%>%
+  filter(!is.na(composite_cd4))%>%
+  ### Create a binary variable from CD4 
+  mutate(cd4_cat = ifelse(composite_cd4 < 200, "CD4 < 200", "CD4 >= 200"))
+
+### There are other approaches for handling missing data, including impution. However, today we'll proceed with dropping the 2 participants. 
+```
+
+```{r}
+### How many participants does this include?
+nrow(adult_subset)
+### What does our outcome - the newly created variable - look like?
+table(adult_subset$stool_semiquant_bin, exclude = NULL)%>%
+  addmargins()
+```
+
+There are 57 participants in the adult_subset. Of these, 32 have a trace result. 
+
+```{r}
+32 / 57
+```
+
+# Visualize the variables in relation to the outcome
+
+Now, let's investigate the relationship between this outcome and the variables we're going to include in the model.
 
 ```{r}
 ### Let's take a look at this variable
-ggplot(data = data, aes(x = bmi))+
+ggplot(adult_subset = adult_subset, aes(x = bmi))+
   geom_histogram()+
   labs(x = "BMI",
        y = "Count",
@@ -282,7 +318,7 @@ For each variable, plot the variable along with the outcome.
 ## Country
 
 ```{r}
-ggplot(data = data, aes(x = rf_country, fill = stool_semiquant_bin))+
+ggplot(adult_subset = adult_subset, aes(x = rf_country, fill = stool_semiquant_bin))+
   geom_bar()+
   labs(x = "Country",
        y = "Count",
@@ -294,7 +330,7 @@ ggplot(data = data, aes(x = rf_country, fill = stool_semiquant_bin))+
 ## BMI
 
 ```{r}
-ggplot(data = data, aes(x = stool_semiquant_bin, y = bmi))+
+ggplot(adult_subset = adult_subset, aes(x = stool_semiquant_bin, y = bmi))+
   geom_boxplot()+
   labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
        y = "BMI",
@@ -305,12 +341,12 @@ ggplot(data = data, aes(x = stool_semiquant_bin, y = bmi))+
 ## Enrollment location
 
 ```{r}
-table(data$rf_enrollocation, data$stool_semiquant_bin, exclude = NULL)%>%
+table(adult_subset$rf_enrollocation, adult_subset$stool_semiquant_bin, exclude = NULL)%>%
   addmargins()
 ```
 
 ```{r}
-ggplot(data = data, aes(x = rf_enrollocation, fill = stool_semiquant_bin))+
+ggplot(adult_subset = adult_subset, aes(x = rf_enrollocation, fill = stool_semiquant_bin))+
   geom_bar()+
   labs(x = "Enrollment location",
        y = "Count",
@@ -320,7 +356,7 @@ ggplot(data = data, aes(x = rf_enrollocation, fill = stool_semiquant_bin))+
 ```
 We can see that there are just **3** participants who were enrolled in an inpatient setting and the rest enrolled in an outpatient setting. We won't include this in the final model, because it will create some problems:
 
-**Very small group size**: With just 3 inpatient participants, the model has very little data to reliably estimate the effect of being inpatient.
+**Very small group size**: With just 3 inpatient participants, the model has very little adult_subset to reliably estimate the effect of being inpatient.
 
 **Unstable estimates**: The regression coefficient for inpatient will be highly unstable and imprecise, leading to wide confidence intervals or even convergence problems.
 
@@ -331,7 +367,7 @@ We can see that there are just **3** participants who were enrolled in an inpati
 ## Gender
 
 ```{r}
-table(data$rf_gender, data$stool_semiquant_bin, exclude = NULL) %>%
+table(adult_subset$rf_gender, adult_subset$stool_semiquant_bin, exclude = NULL) %>%
   addmargins()
 ```
 
@@ -390,14 +426,14 @@ An odds ratio **less than 1** means that the group being compared has lower odds
 We can do this same calculation by fitting a **logistic regression model with one variable**.
 
 ```{r}
-data <- data%>%
+adult_subset <- adult_subset%>%
   ### First, create a variable - outcome - that is 1 if Trace, 0 if not. This is necessary to fit the model.
   mutate(outcome = ifelse(stool_semiquant_bin == "Trace", 1, 0))%>%
   ### By default, R chooses the first alphabetical category to be the reference category. However, often we want the OR > 1 to make it easier to interpret. Because the have already shown that the OR > 1 when the reference is Male, convert to a factor and switch the order
   mutate(rf_gender = factor(rf_gender, levels = c("Male", "Female")))
 
 ### Build the model!
-logistic_regression_model <- glm(outcome ~ rf_gender, data = data, family = "binomial")
+logistic_regression_model <- glm(outcome ~ rf_gender, adult_subset = adult_subset, family = "binomial")
 ```
 
 ```{r}
@@ -425,7 +461,7 @@ Now, let's pivot back to visualizing the relationship between the other variable
 ## Age 
 
 ```{r}
-ggplot(data = data, aes(x = stool_semiquant_bin, y = age))+
+ggplot(adult_subset = adult_subset, aes(x = stool_semiquant_bin, y = age))+
   geom_boxplot()+
   labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
        y = "Age (years)",
@@ -436,30 +472,30 @@ ggplot(data = data, aes(x = stool_semiquant_bin, y = age))+
 We can represent numeric variables as categorical by creating bins. This is commonly done for variables such as age, when we know that younger children have a different response to TB than older adults.
 
 ```{r}
-table(data$age)%>%
+table(adult_subset$age)%>%
   addmargins()
 ```
 
 Create a categorical variable from age, 0-8 and 15 and older.
 
 ```{r}
-data <- data%>%
+adult_subset <- adult_subset%>%
   mutate(age_cat = ifelse(age <= 8, "0-8", "15 and older"))
 ```
 
 ```{r}
-table(data$age_cat, exclude = NULL)%>%
+table(adult_subset$age_cat, exclude = NULL)%>%
   addmargins()
 ```
 
 Finally, let's look at the relationship between age category and the outcome.
 
 ```{r}
-table(data$age_cat, data$stool_semiquant_bin, exclude = NULL)%>%
+table(adult_subset$age_cat, adult_subset$stool_semiquant_bin, exclude = NULL)%>%
   addmargins()
 ```
 ```{r}
-ggplot(data = data, aes(x = age_cat, fill = stool_semiquant_bin))+
+ggplot(adult_subset = adult_subset, aes(x = age_cat, fill = stool_semiquant_bin))+
   geom_bar()+
   labs(x = "Age category",
        y = "Count",
@@ -486,7 +522,7 @@ table(adult_subset$cd4_cat, exclude = NULL)%>%
 ```
 
 ```{r}
-final_model <- glm(outcome ~ rf_country + rf_gender + bmi + cd4_cat, data = adult_subset, family = "binomial")
+final_model <- glm(outcome ~ rf_country + rf_gender + bmi + cd4_cat, adult_subset = adult_subset, family = "binomial")
 ```
 
 ```{r }
