@@ -705,27 +705,31 @@ The **residual deviance** is the amount of variability that the full model expla
 
 # Supplementary analysis 
 
+As a follow-up to this model, we might want to know who initiated TB treatment, among adults with a positive stool Xpert Ultra result. 
+
+We might also want to know their outcomes!
+
 ## ATT initiation
 
-Among those who have a positive stool Xpert Ultra result, who initiated TB treatment?
-
-First, who initiated ATT? 
+First, let's investigate the variable for ATT initiation. 
 
 ```{r}
 table(adult_subset$bf_startedatt, exclude = NULL)%>%
   addmargins()
 ```
 
-If we use the `adult_subset`, it appears that we do not have information on whether 33 adults started ATT.
+If we use the `adult_subset`, it appears that we do not have information for 33 adults on whether they started ATT.
 
 However, this is because the `adult_subset` is filtering to just the **baseline** form. This information was also calculated in the **ATT initiation** form.
+
+So, read back in the original data in order to get the information on ATT initiation.
 
 ```{r}
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
 ```
 
 ```{r}
-### Filter to all participants who initiated on ATT
+### Filter to all participants who initiated on ATT; this is everyone who answered "Yes" for the bf_startedatt variable, regardless of the form 
 att_init_ids <- data%>%
   filter(bf_startedatt == "Yes")%>%
   pull(record_id)%>%
@@ -733,17 +737,6 @@ att_init_ids <- data%>%
 ### Create a variable in the adult subset that indicates whether someone initiated treatment or not
 adult_subset <- adult_subset%>%
   mutate(att_initiation = ifelse(record_id %in% att_init_ids, "Initiated ATT", "Did not initiate ATT"))
-```
-
-In addition, create a variable for the outcome. Once again, this is not found in the **baseline** form.
-
-```{r}
-temp_outcomes <- data%>%
-  filter(redcap_event_name == "M6 post ATT")%>%
-  select(record_id, po_ttoutcome)
-
-### This is a new function - we want to join our adult_subest with the outcomes, by participant ID
-adult_subset <- left_join(adult_subset%>%select(-c(po_ttoutcome)), temp_outcomes, by = "record_id")
 ```
 
 ```{r}
@@ -761,7 +754,7 @@ There are 15 participants who had a positive stool Xpert Ultra result yet did no
 
 Of the 15, 12 had a Trace positive result. 
 
-We can investigate what is going on with the particiapnts who do not have a trace stool Xpert Ultra result yet did not start treatment.
+We can easily investigate what is going on with the particiapnts who do not have a trace stool Xpert Ultra result yet did not start treatment.
 
 Let's look at their other microbiologic results.
 
@@ -773,12 +766,25 @@ adult_subset%>%
 
 ## Outcome
 
+Similar to how we had to add in the ATT initiation variable, we need to create a variable for outcome because this is not found in the baseline form. 
+
+```{r}
+temp_outcomes <- data%>%
+  filter(redcap_event_name == "M6 post ATT")%>%
+  select(record_id, po_ttoutcome)
+
+### This is a new function - we want to join our adult_subest with the outcomes, by participant ID
+adult_subset <- left_join(adult_subset%>%select(-c(po_ttoutcome)), temp_outcomes, by = "record_id")
+```
+
+Look at the association between the treatment outcome and the stool Xpert Ultra result:
+
 ```{r}
 table(adult_subset$po_ttoutcome, adult_subset$stool_semiquant_bin, exclude = NULL)%>%
   addmargins()
 ```
 
-This may be something to revisit and confirm with Miguel - it appears that 18 participants do not have an outcome reported.
+This may be something to revisit - it appears that 18 participants do not have an outcome reported; this could be the case if the outcome is just for those on ATT.
 
 # Discussion of results
 

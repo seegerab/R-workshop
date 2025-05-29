@@ -177,6 +177,7 @@ data <- data%>%
 ```{r}
 table(data$new_hiv_status, data$bf_hivstatus, exclude = NULL)%>%addmargins()
 ```
+
 The **rows** are the newly created variable, `hiv_status`. The **columns** are the original variable, `bf_hivstatus`. So, 707 values that were originally missing ("") are now "Positive". We still have 1 missing the HIV status, though they are a child.
 
 ```{r}

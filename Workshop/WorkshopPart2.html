@@ -2315,23 +2315,26 @@ that the full model explains.</p>
 </div>
 <div id="supplementary-analysis" class="section level1">
 <h1>Supplementary analysis</h1>
+<p>As a follow-up to this model, we might want to know who initiated TB
+treatment, among adults with a positive stool Xpert Ultra result.</p>
+<p>We might also want to know their outcomes!</p>
 <div id="att-initiation" class="section level2">
 <h2>ATT initiation</h2>
-<p>Among those who have a positive stool Xpert Ultra result, who
-initiated TB treatment?</p>
-<p>First, who initiated ATT?</p>
+<p>First, let’s investigate the variable for ATT initiation.</p>
 <div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a><span class="fu">table</span>(adult_subset<span class="sc">$</span>bf_startedatt, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
 <span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>## 
 ##      No Yes Sum 
 ##  33   1  23  57</code></pre>
 <p>If we use the <code>adult_subset</code>, it appears that we do not
-have information on whether 33 adults started ATT.</p>
+have information for 33 adults on whether they started ATT.</p>
 <p>However, this is because the <code>adult_subset</code> is filtering
 to just the <strong>baseline</strong> form. This information was also
 calculated in the <strong>ATT initiation</strong> form.</p>
+<p>So, read back in the original data in order to get the information on
+ATT initiation.</p>
 <div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="do">### Filter to all participants who initiated on ATT</span></span>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="do">### Filter to all participants who initiated on ATT; this is everyone who answered &quot;Yes&quot; for the bf_startedatt variable, regardless of the form </span></span>
 <span id="cb80-2"><a href="#cb80-2" tabindex="-1"></a>att_init_ids <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
 <span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>  <span class="fu">filter</span>(bf_startedatt <span class="sc">==</span> <span class="st">&quot;Yes&quot;</span>)<span class="sc">%&gt;%</span></span>
 <span id="cb80-4"><a href="#cb80-4" tabindex="-1"></a>  <span class="fu">pull</span>(record_id)<span class="sc">%&gt;%</span></span>
@@ -2339,21 +2342,13 @@ calculated in the <strong>ATT initiation</strong> form.</p>
 <span id="cb80-6"><a href="#cb80-6" tabindex="-1"></a><span class="do">### Create a variable in the adult subset that indicates whether someone initiated treatment or not</span></span>
 <span id="cb80-7"><a href="#cb80-7" tabindex="-1"></a>adult_subset <span class="ot">&lt;-</span> adult_subset<span class="sc">%&gt;%</span></span>
 <span id="cb80-8"><a href="#cb80-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">att_initiation =</span> <span class="fu">ifelse</span>(record_id <span class="sc">%in%</span> att_init_ids, <span class="st">&quot;Initiated ATT&quot;</span>, <span class="st">&quot;Did not initiate ATT&quot;</span>))</span></code></pre></div>
-<p>In addition, create a variable for the outcome. Once again, this is
-not found in the <strong>baseline</strong> form.</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" tabindex="-1"></a>temp_outcomes <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
-<span id="cb81-2"><a href="#cb81-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;M6 post ATT&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb81-3"><a href="#cb81-3" tabindex="-1"></a>  <span class="fu">select</span>(record_id, po_ttoutcome)</span>
-<span id="cb81-4"><a href="#cb81-4" tabindex="-1"></a></span>
-<span id="cb81-5"><a href="#cb81-5" tabindex="-1"></a><span class="do">### This is a new function - we want to join our adult_subest with the outcomes, by participant ID</span></span>
-<span id="cb81-6"><a href="#cb81-6" tabindex="-1"></a>adult_subset <span class="ot">&lt;-</span> <span class="fu">left_join</span>(adult_subset<span class="sc">%&gt;%</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(po_ttoutcome)), temp_outcomes, <span class="at">by =</span> <span class="st">&quot;record_id&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" tabindex="-1"></a><span class="fu">table</span>(adult_subset<span class="sc">$</span>att_initiation, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span><span class="fu">addmargins</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" tabindex="-1"></a><span class="fu">table</span>(adult_subset<span class="sc">$</span>att_initiation, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span><span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>## 
 ## Did not initiate ATT        Initiated ATT                  Sum 
 ##                   15                   42                   57</code></pre>
 <p>How is ATT initiation related to trace results?</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a><span class="fu">table</span>(adult_subset<span class="sc">$</span>att_initiation, adult_subset<span class="sc">$</span>stool_semiquant_bin, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a><span class="fu">table</span>(adult_subset<span class="sc">$</span>att_initiation, adult_subset<span class="sc">$</span>stool_semiquant_bin, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>##                       
 ##                        Not Trace Trace Sum
 ##   Did not initiate ATT         3    12  15
@@ -2362,12 +2357,13 @@ not found in the <strong>baseline</strong> form.</p>
 <p>There are 15 participants who had a positive stool Xpert Ultra result
 yet did not start treatment.</p>
 <p>Of the 15, 12 had a Trace positive result.</p>
-<p>We can investigate what is going on with the particiapnts who do not
-have a trace stool Xpert Ultra result yet did not start treatment.</p>
+<p>We can easily investigate what is going on with the particiapnts who
+do not have a trace stool Xpert Ultra result yet did not start
+treatment.</p>
 <p>Let’s look at their other microbiologic results.</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" tabindex="-1"></a>adult_subset<span class="sc">%&gt;%</span></span>
-<span id="cb86-2"><a href="#cb86-2" tabindex="-1"></a>  <span class="fu">filter</span>(stool_semiquant_bin <span class="sc">==</span> <span class="st">&quot;Not Trace&quot;</span> <span class="sc">&amp;</span> att_initiation <span class="sc">==</span> <span class="st">&quot;Did not initiate ATT&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb86-3"><a href="#cb86-3" tabindex="-1"></a>  <span class="fu">select</span>(record_id, rf_country, pe_stoolsemiresult, pe_lamresult, pe_finalculturesult, pe_xpertresult)</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a>adult_subset<span class="sc">%&gt;%</span></span>
+<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a>  <span class="fu">filter</span>(stool_semiquant_bin <span class="sc">==</span> <span class="st">&quot;Not Trace&quot;</span> <span class="sc">&amp;</span> att_initiation <span class="sc">==</span> <span class="st">&quot;Did not initiate ATT&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb85-3"><a href="#cb85-3" tabindex="-1"></a>  <span class="fu">select</span>(record_id, rf_country, pe_stoolsemiresult, pe_lamresult, pe_finalculturesult, pe_xpertresult)</span></code></pre></div>
 <pre><code>##   record_id rf_country pe_stoolsemiresult pe_lamresult pe_finalculturesult
 ## 1 4TB-2-182 Mozambique           Very low     Negative           No growth
 ## 2 4TB-2-195 Mozambique                Low     Negative           No growth
@@ -2379,6 +2375,17 @@ have a trace stool Xpert Ultra result yet did not start treatment.</p>
 </div>
 <div id="outcome" class="section level2">
 <h2>Outcome</h2>
+<p>Similar to how we had to add in the ATT initiation variable, we need
+to create a variable for outcome because this is not found in the
+baseline form.</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" tabindex="-1"></a>temp_outcomes <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb87-2"><a href="#cb87-2" tabindex="-1"></a>  <span class="fu">filter</span>(redcap_event_name <span class="sc">==</span> <span class="st">&quot;M6 post ATT&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb87-3"><a href="#cb87-3" tabindex="-1"></a>  <span class="fu">select</span>(record_id, po_ttoutcome)</span>
+<span id="cb87-4"><a href="#cb87-4" tabindex="-1"></a></span>
+<span id="cb87-5"><a href="#cb87-5" tabindex="-1"></a><span class="do">### This is a new function - we want to join our adult_subest with the outcomes, by participant ID</span></span>
+<span id="cb87-6"><a href="#cb87-6" tabindex="-1"></a>adult_subset <span class="ot">&lt;-</span> <span class="fu">left_join</span>(adult_subset<span class="sc">%&gt;%</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(po_ttoutcome)), temp_outcomes, <span class="at">by =</span> <span class="st">&quot;record_id&quot;</span>)</span></code></pre></div>
+<p>Look at the association between the treatment outcome and the stool
+Xpert Ultra result:</p>
 <div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" tabindex="-1"></a><span class="fu">table</span>(adult_subset<span class="sc">$</span>po_ttoutcome, adult_subset<span class="sc">$</span>stool_semiquant_bin, <span class="at">exclude =</span> <span class="cn">NULL</span>)<span class="sc">%&gt;%</span></span>
 <span id="cb88-2"><a href="#cb88-2" tabindex="-1"></a>  <span class="fu">addmargins</span>()</span></code></pre></div>
 <pre><code>##                      
@@ -2390,8 +2397,9 @@ have a trace stool Xpert Ultra result yet did not start treatment.</p>
 ##   Treatment failed            1     0   1
 ##   &lt;NA&gt;                        4    14  18
 ##   Sum                        25    32  57</code></pre>
-<p>This may be something to revisit and confirm with Miguel - it appears
-that 18 participants do not have an outcome reported.</p>
+<p>This may be something to revisit - it appears that 18 participants do
+not have an outcome reported; this could be the case if the outcome is
+just for those on ATT.</p>
 </div>
 </div>
 <div id="discussion-of-results" class="section level1">
