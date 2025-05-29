@@ -316,7 +316,9 @@ table(adult_subset$stool_semiquant_bin, exclude = NULL)%>%
   addmargins()
 ```
 
-There are 57 participants in the adult_subset. Of these, 32 have a trace result. 
+EDIT HERE 
+
+There are 57 participants in the adult subset. Of these, 32 have a trace result. 
 
 ```{r}
 32 / 57
@@ -377,11 +379,11 @@ ggplot(data = adult_subset, aes(x = rf_enrollocation, fill = stool_semiquant_bin
        title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Enrollment location",
        subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
 ```
-We can see that there are just **2** participants who were enrolled in an inpatient setting and the rest enrolled in an outpatient setting. We won't include this in the final model, because it will create some problems:
+We can see that there are just **2** participants who were enrolled in an inpatient setting and the rest enrolled in an outpatient setting. We won't include this in the final model because it will create some problems:
 
-**Very small group size**: With just 2 inpatient participants, the model has very little adult_subset to reliably estimate the effect of being inpatient. Further, both of them has a result that is "Trace".
+**Very small group size**: With just 2 inpatient participants, the model has very little adult_subset to reliably estimate the effect of being inpatient. Further, both of them have a result that is "Trace".
 
-**Unstable estimates**: The regression coefficient for inpatient will be highly unstable and imprecise, leading to wide confidence intervals or even convergence problems.
+**Unstable estimates**: The regression coefficient for the inpatient group will likely be highly unstable and imprecise, leading to wide confidence intervals or even convergence problems.
 
 **Low statistical power**: With so few cases, it’s unlikely we'll detect a meaningful association even if one exists.
 
@@ -438,7 +440,7 @@ The **odds ratio (OR)** compares the odds in females to the odds in males.
 
 The odds of having a stool Xpert Ultra trace result are approximately **1.5 times higher in females than in males**. Here, males would be the **reference category**.
 
-An odds ratio of **1** means that both groups have the same likelihood of experiencing the event.
+An odds ratio of **1** means that both groups have the same odds of experiencing the event.
 
 An odds ratio **greater than 1** means that the group being compared has higher odds of the event happening than the reference group. In other words, the event is more likely in this group.
 
@@ -452,7 +454,7 @@ We can do this same calculation by fitting a **logistic regression model with on
 adult_subset <- adult_subset%>%
   ### First, create a variable - outcome - that is 1 if Trace, 0 if not. This is necessary to fit the model.
   mutate(outcome = ifelse(stool_semiquant_bin == "Trace", 1, 0))%>%
-  ### By default, R chooses the first alphabetical category to be the reference category. However, often we want the OR > 1 to make it easier to interpret. Because the have already shown that the OR > 1 when the reference is Male, convert to a factor and switch the order
+  ### By default, R chooses the first alphabetical category to be the reference category. However, often we want the OR > 1 to make it easier to interpret. Because the have already shown that the OR > 1 when the reference is Male, we convert to a factor and switch the order
   mutate(rf_gender = factor(rf_gender, levels = c("Male", "Female")))
 ```
 
@@ -470,7 +472,7 @@ There is a lot in this summary! We'll learn more about some of the other values 
 
 We see `rf_genderFemale`. This let's us know that the odds are for the female group, so we know the **reference group** must be male.
 
-The estimate is 0.4055 A logistic regression model predicts the **log odds** rather than the odds themselves. This is because odds are bounded between 0 and infinity, which can cause difficulties with modeling. By taking the **log**, we transform the odds to a scale that ranges from negative infinity to infinity, making it easier to model with a linear equation.
+The estimate is 0.4055. A logistic regression model predicts the **log odds** rather than the odds themselves. This is because odds are bounded between 0 and infinity, which can cause difficulties with modeling. By taking the **log**, we transform the odds to a scale that ranges from negative infinity to infinity, making it easier to model with a linear equation.
 
 However, the odds ratio is easier to interpret than the log odds. 
 
@@ -540,13 +542,9 @@ Include all the variables we investigated above in the final model.
 final_model <- glm(outcome ~ rf_country + rf_gender + nutritional_cat + cd4_cat, data = adult_subset, family = "binomial")
 ```
 
-```{r }
-summary(final_model)
-```
-
 # Model diagnostics 
 
-The assumptions for logistics regression models are:
+The assumptions for logistic regression models are:
 
 1. The outcome is binary (i.e. has two levels)
 2. There are no extreme values or outliers
@@ -568,8 +566,6 @@ table(adult_subset$outcome)
 To investigate this, we can look at the **standardized residuals** of the model.
 
 **Residuals** are the difference between the observed outcome - in this case, 0 or 1 - and the predicted probability of the participant having a trace result.
-
-
 
 ```{r}
 ### Investigate outliers
@@ -662,9 +658,52 @@ Therefore, with only categorical predictors, this linearity assumption is automa
 
 # Interpret the model
 
+We can run the `summary()` function on the model to get more information on the model. 
+
+```{r }
+summary(final_model)
+```
+
+## Call
+
+The `call` output reminds us the arguments we passed to the function:
+
+glm(formula = outcome ~ rf_country + rf_gender + nutritional_cat + cd4_cat, family = "binomial", data = adult_subset)
+
+## Estimate
+
+The estimate column is the **log-odds**.
+
+To better interpret this column, we can **exponentiate this** to get the odds ratio.
+
+```{r}
+exp(coef(final_model))
+```
+
+```{r}
+exp(confint(final_model))
+```
+## p-values
+
+The final column includes p-values for each variable.
+
+It is testing the hypothesis that the coefficient is different from 0, which corresponds to an odds ratio of 1 (in other words, that there is no association between the predictor and the log-odds of the outcome).
+
+If the **p-value is less than 0.05**, we can conclude that there is an association between the predictor and the outcome. 
+
+In our model, none of the p-values are less than 0.05. So, we didn't find evidence for any of the variables we included that they are significantly associated with a stool Xpert Ultra trace result.
+
+## Additional outcome at the bottom
+
+**AIC** is the Akaike Information Criterion and is used to compare different models. If we build different models, we can compare them using the AIC. A lower value is better. 
+
+**Deviance**
+
+The **null deviance** is the amount of variability that is explained by the **null model** - no predictors, just the model intercept. 
+
+The **residual deviance** is the amount of variability that the full model explains. 
+
 # Supplementary analysis 
-
-
 
 ## ATT initiation
 
@@ -679,14 +718,67 @@ table(adult_subset$bf_startedatt, exclude = NULL)%>%
 
 If we use the `adult_subset`, it appears that we do not have information on whether 33 adults started ATT.
 
-However, this is because the `adult_subset` is filtering to just the ****
+However, this is because the `adult_subset` is filtering to just the **baseline** form. This information was also calculated in the **ATT initiation** form.
 
 ```{r}
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
 ```
 
+```{r}
+### Filter to all participants who initiated on ATT
+att_init_ids <- data%>%
+  filter(bf_startedatt == "Yes")%>%
+  pull(record_id)%>%
+  unique()
+### Create a variable in the adult subset that indicates whether someone initiated treatment or not
+adult_subset <- adult_subset%>%
+  mutate(att_initiation = ifelse(record_id %in% att_init_ids, "Initiated ATT", "Did not initiate ATT"))
+```
+
+In addition, create a variable for the outcome. Once again, this is not found in the **baseline** form.
+
+```{r}
+temp_outcomes <- data%>%
+  filter(redcap_event_name == "M6 post ATT")%>%
+  select(record_id, po_ttoutcome)
+
+### This is a new function - we want to join our adult_subest with the outcomes, by participant ID
+adult_subset <- left_join(adult_subset%>%select(-c(po_ttoutcome)), temp_outcomes, by = "record_id")
+```
+
+```{r}
+table(adult_subset$att_initiation, exclude = NULL)%>%addmargins()
+```
+
+How is ATT initiation related to trace results?
+
+```{r}
+table(adult_subset$att_initiation, adult_subset$stool_semiquant_bin, exclude = NULL)%>%
+  addmargins()
+```
+
+There are 15 participants who had a positive stool Xpert Ultra result yet did not start treatment.
+
+Of the 15, 12 had a Trace positive result. 
+
+We can investigate what is going on with the particiapnts who do not have a trace stool Xpert Ultra result yet did not start treatment.
+
+Let's look at their other microbiologic results.
+
+```{r}
+adult_subset%>%
+  filter(stool_semiquant_bin == "Not Trace" & att_initiation == "Did not initiate ATT")%>%
+  select(record_id, rf_country, pe_stoolsemiresult, pe_lamresult, pe_finalculturesult, pe_xpertresult)
+```
 
 ## Outcome
+
+```{r}
+table(adult_subset$po_ttoutcome, adult_subset$stool_semiquant_bin, exclude = NULL)%>%
+  addmargins()
+```
+
+This may be something to revisit and confirm with Miguel - it appears that 18 participants do not have an outcome reported.
 
 # Discussion of results
 
@@ -696,5 +788,5 @@ data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teachin
 
 3. What are some of the limitations of our results?
 
-4. What are of the main points of the analysis?
+4. What are some next steps were should take? 
 
