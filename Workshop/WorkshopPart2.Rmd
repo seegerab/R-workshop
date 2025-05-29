@@ -47,11 +47,15 @@ library(lubridate)
 We will also use a few new packages today. Please install a few additional packages. 
 
 ```{r}
-install.packages("GGally")
+### install.packages("GGally")
+### install.packages("broom")
+### install.packages("car")
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE}
 library(GGally)
+library(broom)
+library(car)
 ```
 
 For the analysis question, we are interested in the stool Xpert Ultra trace results. So to start, let's filter to all participants who have a positive stool Xpert Ultra result. 
@@ -115,6 +119,12 @@ data <- data%>%
 ```
 
 ```{r}
+### Create a categorical variable for age
+data <- data%>%
+  mutate(age_cat = ifelse(age <= 8, "0-8", "15 and older"))
+```
+
+```{r}
 ## Create a variable for CD4 result
 data <- data%>%
   ### Convert both variables to be numeric
@@ -126,7 +136,7 @@ data <- data%>%
 
 # What predictors to include?
 
-We've defined the research question. But, how do we know what variables to include that may explain whether a participant has a trace or not trace stool Xpert Ultra result?
+We've defined the research question. But, how do we know what variables to include that may explain whether a participant has a trace stool Xpert Ultra result or not?
 
 There are different ways to approach this.
 
@@ -184,7 +194,6 @@ ggpairs(data%>%
 What relationships do you see in the data? There's a lot of information here - can you figure out what is being plotted?
 
 
-
 Multicollinearity (when two or more variables in a model are highly correlated) can lead to several problems in model estimation:
 
 1. **Unstable model estimates**: when predictors are highly correlated, small changes in the data can cause large swings in the estimated coefficients.
@@ -193,7 +202,9 @@ Multicollinearity (when two or more variables in a model are highly correlated) 
 
 ## Age and HIV status
 
-Let's look at the relationship between age and HIV status. First, we need to modify the variable for HIV status, because it was just collected for the 0-8 subgroup and is missing for the adults. 
+Let's look at the relationship between age and HIV status. 
+
+First, we need to modify the variable for HIV status, because it was just collected for the 0-8 subgroup and is missing for the adults. 
 
 ```{r}
 ### We did this in the first portion of the workshop activity
@@ -208,7 +219,7 @@ data <- data%>%
                                 TRUE ~ bf_hivstatus))
 ```
 
-Let's investigate the relationship between age and HIV status:
+Now, we can create a table of categorical age and HIV status:
 
 ```{r}
 table(data$age_cat, data$new_hiv_status)%>%
@@ -259,7 +270,7 @@ This would allow us to include HIV status in the model.
 ```{r}
 children_subset <- data%>%
   filter(age_cat == "0-8")
-table(children_subset$outcome, children_subset$bf_hivstatus, exclude = NULL)%>%
+table(children_subset$stool_semiquant_bin, children_subset$bf_hivstatus, exclude = NULL)%>%
   addmargins()
 ```
 
@@ -275,14 +286,26 @@ Moving forward in this workshop, we will just use the adult analytic cohort and 
 
 However, what should we do differently for the manuscript?
 
+Before proceeding with the analysis, make a few modifications.
+
 ```{r}
-### Before proceeding, remove the 2 participants missing CD4 from the analysis
+### Remove the 2 participants missing CD4 from the analysis
 adult_subset <- adult_subset%>%
   filter(!is.na(composite_cd4))%>%
   ### Create a binary variable from CD4 
   mutate(cd4_cat = ifelse(composite_cd4 < 200, "CD4 < 200", "CD4 >= 200"))
+```
 
-### There are other approaches for handling missing data, including impution. However, today we'll proceed with dropping the 2 participants. 
+```{r}
+### Create a categorical variable for nutritional status using BMI; sourced from the CDC 
+
+### https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html
+
+adult_subset <- adult_subset%>%
+  mutate(nutritional_cat = case_when(bmi < 18.5 ~ "Underweight",
+                                     bmi >= 18.5 & bmi < 25 ~ "Healthy weight",
+                                     bmi >=25 & bmi < 30 ~ "Overweight",
+                                     bmi >=30 ~ "Overweight"))
 ```
 
 ```{r}
@@ -303,38 +326,38 @@ There are 57 participants in the adult_subset. Of these, 32 have a trace result.
 
 Now, let's investigate the relationship between this outcome and the variables we're going to include in the model.
 
+For each variable, plot the variable along with the outcome.
+
+## BMI 
+
 ```{r}
-### Let's take a look at this variable
-ggplot(adult_subset = adult_subset, aes(x = bmi))+
-  geom_histogram()+
-  labs(x = "BMI",
-       y = "Count",
-       title = "Histogram of BMI",
+ggplot(data = adult_subset, aes(x = stool_semiquant_bin, y = bmi))+
+  geom_boxplot()+
+  labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
+       y = "BMI",
+       title = "Boxplots of BMI by stool Xpert Ultra semi-quantitative bin",
        subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
 ```
 
-For each variable, plot the variable along with the outcome.
+```{r}
+ggplot(data = adult_subset, aes(x = nutritional_cat, fill = stool_semiquant_bin))+
+  geom_bar()+
+  labs(x = "Nutritional category",
+       y = "Count",
+       fill = "Stool Xpert Ultra Semi-Quantitative Bin",
+       title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Nutritional Category",
+       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
+```
 
 ## Country
 
 ```{r}
-ggplot(adult_subset = adult_subset, aes(x = rf_country, fill = stool_semiquant_bin))+
+ggplot(data = adult_subset, aes(x = rf_country, fill = stool_semiquant_bin))+
   geom_bar()+
   labs(x = "Country",
        y = "Count",
        fill = "Stool Xpert Ultra Semi-Quantitative Bin",
        title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Country",
-       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
-```
-
-## BMI
-
-```{r}
-ggplot(adult_subset = adult_subset, aes(x = stool_semiquant_bin, y = bmi))+
-  geom_boxplot()+
-  labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
-       y = "BMI",
-       title = "Boxplots of BMI by stool Xpert Ultra semi-quantitative bin",
        subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
 ```
 
@@ -346,7 +369,7 @@ table(adult_subset$rf_enrollocation, adult_subset$stool_semiquant_bin, exclude =
 ```
 
 ```{r}
-ggplot(adult_subset = adult_subset, aes(x = rf_enrollocation, fill = stool_semiquant_bin))+
+ggplot(data = adult_subset, aes(x = rf_enrollocation, fill = stool_semiquant_bin))+
   geom_bar()+
   labs(x = "Enrollment location",
        y = "Count",
@@ -354,9 +377,9 @@ ggplot(adult_subset = adult_subset, aes(x = rf_enrollocation, fill = stool_semiq
        title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Enrollment location",
        subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
 ```
-We can see that there are just **3** participants who were enrolled in an inpatient setting and the rest enrolled in an outpatient setting. We won't include this in the final model, because it will create some problems:
+We can see that there are just **2** participants who were enrolled in an inpatient setting and the rest enrolled in an outpatient setting. We won't include this in the final model, because it will create some problems:
 
-**Very small group size**: With just 3 inpatient participants, the model has very little adult_subset to reliably estimate the effect of being inpatient.
+**Very small group size**: With just 2 inpatient participants, the model has very little adult_subset to reliably estimate the effect of being inpatient. Further, both of them has a result that is "Trace".
 
 **Unstable estimates**: The regression coefficient for inpatient will be highly unstable and imprecise, leading to wide confidence intervals or even convergence problems.
 
@@ -387,20 +410,20 @@ The **odds** of an event are calculated as:
 
 Let’s calculate the odds for **females**:
 
-- 35 had a trace result  
-- 19 did not
+- 21 had a trace result  
+- 14 did not
 
 ```{r}
-35 / 19
+21 / 14
 ```
 
 Now let’s calculate the odds for **males**:
 
-- 22 had a trace result  
-- 13 did not
+- 11 had a trace result  
+- 11 did not
 
 ```{r}
-22 / 13
+11 / 11
 ```
 
 ### Step 2: Calculate the Odds Ratio
@@ -408,12 +431,12 @@ Now let’s calculate the odds for **males**:
 The **odds ratio (OR)** compares the odds in females to the odds in males.
 
 ```{r}
-(35 / 19) / (22 / 13)
+(21 / 14) / (11 / 11)
 ```
 
 ### Step 3: Interpretation
 
-The odds of having a stool Xpert Ultra trace result are approximately **1.089 times higher in females than in males**. Here, males would be the **reference category**.
+The odds of having a stool Xpert Ultra trace result are approximately **1.5 times higher in females than in males**. Here, males would be the **reference category**.
 
 An odds ratio of **1** means that both groups have the same likelihood of experiencing the event.
 
@@ -431,10 +454,13 @@ adult_subset <- adult_subset%>%
   mutate(outcome = ifelse(stool_semiquant_bin == "Trace", 1, 0))%>%
   ### By default, R chooses the first alphabetical category to be the reference category. However, often we want the OR > 1 to make it easier to interpret. Because the have already shown that the OR > 1 when the reference is Male, convert to a factor and switch the order
   mutate(rf_gender = factor(rf_gender, levels = c("Male", "Female")))
-
-### Build the model!
-logistic_regression_model <- glm(outcome ~ rf_gender, adult_subset = adult_subset, family = "binomial")
 ```
+
+```{r}
+### Build the model!
+logistic_regression_model <- glm(outcome ~ rf_gender, data = adult_subset, family = "binomial")
+```
+
 
 ```{r}
 summary(logistic_regression_model)
@@ -444,85 +470,74 @@ There is a lot in this summary! We'll learn more about some of the other values 
 
 We see `rf_genderFemale`. This let's us know that the odds are for the female group, so we know the **reference group** must be male.
 
-The estimate is 0.08482. A logistic regression model predicts the **log odds** rather than the odds themselves. This is because odds are bounded between 0 and infinity, which can cause difficulties with modeling. By taking the **log**, we transform the odds to a scale that ranges from negative infinity to infinity, making it easier to model with a linear equation.
+The estimate is 0.4055 A logistic regression model predicts the **log odds** rather than the odds themselves. This is because odds are bounded between 0 and infinity, which can cause difficulties with modeling. By taking the **log**, we transform the odds to a scale that ranges from negative infinity to infinity, making it easier to model with a linear equation.
 
 However, the odds ratio is easier to interpret than the log odds. 
 
 To go from the **log odds** to the **odds ratio** we can exponentiate the coefficient estimate.
 
 ```{r}
-exp(0.08482)
+exp(0.4055)
 ```
 
-This is the same value we calculated above by hand! This is what is going on "behind the scenes" of the function, and the same logic applies to a logistic regression model with multiple predictors. 
+This is the same value we calculated above by hand (with a little bit of rounding differences)! This is what is going on "behind the scenes" of the function, and the same logic applies to a logistic regression model with multiple predictors. 
 
 Now, let's pivot back to visualizing the relationship between the other variables and the outcome. 
 
 ## Age 
 
-```{r}
-ggplot(adult_subset = adult_subset, aes(x = stool_semiquant_bin, y = age))+
-  geom_boxplot()+
-  labs(x = "Stool Xpert Ultra Semi-quantitative Bin",
-       y = "Age (years)",
-       title = "Boxplots of age by stool Xpert Ultra semi-quantitative bin",
-       subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
-```
+We are filtering to an analytic subset that is just adults. 
 
-We can represent numeric variables as categorical by creating bins. This is commonly done for variables such as age, when we know that younger children have a different response to TB than older adults.
+It does not make sense to also include the `age_cat` variable in the model - all are "15 and older".
+
+Further, it doesn't necessarily make sense to include the numeric age of those 15 and older.
+
+## CD4
 
 ```{r}
-table(adult_subset$age)%>%
+table(adult_subset$cd4_cat, adult_subset$stool_semiquant_bin, exclude = NULL) %>%
   addmargins()
 ```
 
-Create a categorical variable from age, 0-8 and 15 and older.
-
 ```{r}
-adult_subset <- adult_subset%>%
-  mutate(age_cat = ifelse(age <= 8, "0-8", "15 and older"))
-```
-
-```{r}
-table(adult_subset$age_cat, exclude = NULL)%>%
-  addmargins()
-```
-
-Finally, let's look at the relationship between age category and the outcome.
-
-```{r}
-table(adult_subset$age_cat, adult_subset$stool_semiquant_bin, exclude = NULL)%>%
-  addmargins()
-```
-```{r}
-ggplot(adult_subset = adult_subset, aes(x = age_cat, fill = stool_semiquant_bin))+
+ggplot(data = adult_subset, aes(x = cd4_cat, fill = stool_semiquant_bin))+
   geom_bar()+
-  labs(x = "Age category",
+  labs(x = "CD4 Category",
        y = "Count",
        fill = "Stool Xpert Ultra Semi-Quantitative Bin",
-       title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by Age",
+       title = "Stacked Barplot of Stool Xpert Ultra Semi-Quantitative bin by CD4 category",
        subtitle = "Among participants with a positive stool Xpert Ultra result at baseline")
 ```
 
 ## Think about it! 
 
-Discuss with someone near you - what does the above table and figure tell us about the relationship between age and whether a stool Xpert Ultra result is trace or not?
+Discuss with someone near you - what does the above table and figure tell us about the relationship between categorical CD4 count and whether a stool Xpert Ultra result is trace or not?
 
 ## Try it! 
 
+Calculate the odds ratio for having a trace stool Xpert Ultra result for the group with a CD4 >=200 compared to the group with a CD4 < 200.
+
 ```{r}
+### Calculate the OR by hand here
+
+```
+
+```{r}
+### Use the lm() function here
+
+```
+
+```{r}
+### Exponentiate the coefficient estimate from the model here
 
 ```
 
 # Build the model
 
-```{r}
-table(adult_subset$cd4_cat, exclude = NULL)%>%
-  addmargins()
-```
+Include all the variables we investigated above in the final model. 
 
 ```{r}
-final_model <- glm(outcome ~ rf_country + rf_gender + bmi + cd4_cat, adult_subset = adult_subset, family = "binomial")
+final_model <- glm(outcome ~ rf_country + rf_gender + nutritional_cat + cd4_cat, data = adult_subset, family = "binomial")
 ```
 
 ```{r }
@@ -533,7 +548,7 @@ summary(final_model)
 
 The assumptions for logistics regression models are:
 
-1. The outcome is binary
+1. The outcome is binary (i.e. has two levels)
 2. There are no extreme values or outliers
 3. There are no highly correlated predictors
 4. There is a linear relationship between the **log odds** of the outcome and each predictor value.
@@ -542,46 +557,134 @@ Let's tackle these one at a time!
 
 ## 1. The outcome is binary
 
-We have ensured that with the construction of our model
+We have ensured that with the construction of our model, but to confirm:
+
+```{r}
+table(adult_subset$outcome)
+```
 
 ## 2. There are no extreme values or outliers
 
+To investigate this, we can look at the **standardized residuals** of the model.
+
+**Residuals** are the difference between the observed outcome - in this case, 0 or 1 - and the predicted probability of the participant having a trace result.
+
+
+
 ```{r}
-### install.packages("broom")
-library(broom)
+### Investigate outliers
+adult_subset <- adult_subset%>%
+  ### Create a variable that is the predicted probability of having a stool Xpert Ultra trace result - this ranges from 0 to 1
+  mutate(predicted_probability = predict(final_model, type = "response"))%>%
+  ### Create a variable for the residual - this is the difference between the outcome - either 0 or 1 - and the predicted probability
+  mutate(residual = outcome - predicted_probability)%>%
+  ### Calculate the standard deviation of the predicted probability
+  mutate(standard_deviation = sqrt(predicted_probability * (1 - predicted_probability)))%>%
+  ### Standardize the raw residual by the standard deviation so we can compare each point
+  mutate(standardized_residual = residual / standard_deviation)%>%
+  ### Include a variable with the generic index of the participant for plotting purposes
+  mutate(generic_index = row_number())
+```
 
-model.data <- augment(final_model) %>% 
-  mutate(index = 1:n()) 
+What does the **residual** look like?
 
-ggplot(model.data, aes(index, .std.resid)) + 
-  geom_point(aes(color = as.factor(outcome)), alpha = .5) +
-  theme_bw()+
-  labs(x = "Generic index for each participant",
+Notice that in this figure, the residual values are bound between -1 and 1.
+
+```{r}
+ggplot(data = adult_subset, aes(x = generic_index, y = residual, color = as.factor(outcome))) + 
+  geom_point()+
+  labs(x = "Generic index",
+       y = "Residual",
+       color = "Outcome",
+       title = "Investigation of extreme values for our final model")+
+  ylim(c(-4, 4))+
+  geom_hline(yintercept = -3, lty = 2)+
+  geom_hline(yintercept = 3, lty = 2)
+```
+
+What does the **standardized residual** look like?
+
+Different predictions have different levels of uncertainty. For example, a prediction of 0.5 is more uncertain than a prediction of 0.95.
+
+To fairly compare residuals across all predictions, we divide each residual by its expected variability — this gives us the standardized residual, which puts them all on the same scale. Standardized residuals help us identify which points are unusually far from what the model expected.
+
+
+```{r}
+ggplot(data = adult_subset, aes(x = generic_index, y = standardized_residual, color = as.factor(outcome))) + 
+  geom_point()+
+  labs(x = "Generic index",
        y = "Standardized residual",
-       color = "Outcome")
+       color = "Outcome",
+       title = "Investigation of extreme values for our final model")+
+  ylim(c(-4, 4))+
+  geom_hline(yintercept = -3, lty = 2)+
+  geom_hline(yintercept = 3, lty = 2)
 ```
+
+In both plots above, dashed lines are added at standardized residuals of -3 and 3. Any points that are more extreme than -3 and 3 are considered outliers and need to be investigated further and potentially removed from the model.
+
+Everything looks good from the figure above!
+
+## 3. There are no highly correlated predictors
+
+We investigated this prior to building the model by looking at the relationship between the different predictors in the model.
+
+However, a double-check is looking at the **variance inflation factor (VIF)**.
+
+The VIF is calculated for each predictor to assess how much its variance is inflated due to correlation with other predictors.
+
+**VIF = 1**: No correlation between a given predictor and the others.
+
+**VIF between 1–5**: Low/moderate correlation — not usually a concern.
+
+**VIF > 10**: High multicollinearity — we may want to remove or combine variables.
 
 
 ```{r}
-data <- data %>%
-  mutate(predicted_logit = predict(final_model, type = "link"))  # link = logit
-
-# Plot logit vs. continuous predictor
-ggplot(data, aes(x = bmi, y = predicted_logit)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "loess", se = FALSE, color = "blue") +
-  labs(title = "Logit vs. BMI", y = "Logit (log-odds)", x = "BMI")
+# Calculate the VIF for each predictor
+vif(final_model)
 ```
+
+In this output, we can focus on the **GVIF^(1/(2*Df))** column. This is an adjusted VIF, which is appropriate to use because our model contains categorical variables. 
+
+All are near 1, so this is okay! 
+
+
+## 4. There is a linear relationship between the log odds of the outcome and each predictor value.
+
+What does this mean? For continuous predictors, a one-unit increase should correspond to a consistent change in the log odds of the outcome.
+
+We check this assumption because if the relationship is not linear, the model may be misspecified, leading to biased or misleading results.
+
+However, all the predictors we included in our model are categorical, meaning they represent distinct groups or categories. For categorical variables, the model estimates separate effects for each category compared to a reference group. Since these effects are not based on a continuous scale but rather on group membership, the assumption of linearity in the log odds does not apply in the same way.
+
+Therefore, with only categorical predictors, this linearity assumption is automatically met, and we don’t need additional checks or transformations for this assumption.
 
 # Interpret the model
-
-
 
 # Supplementary analysis 
 
 
 
 ## ATT initiation
+
+Among those who have a positive stool Xpert Ultra result, who initiated TB treatment?
+
+First, who initiated ATT? 
+
+```{r}
+table(adult_subset$bf_startedatt, exclude = NULL)%>%
+  addmargins()
+```
+
+If we use the `adult_subset`, it appears that we do not have information on whether 33 adults started ATT.
+
+However, this is because the `adult_subset` is filtering to just the ****
+
+```{r}
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
+```
+
 
 ## Outcome
 
