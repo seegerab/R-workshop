@@ -316,8 +316,6 @@ table(adult_subset$stool_semiquant_bin, exclude = NULL)%>%
   addmargins()
 ```
 
-EDIT HERE 
-
 There are 57 participants in the adult subset. Of these, 32 have a trace result. 
 
 ```{r}
@@ -648,7 +646,7 @@ All are near 1, so this is okay!
 
 ## 4. There is a linear relationship between the log odds of the outcome and each predictor value.
 
-What does this mean? For continuous predictors, a one-unit increase should correspond to a consistent change in the log odds of the outcome.
+This means that for continuous predictors, a one-unit increase should correspond to a consistent change in the log odds of the outcome.
 
 We check this assumption because if the relationship is not linear, the model may be misspecified, leading to biased or misleading results.
 
@@ -693,15 +691,17 @@ If the **p-value is less than 0.05**, we can conclude that there is an associati
 
 In our model, none of the p-values are less than 0.05. So, we didn't find evidence for any of the variables we included that they are significantly associated with a stool Xpert Ultra trace result.
 
+However, some of the p-values are close to being significant - including being overweight (compared to the reference of healthy weight) and having a CD4 count greater than 200 (compared to the reference of having a CD4 count less than 200). Both are associated with having a higher odds of a stool Xpert Ultra trace result.
+
+### Think about it!
+
+Even though the p-value wasn't significant, this may be because of our relatively small sample size.
+
+Do you have any insight into the direction of the associations that we observe?
+
 ## Additional outcome at the bottom
 
 **AIC** is the Akaike Information Criterion and is used to compare different models. If we build different models, we can compare them using the AIC. A lower value is better. 
-
-**Deviance**
-
-The **null deviance** is the amount of variability that is explained by the **null model** - no predictors, just the model intercept. 
-
-The **residual deviance** is the amount of variability that the full model explains. 
 
 # Supplementary analysis 
 
@@ -754,13 +754,19 @@ There are 15 participants who had a positive stool Xpert Ultra result yet did no
 
 Of the 15, 12 had a Trace positive result. 
 
-We can easily investigate what is going on with the particiapnts who do not have a trace stool Xpert Ultra result yet did not start treatment.
+We can easily investigate what is going on with the participants who do not have a trace stool Xpert Ultra result yet did not start treatment.
 
 Let's look at their other microbiologic results.
 
 ```{r}
 adult_subset%>%
   filter(stool_semiquant_bin == "Not Trace" & att_initiation == "Did not initiate ATT")%>%
+  select(record_id, rf_country, pe_stoolsemiresult, pe_lamresult, pe_finalculturesult, pe_xpertresult)
+```
+
+```{r}
+adult_subset%>%
+  filter(stool_semiquant_bin == "Trace" & att_initiation == "Did not initiate ATT")%>%
   select(record_id, rf_country, pe_stoolsemiresult, pe_lamresult, pe_finalculturesult, pe_xpertresult)
 ```
 
