@@ -29,7 +29,7 @@ What are the clinical traits associated with having a stool Xpert Ultra trace re
 Start by reading in the data. This is the same data that we've been using for the pre-workshop activities, with a few additional columns. 
 
 ```{r}
-data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB in person workshop data.csv")
 ```
 
 ```{r}

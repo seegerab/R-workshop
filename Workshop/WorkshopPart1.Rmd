@@ -22,8 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 First, read in the data.
 
 ```{r}
-data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB Database for Abi.csv")
-colnames(data)[colnames(data) == "X...record_id"] <- "record_id"
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/Workshop/Stool4TB in person workshop data.csv")
 ```
 
 We'll use `ggplot2` and `dplyr` today. We need to read in the `tidyverse` package (remember, `ggplot2` and `dplyr` are bundled in the `tidyverse` package) to use them.
