@@ -526,5 +526,32 @@ print(table_one,
       nonnormal = TRUE) ### By include nonnormal = TRUE, this returns median and IQR rather than mean and sd
 ```
 
+Let's clean this up a bit! I normally change the column names so rather than `rf_country`, for example, we see "Country".
+
+```{r}
+### Create a subset of data
+table_one_subset <- data%>%
+  select(rf_age_calculated, bf_hivstatus, rf_enrollocation, rf_country)
+colnames(table_one_subset) <- c("Age (years)", "HIV status", "Enrollment location", "Country")
+```
+
+```{r}
+table_one <- CreateTableOne(vars = c("Age (years)", "HIV status", "Enrollment location", "Country"),
+                            data = table_one_subset)
+
+table_one_output <- print(table_one, 
+      showAllLevels = TRUE,
+      nonnormal = TRUE)
+```
+
+
+We can export this table to a .csv to further edit or share in Excel using the `write.csv()` function:
+
+```{r}
+write.csv(table_one_output, "Week 2 example table one.csv")
+```
+
+
+
 
 
