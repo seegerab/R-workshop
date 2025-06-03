@@ -1586,7 +1586,7 @@ Eswatini.</p>
 to this file path “C:/Users/u249135/OneDrive - Baylor College of
 Medicine/Stool4TB/Workshop”.</p>
 <p>So, my code would look like:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">### This is just an example - if you run this, you will get an error </span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">### This is just an example - if you try and run this, you will get an error </span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv&quot;</span>)</span></code></pre></div>
 <p>You will need to update this to be the file path that you saved the
 .csv file to.</p>
@@ -2118,11 +2118,11 @@ rate.</li>
 <h2>A quick note</h2>
 <p>Do you recall how earlier, we learned that functions have optional
 arguments?</p>
-<p>One common on for fuctions that apply to numeric variables is
-<code>na.rm</code>. This removes NA values when calculating the numeric
-value.</p>
-<p>For example, suppose we wanted to find the mean age of
-participants.</p>
+<p>One common optional argument for functions that apply to numeric
+variables is <code>na.rm</code>. This removes NA values when calculating
+the numeric value.</p>
+<p>For example, suppose we wanted to find the average age of the
+participants:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">mean</span>(data<span class="sc">$</span>rf_age_calculated)</span></code></pre></div>
 <pre><code>## [1] NA</code></pre>
 <p>This returns NA!</p>
@@ -2158,10 +2158,10 @@ before calculating the mean.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">mean</span>(data<span class="sc">$</span>rf_age_calculated, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>## [1] 19.27622</code></pre>
 <p>However, this should be used with caution. Those 2 missing ages need
-to be tracked down. So, <code>na.rm</code> is a good argument to use so
-we at least have a general idea of the average age, but we should always
-look at the underlying data to see what exactly is missing and make
-efforts to find the data.</p>
+to be tracked down. So, <code>na.rm</code> is a good argument to use to
+have a general idea of the average age, but we should always look at the
+underlying data to see what exactly is missing and make efforts to find
+the data.</p>
 </div>
 <div id="summaries-by-category" class="section level2">
 <h2>Summaries by category</h2>
@@ -2246,6 +2246,32 @@ variables or median and IQR for numeric variables.</p>
 ##                                    Inpatient    22 (  3.8)      
 ##                                    Outpatient  533 ( 92.9)      
 ##   rf_country (%)                   Eswatini    574 (100.0)</code></pre>
+<p>Let’s clean this up a bit! I normally change the column names so
+rather than <code>rf_country</code>, for example, we see “Country”.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="do">### Create a subset of data</span></span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>table_one_subset <span class="ot">&lt;-</span> data<span class="sc">%&gt;%</span></span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>  <span class="fu">select</span>(rf_age_calculated, bf_hivstatus, rf_enrollocation, rf_country)</span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a><span class="fu">colnames</span>(table_one_subset) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Age (years)&quot;</span>, <span class="st">&quot;HIV status&quot;</span>, <span class="st">&quot;Enrollment location&quot;</span>, <span class="st">&quot;Country&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a>table_one <span class="ot">&lt;-</span> <span class="fu">CreateTableOne</span>(<span class="at">vars =</span> <span class="fu">c</span>(<span class="st">&quot;Age (years)&quot;</span>, <span class="st">&quot;HIV status&quot;</span>, <span class="st">&quot;Enrollment location&quot;</span>, <span class="st">&quot;Country&quot;</span>),</span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a>                            <span class="at">data =</span> table_one_subset)</span>
+<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a>table_one_output <span class="ot">&lt;-</span> <span class="fu">print</span>(table_one, </span>
+<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a>      <span class="at">showAllLevels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a>      <span class="at">nonnormal =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>##                             
+##                              level      Overall           
+##   n                                      574              
+##   Age (years) (median [IQR])            7.00 [3.00, 35.00]
+##   HIV status (%)             Negative    258 ( 44.9)      
+##                              Positive    304 ( 53.0)      
+##                              Unknown      12 (  2.1)      
+##   Enrollment location (%)    Home         19 (  3.3)      
+##                              Inpatient    22 (  3.8)      
+##                              Outpatient  533 ( 92.9)      
+##   Country (%)                Eswatini    574 (100.0)</code></pre>
+<p>We can export this table to a .csv to further edit or share in Excel
+using the <code>write.csv()</code> function:</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">write.csv</span>(table_one_output, <span class="st">&quot;Week 2 example table one.csv&quot;</span>)</span></code></pre></div>
 </div>
 
 

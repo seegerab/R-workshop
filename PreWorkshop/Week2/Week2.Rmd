@@ -41,7 +41,7 @@ As an example, I saved my data "Stool4TB workshop subset week 2.csv" to this fil
 
 So, my code would look like:
 
-```{r eval = FALSE }
+```{r }
 ### This is just an example - if you try and run this, you will get an error 
 data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Stool4TB/Workshop/Stool4TB workshop subset week 2.csv")
 ```
