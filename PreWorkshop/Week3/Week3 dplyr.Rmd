@@ -56,7 +56,7 @@ To start, read in the data. Please reference week 2 if you need a reminder.
 
 ### Please review the week 2 video if you are stuck on this step
 
-data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Database for Abi.csv")
+data <- read.csv("C:/Users/u249135/OneDrive - Baylor College of Medicine/Teaching Materials/R-workshop/PreWorkshop/Week3/Stool4TB Data Week 3.csv")
 ```
 
 This dataset includes the same variables as week 2, though it includes all 3 sites, noted by the `rf_coutnry` variable.
